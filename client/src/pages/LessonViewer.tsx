@@ -11,6 +11,8 @@ import { getLessonContent, type SlotContent } from "@/data/lessonContent";
 import { useGamification } from "@/contexts/GamificationContext";
 import DashboardLayout from "@/components/DashboardLayout";
 import { toast } from "sonner";
+import { AudioPlayer } from "@/components/AudioPlayer";
+import { VoiceRecorder } from "@/components/VoiceRecorder";
 
 const SLOT_CONFIG = [
   { key: "hook", icon: "bolt", label: "Hook / Accroche", labelFr: "Accroche", color: "#e74c3c", description: "Warm-up scenario to activate prior knowledge" },
@@ -700,6 +702,35 @@ export default function LessonViewer() {
                         <p key={i} className="text-sm text-gray-700 leading-relaxed">{para}</p>
                       ))}
                     </div>
+                  )}
+
+                  {/* Audio Player for Video and Hook slots — TTS reads the content aloud */}
+                  {(currentSlotKey === "video" || currentSlotKey === "hook" || currentSlotKey === "strategy") && (
+                    <AudioPlayer
+                      text={slotRealContent?.content || getDefaultSlotContent(currentSlotKey, lesson.title, lesson.id).join(". ")}
+                      language={program?.id.startsWith("esl") ? "en-US" : "fr-FR"}
+                      title="Listen to this lesson"
+                    />
+                  )}
+
+                  {/* Voice Recorder for Oral Practice slot */}
+                  {currentSlotKey === "oral" && (
+                    <VoiceRecorder
+                      prompt={slotRealContent?.content?.split("\n")[0] || `Practice speaking about: ${lesson.title}`}
+                      language={program?.id.startsWith("esl") ? "en-US" : "fr-FR"}
+                      maxDuration={120}
+                      showTranscript={true}
+                    />
+                  )}
+
+                  {/* Audio Player for Written Practice — listen to instructions */}
+                  {currentSlotKey === "written" && (
+                    <AudioPlayer
+                      text={slotRealContent?.content || getDefaultSlotContent(currentSlotKey, lesson.title, lesson.id).join(". ")}
+                      language={program?.id.startsWith("esl") ? "en-US" : "fr-FR"}
+                      title="Listen to instructions"
+                      compact={true}
+                    />
                   )}
 
                   {/* Slot action button */}

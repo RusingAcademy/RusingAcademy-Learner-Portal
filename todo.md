@@ -208,3 +208,33 @@
 - [x] Add admin route to App.tsx and admin nav to Sidebar (purple accent, admin-only)
 - [x] Build 4-tab admin interface (Analytics, Users, Challenges, Announcements)
 - [x] Verify TypeScript (0 errors) + dev server clean after admin panel
+
+## Méga-Sprint 14: Calendly Embed + Enhanced Tutoring Sessions
+- [x] Build Tutoring Sessions page with embedded Calendly scheduling widget (modal overlay)
+- [x] Add 4 booking types: Free Discovery Call, Diagnostic Assessment, 1-on-1 Coaching, Intensive Crash Course
+- [x] Embed Calendly inline widget using steven-barholere/30min and rusingacademy URLs
+- [x] Build coach profiles section (4 coaches with LinkedIn, specialties, book buttons)
+- [x] Add session history tab with empty state and future tracking notice
+- [x] Add "How It Works" 4-step guide and quick CTA banner
+- [x] Verify TypeScript (0 errors) after Calendly integration
+
+## Méga-Sprint 15: Audio/Oral Exercises + Voice Recording
+- [x] Build AudioPlayer component (TTS + audio file, speed control, waveform, compact mode)
+- [x] Build VoiceRecorder component (MediaRecorder API, pause/resume, live transcript)
+- [x] Add audio playback controls (play, pause, 0.5x-2x speed, progress bar)
+- [x] Add speech recognition for oral practice with live transcript
+- [x] Integrate audio/voice into LessonViewer (Hook, Video, Strategy, Written, Oral slots)
+- [x] Add text-to-speech using Web Speech API (auto-detect ESL en-US / FSL fr-FR)
+- [x] Verify TypeScript (0 errors) after audio integration
+
+## Méga-Sprint 16: Reports/Analytics Dashboard + Progress Enhancements
+- [x] Build comprehensive Reports page with 4 tabs (Overview, Progress, SLE Readiness, Activity)
+- [x] Add XP over time chart (SVG line chart, 12-week view)
+- [x] Add lessons completed per path (SVG bar chart, 6 paths)
+- [x] Add quiz score trends (bar chart with pass threshold indicator)
+- [x] Add SLE readiness assessment (radar chart with 5 skills + circular score)
+- [x] Add activity heatmap (GitHub-style 12-week contribution grid)
+- [x] Add milestones grid (8 achievement milestones with progress tracking)
+- [x] Add weekly activity summary with daily bar visualization
+- [x] Add recent activity log with XP earned per action
+- [x] Verify TypeScript (0 errors) after reports
