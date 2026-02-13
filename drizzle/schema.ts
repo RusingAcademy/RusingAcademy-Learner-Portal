@@ -300,3 +300,76 @@ export const vocabularyItems = mysqlTable("vocabulary_items", {
 });
 
 export type VocabularyItem = typeof vocabularyItems.$inferSelect;
+
+/* ───────────────────────────── DAILY STUDY GOALS ──────────────────────── */
+export const dailyStudyGoals = mysqlTable("daily_study_goals", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  date: varchar("date", { length: 10 }).notNull(),
+  xpTarget: int("xpTarget").default(50).notNull(),
+  xpEarned: int("xpEarned").default(0).notNull(),
+  lessonsTarget: int("lessonsTarget").default(1).notNull(),
+  lessonsCompleted: int("lessonsCompleted").default(0).notNull(),
+  studyMinutesTarget: int("studyMinutesTarget").default(30).notNull(),
+  studyMinutesActual: int("studyMinutesActual").default(0).notNull(),
+  isGoalMet: boolean("isGoalMet").default(false).notNull(),
+  streakMultiplier: int("streakMultiplier").default(100).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type DailyStudyGoal = typeof dailyStudyGoals.$inferSelect;
+
+/* ───────────────────────── DISCUSSION THREADS ────────────────────────── */
+export const discussionThreads = mysqlTable("discussion_threads", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  title: varchar("title", { length: 512 }).notNull(),
+  content: text("content").notNull(),
+  category: mysqlEnum("category", ["grammar", "vocabulary", "sle_prep", "general", "study_tips", "resources"]).default("general").notNull(),
+  isPinned: boolean("isPinned").default(false).notNull(),
+  isLocked: boolean("isLocked").default(false).notNull(),
+  replyCount: int("replyCount").default(0).notNull(),
+  likeCount: int("likeCount").default(0).notNull(),
+  viewCount: int("viewCount").default(0).notNull(),
+  lastReplyAt: timestamp("lastReplyAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type DiscussionThread = typeof discussionThreads.$inferSelect;
+
+/* ───────────────────────── DISCUSSION REPLIES ────────────────────────── */
+export const discussionReplies = mysqlTable("discussion_replies", {
+  id: int("id").autoincrement().primaryKey(),
+  threadId: int("threadId").notNull(),
+  userId: int("userId").notNull(),
+  content: text("content").notNull(),
+  parentReplyId: int("parentReplyId"),
+  likeCount: int("likeCount").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type DiscussionReply = typeof discussionReplies.$inferSelect;
+
+/* ───────────────────────── WRITING SUBMISSIONS ──────────────────────── */
+export const writingSubmissions = mysqlTable("writing_submissions", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  title: varchar("title", { length: 512 }).notNull(),
+  content: text("content").notNull(),
+  promptText: text("promptText"),
+  language: mysqlEnum("language", ["en", "fr"]).default("fr").notNull(),
+  cefrLevel: mysqlEnum("cefrLevel", ["A1", "A2", "B1", "B2", "C1"]),
+  status: mysqlEnum("status", ["draft", "submitted", "reviewed"]).default("draft").notNull(),
+  wordCount: int("wordCount").default(0).notNull(),
+  aiFeedback: text("aiFeedback"),
+  aiScore: int("aiScore"),
+  programId: varchar("programId", { length: 16 }),
+  pathId: varchar("pathId", { length: 64 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type WritingSubmission = typeof writingSubmissions.$inferSelect;

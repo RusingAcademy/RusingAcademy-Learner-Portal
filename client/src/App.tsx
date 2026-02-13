@@ -33,6 +33,10 @@ import Notes from "./pages/Notes";
 import Flashcards from "./pages/Flashcards";
 import StudyPlanner from "./pages/StudyPlanner";
 import Vocabulary from "./pages/Vocabulary";
+import DiscussionBoards from "./pages/DiscussionBoards";
+import WritingPortfolio from "./pages/WritingPortfolio";
+import PronunciationLab from "./pages/PronunciationLab";
+import Achievements from "./pages/Achievements";
 import CelebrationOverlay from "./components/CelebrationOverlay";
 import FloatingAICompanion from "./components/FloatingAICompanion";
 import { LanguageProvider } from "./contexts/LanguageContext";
@@ -67,6 +71,10 @@ function Router() {
       <Route path="/flashcards" component={Flashcards} />
       <Route path="/study-planner" component={StudyPlanner} />
       <Route path="/vocabulary" component={Vocabulary} />
+      <Route path="/discussions" component={DiscussionBoards} />
+      <Route path="/writing-portfolio" component={WritingPortfolio} />
+      <Route path="/pronunciation-lab" component={PronunciationLab} />
+      <Route path="/achievements" component={Achievements} />
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />

@@ -37,11 +37,14 @@ const studyToolsNav: NavItem[] = [
   { icon: "style", label: "Flashcards", path: "/flashcards" },
   { icon: "event_note", label: "Study Planner", path: "/study-planner" },
   { icon: "translate", label: "Vocabulary", path: "/vocabulary" },
+  { icon: "edit_note", label: "Writing Portfolio", path: "/writing-portfolio" },
+  { icon: "record_voice_over", label: "Pronunciation Lab", path: "/pronunciation-lab" },
 ];
 
 const secondaryNav: NavItem[] = [
   { icon: "notifications", label: "Notifications", path: "/notifications", badge: 3 },
-  { icon: "forum", label: "Community", path: "/community-forum" },
+  { icon: "forum", label: "Discussions", path: "/discussions" },
+  { icon: "emoji_events", label: "Achievements", path: "/achievements" },
   { icon: "help_outline", label: "Help Center", path: "/help" },
 ];
 

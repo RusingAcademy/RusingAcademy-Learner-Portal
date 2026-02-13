@@ -7,6 +7,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import Sidebar from "@/components/Sidebar";
 import { getLoginUrl } from "@/const";
+import { toast } from "sonner";
 
 const MASTERY_CONFIG: Record<string, { label: string; color: string; bg: string; icon: string }> = {
   new: { label: "New", color: "#3b82f6", bg: "bg-blue-50 text-blue-700", icon: "fiber_new" },
@@ -53,6 +54,25 @@ export default function Vocabulary() {
   });
   const deleteItem = trpc.vocabulary.delete.useMutation({
     onSuccess: () => { utils.vocabulary.list.invalidate(); utils.vocabulary.stats.invalidate(); },
+  });
+
+  const aiSuggest = trpc.aiVocabulary.suggestWords.useMutation({
+    onSuccess: (data: any) => {
+      if (data.words && data.words.length > 0) {
+        data.words.forEach((w: any) => {
+          addItem.mutate({
+            word: w.word,
+            translation: w.translation,
+            definition: w.definition || undefined,
+            exampleSentence: w.example || undefined,
+            pronunciation: w.pronunciation || undefined,
+            partOfSpeech: w.partOfSpeech || undefined,
+          });
+        });
+        toast.success(`Added ${data.words.length} AI-suggested words!`);
+      }
+    },
+    onError: () => toast.error("AI suggestion failed. Try again."),
   });
 
   function resetForm() {
@@ -153,6 +173,12 @@ export default function Vocabulary() {
                   className="px-4 py-2.5 rounded-xl text-sm font-semibold text-[#008090] border border-[#008090] flex items-center gap-2 hover:bg-[#008090]/5 disabled:opacity-40">
                   <span className="material-icons text-base">quiz</span>
                   Quiz Mode
+                </button>
+                <button onClick={() => aiSuggest.mutate({ topic: "public service bilingualism", level: "B2", count: 5 })}
+                  disabled={aiSuggest.isPending}
+                  className="px-4 py-2.5 rounded-xl text-sm font-semibold text-[#8b5cf6] border border-[#8b5cf6] flex items-center gap-2 hover:bg-[#8b5cf6]/5 disabled:opacity-40">
+                  <span className="material-icons text-base">{aiSuggest.isPending ? "hourglass_empty" : "auto_awesome"}</span>
+                  {aiSuggest.isPending ? "Generating..." : "AI Suggest"}
                 </button>
                 <button onClick={() => setShowForm(true)}
                   className="px-4 py-2.5 rounded-xl text-sm font-semibold text-white flex items-center gap-2 hover:shadow-md" style={{ background: "#008090" }}>

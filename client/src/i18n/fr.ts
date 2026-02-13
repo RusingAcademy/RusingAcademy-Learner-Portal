@@ -353,6 +353,61 @@ export const fr = {
     deleteConfirm: "Supprimer ce mot ?",
   },
 
+  // Discussion Boards
+  discussions: {
+    title: "Forums de discussion",
+    subtitle: "Connectez-vous avec d'autres apprenants",
+    newThread: "Nouveau sujet",
+    reply: "Répondre",
+    replies: "réponses",
+    noThreads: "Aucune discussion pour le moment",
+    startConversation: "Commencer une conversation",
+    categories: "Catégories",
+  },
+  // Writing Portfolio
+  writing: {
+    title: "Portfolio d'écriture",
+    subtitle: "Pratiquez l'écriture et obtenez des commentaires IA",
+    newWriting: "Nouvelle rédaction",
+    saveDraft: "Enregistrer le brouillon",
+    getAIFeedback: "Obtenir un retour IA",
+    analyzing: "Analyse de votre texte...",
+    score: "Score",
+    grammar: "Grammaire",
+    vocabulary: "Vocabulaire",
+    coherence: "Cohérence",
+    strengths: "Points forts",
+    suggestions: "Suggestions",
+    noSubmissions: "Aucune soumission pour le moment",
+    writingPrompts: "Sujets d'écriture par niveau",
+  },
+  // Pronunciation Lab
+  pronunciation: {
+    title: "Laboratoire de prononciation",
+    subtitle: "Écoutez, pratiquez et perfectionnez votre prononciation",
+    listen: "Écouter",
+    record: "Enregistrer",
+    stop: "Arrêter",
+    compare: "Comparer avec le modèle",
+    tryAgain: "Réessayer",
+    practices: "pratiques",
+    tips: "Conseils de prononciation",
+  },
+  // Achievements
+  achievements: {
+    title: "Vitrine des réalisations",
+    subtitle: "Les jalons de votre parcours d'apprentissage",
+    badges: "Badges",
+    milestones: "Jalons",
+    statistics: "Statistiques",
+    totalXP: "XP total",
+    level: "Niveau",
+    dayStreak: "Jours consécutifs",
+    badgesEarned: "Badges obtenus",
+    milestonesReached: "Jalons atteints",
+    nextMilestone: "Prochain jalon",
+    xpRemaining: "XP restants",
+  },
   // Auth
   auth: {
     loginTitle: "Bienvenue à RusingÂcademy",

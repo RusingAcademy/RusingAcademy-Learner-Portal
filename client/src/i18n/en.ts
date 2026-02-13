@@ -353,6 +353,61 @@ export const en = {
     deleteConfirm: "Delete this word?",
   },
 
+  // Discussion Boards
+  discussions: {
+    title: "Discussion Boards",
+    subtitle: "Connect with fellow learners",
+    newThread: "New Thread",
+    reply: "Reply",
+    replies: "replies",
+    noThreads: "No discussions yet",
+    startConversation: "Start a conversation",
+    categories: "Categories",
+  },
+  // Writing Portfolio
+  writing: {
+    title: "Writing Portfolio",
+    subtitle: "Practice writing and get AI feedback",
+    newWriting: "New Writing",
+    saveDraft: "Save Draft",
+    getAIFeedback: "Get AI Feedback",
+    analyzing: "Analyzing your writing...",
+    score: "Score",
+    grammar: "Grammar",
+    vocabulary: "Vocabulary",
+    coherence: "Coherence",
+    strengths: "Strengths",
+    suggestions: "Suggestions",
+    noSubmissions: "No submissions yet",
+    writingPrompts: "Writing Prompts by Level",
+  },
+  // Pronunciation Lab
+  pronunciation: {
+    title: "Pronunciation Lab",
+    subtitle: "Listen, practice, and perfect your pronunciation",
+    listen: "Listen",
+    record: "Record",
+    stop: "Stop",
+    compare: "Compare with model",
+    tryAgain: "Try again",
+    practices: "practices",
+    tips: "Pronunciation Tips",
+  },
+  // Achievements
+  achievements: {
+    title: "Achievement Showcase",
+    subtitle: "Your learning journey milestones",
+    badges: "Badges",
+    milestones: "Milestones",
+    statistics: "Statistics",
+    totalXP: "Total XP",
+    level: "Level",
+    dayStreak: "Day Streak",
+    badgesEarned: "Badges Earned",
+    milestonesReached: "Milestones Reached",
+    nextMilestone: "Next Milestone",
+    xpRemaining: "XP remaining",
+  },
   // Auth
   auth: {
     loginTitle: "Welcome to RusingÂcademy",

@@ -7,6 +7,7 @@ import { invokeLLM } from "./_core/llm";
 import { z } from "zod";
 import * as db from "./db";
 import { notesRouter, flashcardsRouter, studyPlannerRouter, vocabularyRouter } from "./routers-sprint17";
+import { aiVocabularyRouter, dailyGoalsRouter, discussionsRouter, writingRouter, recommendationsRouter } from "./routers-sprint22";
 import { gamificationProfiles, users } from "../drizzle/schema";
 import { desc, eq, sql } from "drizzle-orm";
 
@@ -364,6 +365,11 @@ Always be professional, supportive, and pedagogically sound. When the user write
   flashcards: flashcardsRouter,
   studyPlanner: studyPlannerRouter,
   vocabulary: vocabularyRouter,
+  aiVocabulary: aiVocabularyRouter,
+  dailyGoals: dailyGoalsRouter,
+  discussions: discussionsRouter,
+  writing: writingRouter,
+  recommendations: recommendationsRouter,
 
   admin: router({
     overview: protectedProcedure.query(async ({ ctx }) => {

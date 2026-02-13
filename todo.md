@@ -281,3 +281,74 @@
 - [x] Run TypeScript check — 0 errors
 - [x] Browser E2E validation — server running clean, no console errors
 - [x] Final checkpoint and delivery report
+
+## Méga-Sprint 22: AI-Powered Vocabulary Suggestions
+- [x] Build tRPC ai.suggestVocabulary procedure (LLM extracts key terms from lesson content)
+- [x] Add "AI Suggest" button to Vocabulary Builder page
+- [x] Display AI-generated word suggestions with definitions, translations, examples
+- [x] Allow one-click add of suggested words to personal vocabulary
+- [x] Verify TypeScript (0 errors) after Sprint 22
+
+## Méga-Sprint 23: Study Streak Rewards & Gamification Boost
+- [x] Add daily_study_goals DB table (daily XP target, weekly lesson target)
+- [x] Build streak reward multiplier system (consecutive days → bonus XP)
+- [x] Add streak calendar heatmap to Dashboard (integrated in Study Planner)
+- [x] Add daily goal progress bar to Dashboard header (Study Tools cards)
+- [x] Wire Study Planner session completion to streak tracking
+- [x] Write vitest tests for streak rewards
+- [x] Verify TypeScript (0 errors) after Sprint 23
+
+## Méga-Sprint 24: Flashcard Import/Export & Shared Decks
+- [x] Build CSV/JSON export for flashcard decks (via Flashcards page)
+- [x] Build CSV/JSON import for flashcard decks (via Flashcards page)
+- [x] Add pre-built SLE vocabulary decks (curated by level: A, B, C)
+- [x] Add import/export buttons to Flashcards page
+- [x] Verify TypeScript (0 errors) after Sprint 24
+
+## Méga-Sprint 25: Discussion Boards & Peer Learning
+- [x] Add discussion_threads and discussion_replies DB tables
+- [x] Build tRPC routers for thread CRUD and replies
+- [x] Build Discussion Boards page with real discussion threads
+- [x] Add reply system with threaded comments
+- [x] Add thread categories (Grammar, Vocabulary, SLE Prep, Pronunciation, Culture, General)
+- [x] Write vitest tests for discussion routers
+- [x] Verify TypeScript (0 errors) after Sprint 25
+
+## Méga-Sprint 26: Writing Portfolio & Submissions
+- [x] Add writing_submissions DB table
+- [x] Build tRPC routers for writing submission CRUD
+- [x] Build Writing Portfolio page with submission list, editor, and writing prompts by CEFR level
+- [x] Add AI feedback on writing submissions (grammar, vocabulary, coherence scoring)
+- [x] Add submission history with status tracking (draft, submitted, reviewed)
+- [x] Verify TypeScript (0 errors) after Sprint 26
+
+## Méga-Sprint 27: Pronunciation Lab
+- [x] Build Pronunciation Lab page with word/phrase practice by CEFR level
+- [x] Add text-to-speech model pronunciation playback (Web Speech API)
+- [x] Add voice recording with playback and comparison
+- [x] Build pronunciation practice with IPA transcriptions
+- [x] Add pronunciation exercises by CEFR level (A1-C1, 17 exercises)
+- [x] Verify TypeScript (0 errors) after Sprint 27
+
+## Méga-Sprint 28: Smart Learning Path Recommendations
+- [x] Build tRPC ai.getPathRecommendations procedure
+- [x] Analyze user progress, quiz scores, and weak areas
+- [x] Build Recommendations widget on Dashboard (Study Tools cards)
+- [x] Add "Suggested Next Steps" via recommendations router
+- [x] Verify TypeScript (0 errors) after Sprint 28
+
+## Méga-Sprint 29: Achievement Showcase & Social Sharing
+- [x] Build Achievement Showcase page with badges, milestones, and statistics tabs
+- [x] Add achievement stats cards with progress visualization
+- [x] Add milestone progress tracking with XP-based progression
+- [x] Add achievement showcase accessible from sidebar navigation
+- [x] Verify TypeScript (0 errors) after Sprint 29
+
+## Méga-Sprint 30: Comprehensive QA & Production Readiness
+- [x] Run full vitest suite — 144 tests passing (9 test files)
+- [x] Run TypeScript check — 0 errors
+- [x] Audit all routes for authentication requirements
+- [x] Verify all sidebar navigation links work (30+ routes)
+- [x] Test all CRUD operations end-to-end
+- [x] Verify bilingual i18n coverage for all new features (EN/FR)
+- [x] Final checkpoint and delivery report
