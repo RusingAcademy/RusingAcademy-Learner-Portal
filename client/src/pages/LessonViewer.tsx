@@ -490,7 +490,8 @@ export default function LessonViewer() {
   // Get real lesson content from extracted data
   const realContent = useMemo(() => getLessonContent(lessonId), [lessonId]);
 
-  const { completedLessons, addXP, completeLesson } = useGamification();
+  const { completedLessons, addXP, completeLesson, completeSlot } = useGamification();
+  const moduleIndex = currentModule ? path!.modules.indexOf(currentModule) : 0;
   const [activeSlot, setActiveSlot] = useState(0);
   const [completedSlots, setCompletedSlots] = useState<Set<number>>(new Set());
   const lessonKey = `${programId}-${lessonId}`;
@@ -502,23 +503,26 @@ export default function LessonViewer() {
       next.add(slotIdx);
       return next;
     });
+    completeSlot(lessonKey, slotIdx, programId, pathId, moduleIndex);
     toast.success(`${SLOT_CONFIG[slotIdx].label} completed!`, { duration: 2000 });
     if (slotIdx < SLOT_CONFIG.length - 1) {
       setTimeout(() => setActiveSlot(slotIdx + 1), 500);
     }
-  }, []);
+  }, [lessonKey, programId, pathId, moduleIndex, completeSlot]);
 
+  const { passQuiz } = useGamification();
   const handleQuizComplete = useCallback((score: number) => {
     if (score >= 60) {
       handleSlotComplete(5);
       addXP(50);
-      toast.success("Quiz réussi ! +50 XP", { duration: 3000 });
+      passQuiz(`${programId}-${lessonId}-formative`, score, 8, Math.round(score * 8 / 100), programId, pathId, lessonId, "formative");
     }
-  }, [handleSlotComplete, addXP]);
+    toast.success(`Quiz terminé: ${score}% — ${score >= 60 ? "+50 XP" : "Réessayez!"}`, { duration: 3000 });
+  }, [handleSlotComplete, addXP, passQuiz, programId, pathId, lessonId]);
 
   const handleLessonComplete = useCallback(() => {
     if (!isLessonComplete && lesson) {
-      completeLesson(lessonKey);
+      completeLesson(lessonKey, programId, pathId, moduleIndex);
       addXP(lesson.xpReward);
       toast.success(`Leçon terminée ! +${lesson.xpReward} XP 🎉`, { duration: 4000 });
     }

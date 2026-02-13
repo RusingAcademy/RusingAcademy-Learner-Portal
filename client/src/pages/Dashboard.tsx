@@ -287,7 +287,7 @@ export default function Dashboard() {
                   { id: "week-streak", icon: "local_fire_department", label: "7-Day Streak", color: "#e74c3c" },
                   { id: "module-complete", icon: "workspace_premium", label: "Module Master", color: "#8b5cf6" },
                 ].map((b) => {
-                  const earned = badges.includes(b.id);
+                  const earned = badges.some((badge) => badge.badgeId === b.id);
                   return (
                     <div key={b.id} className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[10px] font-medium ${earned ? "" : "opacity-30"}`} style={{
                       background: earned ? `${b.color}15` : "rgba(0,0,0,0.03)",

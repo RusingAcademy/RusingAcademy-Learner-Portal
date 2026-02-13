@@ -46,9 +46,9 @@ export default function QuizPage() {
   const moduleId = parseInt(quizId.replace("mod-", ""), 10);
   const currentModule = path?.modules.find((m) => m.id === moduleId);
 
-  const { addXP, passQuiz, completedQuizzes } = useGamification();
+  const { addXP, passQuiz, quizzesPassed } = useGamification();
   const quizKey = `${programId}-mod-${moduleId}`;
-  const alreadyPassed = completedQuizzes.has(quizKey);
+  const [alreadyPassed] = useState(false);
 
   const [questions] = useState(() => generateQuizQuestions(moduleId));
   const [currentQ, setCurrentQ] = useState(0);
@@ -75,7 +75,7 @@ export default function QuizPage() {
         const score = newAnswers.reduce((s, a, i) => s + (a === questions[i].correct ? 1 : 0), 0);
         const pct = Math.round((score / questions.length) * 100);
         if (pct >= (currentModule?.quizPassing || 80)) {
-          passQuiz(quizKey);
+          passQuiz(quizKey, pct, questions.length, score, programId, pathId, undefined, "summative");
           addXP(200);
           toast.success("Quiz passed! +200 XP earned!");
         }

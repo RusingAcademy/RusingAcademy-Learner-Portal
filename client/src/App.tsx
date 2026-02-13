@@ -24,8 +24,8 @@ import PathList from "./pages/PathList";
 import PathDetail from "./pages/PathDetail";
 import LessonViewer from "./pages/LessonViewer";
 import QuizPage from "./pages/QuizPage";
-
 function Router() {
+  // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
       <Route path="/" component={Login} />
