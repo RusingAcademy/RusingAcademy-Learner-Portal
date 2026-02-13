@@ -1,5 +1,5 @@
 /**
- * LRDG Portal - My Profile Page
+ * RusingÂcademy Learning Portal - My Profile Page
  * Design: Form-based profile page matching original
  * Sections: Info, Name, Login, Other, Security Questions, Learner, Contact Cards, Contact, Address
  */
@@ -16,14 +16,14 @@ export default function MyProfile() {
     <DashboardLayout>
       <div className="max-w-[900px]">
         <div className="flex items-center gap-2 mb-4">
-          <Link href="/dashboard" className="text-gray-400 hover:text-gray-600">
+          <Link href="/dashboard" className="text-gray-400 hover:text-[#008090] transition-colors">
             <span className="material-icons text-[20px]">navigate_before</span>
           </Link>
-          <h1 className="text-2xl font-medium text-gray-900">My Profile</h1>
+          <h1 className="text-2xl font-bold text-[#0c1929]" style={{ fontFamily: "'Playfair Display', serif" }}>My Profile</h1>
         </div>
 
         {/* Info Banner */}
-        <div className="bg-[#D4FBF7] rounded-t-md px-6 py-3">
+        <div className="bg-[rgba(0,128,144,0.08)] rounded-t-md px-6 py-3">
           <h2 className="text-base font-medium text-gray-800">Info</h2>
         </div>
 
@@ -68,7 +68,7 @@ export default function MyProfile() {
                     className="w-full border border-gray-300 rounded px-3 py-2 text-sm text-gray-800 bg-gray-50"
                   />
                 </div>
-                <button className="text-xs text-[#086FDD] hover:underline mt-2">
+                <button className="text-xs text-[#008090] hover:underline mt-2">
                   Change Password
                 </button>
               </div>
@@ -87,7 +87,7 @@ export default function MyProfile() {
                     <label className="text-xs text-gray-500 mb-1 block">Employer</label>
                     <input
                       type="text"
-                      value="LRDG Inc."
+                      value="RusingÂcademy Inc."
                       readOnly
                       className="w-full border border-gray-300 rounded px-3 py-2 text-sm text-gray-800 bg-gray-50"
                     />
@@ -118,7 +118,7 @@ export default function MyProfile() {
                       />
                     </div>
                   ))}
-                  <button className="text-xs text-[#086FDD] hover:underline">
+                  <button className="text-xs text-[#008090] hover:underline">
                     Reset Security Questions
                   </button>
                 </div>
@@ -132,10 +132,10 @@ export default function MyProfile() {
                 <div className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center mb-3">
                   <span className="material-icons text-gray-400 text-5xl">person</span>
                 </div>
-                <button className="text-xs text-[#086FDD] hover:underline mb-1">
+                <button className="text-xs text-[#008090] hover:underline mb-1">
                   Change Profile Picture
                 </button>
-                <button className="text-xs text-[#086FDD] hover:underline">
+                <button className="text-xs text-[#008090] hover:underline">
                   Notification Settings
                 </button>
               </div>
@@ -155,7 +155,7 @@ export default function MyProfile() {
                   <p className="text-[10px] text-gray-400">Language</p>
                   <p className="text-xs text-gray-700">English</p>
                 </div>
-                <button className="text-xs text-[#086FDD] hover:underline w-full text-center py-1 border border-[#086FDD]/20 rounded">
+                <button className="text-xs text-[#008090] hover:underline w-full text-center py-1 border border-[#008090]/20 rounded">
                   See Proficiency Levels
                 </button>
               </div>
@@ -176,8 +176,8 @@ export default function MyProfile() {
             {contactCardsOpen && (
               <div className="mt-2 space-y-3">
                 <div className="bg-gray-50 rounded-md p-3 text-xs">
-                  <p className="font-medium text-gray-700 mb-1">LRDG Canada:</p>
-                  <p className="text-[#086FDD]">Support Form | 514-989-1669</p>
+                  <p className="font-medium text-gray-700 mb-1">RusingÂcademy Canada:</p>
+                  <p className="text-[#008090]">Support Form | 514-989-1669</p>
                 </div>
                 <div className="bg-gray-50 rounded-md p-3 text-xs">
                   <p className="font-medium text-gray-700 mb-1">Account Manager</p>
@@ -260,11 +260,11 @@ export default function MyProfile() {
               <div className="mt-2 space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-gray-600">Home</span>
-                  <button className="text-xs text-[#086FDD] hover:underline">Edit</button>
+                  <button className="text-xs text-[#008090] hover:underline">Edit</button>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-gray-600">Work</span>
-                  <button className="text-xs text-[#086FDD] hover:underline">Edit</button>
+                  <button className="text-xs text-[#008090] hover:underline">Edit</button>
                 </div>
               </div>
             )}
@@ -272,7 +272,7 @@ export default function MyProfile() {
 
           {/* Save Button */}
           <div className="mt-6 flex justify-end">
-            <button className="bg-[#086FDD] text-white text-sm font-medium py-2 px-8 rounded hover:bg-[#0760c0] transition-colors">
+            <button className="bg-[#008090] text-white text-sm font-medium py-2 px-8 rounded hover:bg-[#006d7a] transition-colors">
               Save
             </button>
           </div>

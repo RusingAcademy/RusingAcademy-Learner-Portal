@@ -1,5 +1,5 @@
 /**
- * LRDG Portal - My Settings Page
+ * RusingÂcademy Learning Portal - My Settings Page
  * Design: System Preferences with language and timezone dropdowns
  */
 import DashboardLayout from "@/components/DashboardLayout";
@@ -10,14 +10,14 @@ export default function MySettings() {
     <DashboardLayout>
       <div className="max-w-[900px]">
         <div className="flex items-center gap-2 mb-4">
-          <Link href="/dashboard" className="text-gray-400 hover:text-gray-600">
+          <Link href="/dashboard" className="text-gray-400 hover:text-[#008090] transition-colors">
             <span className="material-icons text-[20px]">navigate_before</span>
           </Link>
-          <h1 className="text-2xl font-medium text-gray-900">My Settings</h1>
+          <h1 className="text-2xl font-bold text-[#0c1929]" style={{ fontFamily: "'Playfair Display', serif" }}>My Settings</h1>
         </div>
 
         {/* System Preferences Banner */}
-        <div className="bg-[#D4FBF7] rounded-t-md px-6 py-3">
+        <div className="bg-[rgba(0,128,144,0.08)] rounded-t-md px-6 py-3">
           <h2 className="text-base font-medium text-gray-800">System Preferences</h2>
         </div>
 
@@ -63,7 +63,7 @@ export default function MySettings() {
 
           {/* Save Button */}
           <div className="mt-8 flex justify-end">
-            <button className="bg-[#086FDD] text-white text-sm font-medium py-2 px-8 rounded hover:bg-[#0760c0] transition-colors">
+            <button className="bg-[#008090] text-white text-sm font-medium py-2 px-8 rounded hover:bg-[#006d7a] transition-colors">
               Save
             </button>
           </div>

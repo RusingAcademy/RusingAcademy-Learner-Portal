@@ -4,6 +4,7 @@ import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { GamificationProvider } from "./contexts/GamificationContext";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import LearningMaterials from "./pages/LearningMaterials";
@@ -18,12 +19,22 @@ import CommunityForum from "./pages/CommunityForum";
 import Help from "./pages/Help";
 import MyProfile from "./pages/MyProfile";
 import MySettings from "./pages/MySettings";
+import ProgramSelect from "./pages/ProgramSelect";
+import PathList from "./pages/PathList";
+import PathDetail from "./pages/PathDetail";
+import LessonViewer from "./pages/LessonViewer";
+import QuizPage from "./pages/QuizPage";
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Login} />
       <Route path="/dashboard" component={Dashboard} />
+      <Route path="/programs" component={ProgramSelect} />
+      <Route path="/programs/:programId" component={PathList} />
+      <Route path="/programs/:programId/:pathId" component={PathDetail} />
+      <Route path="/programs/:programId/:pathId/quiz/:quizId" component={QuizPage} />
+      <Route path="/programs/:programId/:pathId/:lessonId" component={LessonViewer} />
       <Route path="/learning-materials" component={LearningMaterials} />
       <Route path="/tutoring-sessions" component={TutoringSessions} />
       <Route path="/authorizations" component={Authorizations} />
@@ -46,10 +57,12 @@ function App() {
   return (
     <ErrorBoundary>
       <ThemeProvider defaultTheme="light">
-        <TooltipProvider>
-          <Toaster />
-          <Router />
-        </TooltipProvider>
+        <GamificationProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Router />
+          </TooltipProvider>
+        </GamificationProvider>
       </ThemeProvider>
     </ErrorBoundary>
   );

@@ -40,48 +40,49 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-  --font-sans: 'Roboto', sans-serif;
-  --font-heading: 'Montserrat', sans-serif;
-  --color-lrdg-blue: oklch(0.5 0.2 255);
-  --color-lrdg-teal: oklch(0.93 0.05 175);
-  --color-lrdg-teal-dark: oklch(0.85 0.08 175);
-  --color-lrdg-gray: oklch(0.97 0 0);
+  /* RusingAcademy brand colors */
+  --color-ra-teal: oklch(0.55 0.12 195);
+  --color-ra-gold: oklch(0.75 0.15 75);
+  --color-ra-cream: oklch(0.96 0.01 90);
+  --color-ra-navy: oklch(0.15 0.02 260);
+  --color-ra-warm-white: oklch(0.99 0.005 90);
 }
 
 :root {
-  --primary: oklch(0.5 0.2 255);
-  --primary-foreground: oklch(1 0 0);
-  --sidebar-primary: oklch(0.5 0.2 255);
-  --sidebar-primary-foreground: oklch(1 0 0);
-  --chart-1: oklch(0.7 0.15 220);
-  --chart-2: oklch(0.5 0.2 255);
-  --chart-3: oklch(0.85 0.08 175);
-  --chart-4: oklch(0.6 0.15 255);
-  --chart-5: oklch(0.4 0.15 255);
-  --radius: 0.375rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.15 0.01 65);
+  --radius: 0.75rem;
+  /* RusingAcademy Premium Golden Glassmorphism Palette */
+  --primary: oklch(0.55 0.12 195);
+  --primary-foreground: oklch(0.99 0 0);
+  --background: oklch(0.993 0.003 90);
+  --foreground: oklch(0.13 0.02 260);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.15 0.01 65);
+  --card-foreground: oklch(0.13 0.02 260);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.15 0.01 65);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.3 0.01 65);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.5 0.01 250);
-  --accent: oklch(0.93 0.05 175);
-  --accent-foreground: oklch(0.15 0.01 65);
-  --destructive: oklch(0.58 0.24 27);
-  --destructive-foreground: oklch(1 0 0);
-  --border: oklch(0.9 0 0);
-  --input: oklch(0.9 0 0);
-  --ring: oklch(0.5 0.2 255);
-  --sidebar: oklch(1 0 0);
-  --sidebar-foreground: oklch(0.15 0.01 65);
-  --sidebar-accent: oklch(0.93 0.05 175);
-  --sidebar-accent-foreground: oklch(0.15 0.01 65);
-  --sidebar-border: oklch(0.9 0 0);
-  --sidebar-ring: oklch(0.5 0.2 255);
+  --popover-foreground: oklch(0.13 0.02 260);
+  --secondary: oklch(0.96 0.01 90);
+  --secondary-foreground: oklch(0.3 0.02 260);
+  --muted: oklch(0.96 0.01 90);
+  --muted-foreground: oklch(0.5 0.02 260);
+  --accent: oklch(0.75 0.15 75);
+  --accent-foreground: oklch(0.13 0.02 260);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(0.91 0.01 90);
+  --input: oklch(0.91 0.01 90);
+  --ring: oklch(0.55 0.12 195);
+  --chart-1: oklch(0.55 0.12 195);
+  --chart-2: oklch(0.75 0.15 75);
+  --chart-3: oklch(0.65 0.12 195);
+  --chart-4: oklch(0.45 0.12 195);
+  --chart-5: oklch(0.85 0.12 75);
+  --sidebar: oklch(0.15 0.02 260);
+  --sidebar-foreground: oklch(0.92 0.01 90);
+  --sidebar-primary: oklch(0.55 0.12 195);
+  --sidebar-primary-foreground: oklch(0.99 0 0);
+  --sidebar-accent: oklch(0.22 0.02 260);
+  --sidebar-accent-foreground: oklch(0.99 0 0);
+  --sidebar-border: oklch(0.25 0.02 260);
+  --sidebar-ring: oklch(0.75 0.15 75);
 }
 
 @layer base {
@@ -89,11 +90,11 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground font-sans;
-    font-family: 'Roboto', sans-serif;
+    @apply bg-background text-foreground;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Roboto', sans-serif;
+  h1, h2, h3 {
+    font-family: 'Merriweather', Georgia, serif;
   }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
@@ -116,19 +117,16 @@
     padding-left: 1rem;
     padding-right: 1rem;
   }
-
   .flex {
     min-height: 0;
     min-width: 0;
   }
-
   @media (min-width: 640px) {
     .container {
       padding-left: 1.5rem;
       padding-right: 1.5rem;
     }
   }
-
   @media (min-width: 1024px) {
     .container {
       padding-left: 2rem;
@@ -137,45 +135,105 @@
     }
   }
 
-  /* Material Icons sizing */
-  .material-icons,
-  .material-icons-round {
-    font-size: 20px;
-    vertical-align: middle;
+  /* RusingAcademy Glassmorphism Utilities */
+  .glass {
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+  .glass-dark {
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .glass-card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px) saturate(160%);
+    -webkit-backdrop-filter: blur(12px) saturate(160%);
+    border: 1px solid rgba(0, 128, 144, 0.12);
+    box-shadow: 0 4px 24px rgba(0, 128, 144, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
+  }
+  .glass-gold {
+    background: linear-gradient(135deg, rgba(245, 166, 35, 0.08), rgba(255, 255, 255, 0.9));
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(245, 166, 35, 0.2);
+    box-shadow: 0 4px 24px rgba(245, 166, 35, 0.08);
+  }
+  .glass-teal {
+    background: linear-gradient(135deg, rgba(0, 128, 144, 0.06), rgba(255, 255, 255, 0.92));
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(0, 128, 144, 0.15);
   }
 
-  /* LRDG Table styles */
-  .lrdg-table-header {
-    background-color: #D4FBF7;
+  /* Premium Golden Gradient */
+  .gradient-gold {
+    background: linear-gradient(135deg, #f5a623 0%, #d4943c 50%, #f5a623 100%);
+  }
+  .gradient-teal {
+    background: linear-gradient(135deg, #008090 0%, #006d7a 50%, #008090 100%);
+  }
+  .gradient-premium {
+    background: linear-gradient(135deg, #008090 0%, #006d7a 40%, #f5a623 100%);
   }
 
-  .lrdg-table-row:nth-child(even) {
-    background-color: #f8fdfc;
+  /* XP Progress Bar Animation */
+  .xp-bar {
+    background: linear-gradient(90deg, #008090, #00a0b0, #f5a623);
+    background-size: 200% 100%;
+    animation: xpShimmer 3s ease infinite;
+  }
+  @keyframes xpShimmer {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
   }
 
-  .lrdg-table-row:hover {
-    background-color: #eef9f7;
+  /* Streak Fire Animation */
+  .streak-fire {
+    animation: fireGlow 2s ease-in-out infinite;
+  }
+  @keyframes fireGlow {
+    0%, 100% { filter: drop-shadow(0 0 4px rgba(245, 166, 35, 0.4)); }
+    50% { filter: drop-shadow(0 0 12px rgba(245, 166, 35, 0.8)); }
   }
 
-  /* Sidebar active state */
-  .sidebar-item-active {
-    background-color: rgba(8, 111, 221, 0.08);
-    color: #086FDD;
-    border-left: 3px solid #086FDD;
+  /* Badge Unlock Animation */
+  .badge-unlock {
+    animation: badgePop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  @keyframes badgePop {
+    0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+    60% { transform: scale(1.2) rotate(10deg); }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
   }
 
-  /* Custom scrollbar */
-  ::-webkit-scrollbar {
-    width: 6px;
+  /* Level Up Celebration */
+  .level-up {
+    animation: levelPulse 1.5s ease-out;
   }
-  ::-webkit-scrollbar-track {
-    background: #f1f1f1;
+  @keyframes levelPulse {
+    0% { box-shadow: 0 0 0 0 rgba(245, 166, 35, 0.6); }
+    50% { box-shadow: 0 0 0 20px rgba(245, 166, 35, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(245, 166, 35, 0); }
   }
-  ::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
-    border-radius: 3px;
+
+  /* RusingAcademy Glass Card (main content) */
+  .ra-glass {
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(12px) saturate(160%);
+    -webkit-backdrop-filter: blur(12px) saturate(160%);
+    border: 1px solid rgba(0, 128, 144, 0.08);
+    box-shadow: 0 2px 16px rgba(0, 128, 144, 0.04), 0 1px 3px rgba(0, 0, 0, 0.03);
   }
-  ::-webkit-scrollbar-thumb:hover {
-    background: #a1a1a1;
+
+  /* Sidebar active link */
+  .sidebar-link-active {
+    background: linear-gradient(90deg, rgba(0, 128, 144, 0.15), rgba(0, 128, 144, 0.05));
+    border-left: 3px solid #008090;
+    color: #008090;
   }
 }

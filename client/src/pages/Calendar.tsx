@@ -1,5 +1,5 @@
 /**
- * LRDG Portal - Calendar Page
+ * RusingÂcademy Learning Portal - Calendar Page
  * Design: Full month calendar view with category filters
  * Categories: Tutoring Sessions, Events, Deadlines, Holidays
  */
@@ -19,7 +19,7 @@ function getFirstDayOfMonth(year: number, month: number) {
 }
 
 const categories = [
-  { name: "Tutoring Sessions", color: "#086FDD" },
+  { name: "Tutoring Sessions", color: "#008090" },
   { name: "Events", color: "#10b981" },
   { name: "Deadlines", color: "#ef4444" },
   { name: "Holidays", color: "#f59e0b" },
@@ -61,10 +61,10 @@ export default function CalendarPage() {
     <DashboardLayout>
       <div className="max-w-[1200px]">
         <div className="flex items-center gap-2 mb-4">
-          <Link href="/dashboard" className="text-gray-400 hover:text-gray-600">
+          <Link href="/dashboard" className="text-gray-400 hover:text-[#008090] transition-colors">
             <span className="material-icons text-[20px]">navigate_before</span>
           </Link>
-          <h1 className="text-2xl font-medium text-gray-900">Calendar</h1>
+          <h1 className="text-2xl font-bold text-[#0c1929]" style={{ fontFamily: "'Playfair Display', serif" }}>Calendar</h1>
         </div>
 
         {/* Category Filters */}
@@ -87,7 +87,7 @@ export default function CalendarPage() {
         </div>
 
         {/* Calendar */}
-        <div className="bg-white rounded-md border border-gray-200 overflow-hidden">
+        <div className="glass-card rounded-xl overflow-hidden">
           {/* Month Navigation */}
           <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
             <button onClick={prevMonth} className="p-1 hover:bg-gray-100 rounded">
@@ -122,7 +122,7 @@ export default function CalendarPage() {
                 {day && (
                   <span className={`text-sm ${
                     day === today && isCurrentMonth
-                      ? "bg-[#086FDD] text-white w-6 h-6 rounded-full flex items-center justify-center font-medium"
+                      ? "bg-[#008090] text-white w-6 h-6 rounded-full flex items-center justify-center font-medium"
                       : "text-gray-700"
                   }`}>
                     {day}

@@ -1,5 +1,5 @@
 /**
- * LRDG Portal - Notifications Page
+ * RusingÂcademy Learning Portal - Notifications Page
  * Design: Inbox-style list of notifications
  * Teal header, sortable table
  */
@@ -9,7 +9,7 @@ import { Link } from "wouter";
 const notifications = [
   {
     id: 1,
-    title: "LRDG Language Training: How to access your learning materials / Formation linguistique LRDG: Comment accéder à votre matériel d'apprentissage",
+    title: "RusingÂcademy Language Training: How to access your learning materials / Formation linguistique RusingÂcademy: Comment accéder à votre matériel d'apprentissage",
     from: "system",
     date: "03/12/2024",
     time: "02:55 PM",
@@ -17,7 +17,7 @@ const notifications = [
   },
   {
     id: 2,
-    title: "LRDG Language Training: How to access your learning materials / Formation linguistique LRDG: Comment accéder à votre matériel d'apprentissage",
+    title: "RusingÂcademy Language Training: How to access your learning materials / Formation linguistique RusingÂcademy: Comment accéder à votre matériel d'apprentissage",
     from: "system",
     date: "03/01/2024",
     time: "08:54 AM",
@@ -25,7 +25,7 @@ const notifications = [
   },
   {
     id: 3,
-    title: "LRDG Language Training: Preliminary oral evaluation results / Formation linguistique LRDG: Résultats de votre évaluation orale préliminaire.",
+    title: "RusingÂcademy Language Training: Preliminary oral evaluation results / Formation linguistique RusingÂcademy: Résultats de votre évaluation orale préliminaire.",
     from: "system",
     date: "03/01/2024",
     time: "08:54 AM",
@@ -38,18 +38,18 @@ export default function Notifications() {
     <DashboardLayout>
       <div className="max-w-[1200px]">
         <div className="flex items-center gap-2 mb-4">
-          <Link href="/dashboard" className="text-gray-400 hover:text-gray-600">
+          <Link href="/dashboard" className="text-gray-400 hover:text-[#008090] transition-colors">
             <span className="material-icons text-[20px]">navigate_before</span>
           </Link>
-          <h1 className="text-2xl font-medium text-gray-900">Notifications</h1>
+          <h1 className="text-2xl font-bold text-[#0c1929]" style={{ fontFamily: "'Playfair Display', serif" }}>Notifications</h1>
           <span className="text-xs text-gray-400 ml-2">0 unread notifications</span>
         </div>
 
         {/* Notifications Table */}
-        <div className="bg-white rounded-md border border-gray-200 overflow-hidden">
+        <div className="glass-card rounded-xl overflow-hidden">
           <table className="w-full">
             <thead>
-              <tr className="bg-[#D4FBF7]">
+              <tr className="bg-[rgba(0,128,144,0.08)]">
                 <th className="text-left text-xs font-medium text-gray-700 px-4 py-3 w-8">
                   <span className="material-icons text-[16px] text-gray-400">mail</span>
                 </th>

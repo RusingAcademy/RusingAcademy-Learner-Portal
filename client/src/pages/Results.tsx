@@ -1,5 +1,5 @@
 /**
- * LRDG Portal - Results Page
+ * RusingÂcademy Learning Portal - Results Page
  * Design: Tabs for Final Quiz Results / Summary of Results (Chart) / Proficiency Levels (Table)
  * Bar chart + data table
  */
@@ -47,21 +47,21 @@ export default function Results() {
     <DashboardLayout>
       <div className="max-w-[1200px]">
         <div className="flex items-center gap-2 mb-4">
-          <Link href="/dashboard" className="text-gray-400 hover:text-gray-600">
+          <Link href="/dashboard" className="text-gray-400 hover:text-[#008090] transition-colors">
             <span className="material-icons text-[20px]">navigate_before</span>
           </Link>
-          <h1 className="text-2xl font-medium text-gray-900">Results</h1>
+          <h1 className="text-2xl font-bold text-[#0c1929]" style={{ fontFamily: "'Playfair Display', serif" }}>Results</h1>
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-gray-200 mb-4 overflow-x-auto">
+        <div className="flex border-b border-[rgba(0,128,144,0.1)] mb-4 overflow-x-auto">
           {tabs.map((tab, i) => (
             <button
               key={tab}
               onClick={() => setActiveTab(i)}
               className={`px-4 py-3 text-sm font-medium transition-colors relative whitespace-nowrap
                 ${activeTab === i
-                  ? "text-[#086FDD] border-b-2 border-[#086FDD]"
+                  ? "text-[#008090] border-b-2 border-[#008090]"
                   : "text-gray-500 hover:text-gray-700"
                 }`}
             >
@@ -72,10 +72,10 @@ export default function Results() {
 
         {/* Final Quiz Results Tab */}
         {activeTab === 0 && (
-          <div className="bg-white rounded-md border border-gray-200 overflow-hidden">
+          <div className="glass-card rounded-xl overflow-hidden">
             <table className="w-full">
               <thead>
-                <tr className="bg-[#D4FBF7]">
+                <tr className="bg-[rgba(0,128,144,0.08)]">
                   <th className="text-left text-xs font-medium text-gray-700 px-4 py-3">Module</th>
                   <th className="text-left text-xs font-medium text-gray-700 px-4 py-3">Quiz</th>
                   <th className="text-left text-xs font-medium text-gray-700 px-4 py-3">Score</th>
@@ -106,7 +106,7 @@ export default function Results() {
 
         {/* Summary Chart Tab */}
         {activeTab === 1 && (
-          <div className="bg-white rounded-md border border-gray-200 p-6">
+          <div className="glass-card rounded-xl p-6">
             <h3 className="text-sm font-medium text-gray-700 mb-4">Final Quiz Results per Module</h3>
             <div className="h-[350px]">
               <ResponsiveContainer width="100%" height="100%">
@@ -115,7 +115,7 @@ export default function Results() {
                   <XAxis dataKey="module" tick={{ fontSize: 11 }} label={{ value: "Module", position: "insideBottom", offset: -5, fontSize: 12 }} />
                   <YAxis tick={{ fontSize: 11 }} domain={[0, 100]} tickFormatter={(v) => `${v}%`} label={{ value: "Score (%)", angle: -90, position: "insideLeft", fontSize: 12 }} />
                   <Tooltip formatter={(value: number) => [`${value}%`, "Score"]} />
-                  <Bar dataKey="score" fill="#086FDD" radius={[2, 2, 0, 0]} />
+                  <Bar dataKey="score" fill="#008090" radius={[2, 2, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -124,10 +124,10 @@ export default function Results() {
 
         {/* Proficiency Levels Tab */}
         {activeTab === 2 && (
-          <div className="bg-white rounded-md border border-gray-200 overflow-hidden">
+          <div className="glass-card rounded-xl overflow-hidden">
             <table className="w-full">
               <thead>
-                <tr className="bg-[#D4FBF7]">
+                <tr className="bg-[rgba(0,128,144,0.08)]">
                   <th className="text-left text-xs font-medium text-gray-700 px-4 py-3">Skill</th>
                   <th className="text-left text-xs font-medium text-gray-700 px-4 py-3">Level</th>
                   <th className="text-left text-xs font-medium text-gray-700 px-4 py-3">Date</th>

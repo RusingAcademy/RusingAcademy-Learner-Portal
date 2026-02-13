@@ -1,5 +1,5 @@
 /**
- * LRDG Portal - Community Forum Page
+ * RusingÂcademy Learning Portal - Community Forum Page
  * Design: Forum with categories, hero illustration
  * Categories: Pedagogical Discussions, Technical Support, General Discussion
  */
@@ -56,10 +56,10 @@ export default function CommunityForum() {
     <DashboardLayout>
       <div className="max-w-[1200px]">
         <div className="flex items-center gap-2 mb-4">
-          <Link href="/dashboard" className="text-gray-400 hover:text-gray-600">
+          <Link href="/dashboard" className="text-gray-400 hover:text-[#008090] transition-colors">
             <span className="material-icons text-[20px]">navigate_before</span>
           </Link>
-          <h1 className="text-2xl font-medium text-gray-900">Community Forum</h1>
+          <h1 className="text-2xl font-bold text-[#0c1929]" style={{ fontFamily: "'Playfair Display', serif" }}>Community Forum</h1>
         </div>
 
         {/* Hero Banner */}
@@ -69,10 +69,10 @@ export default function CommunityForum() {
             alt="Community Forum"
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#086FDD]/80 to-[#086FDD]/40 flex items-center">
+          <div className="absolute inset-0 bg-gradient-to-r from-[#008090]/80 to-[#008090]/40 flex items-center">
             <div className="px-6">
               <h2 className="text-white text-xl font-medium mb-1">Welcome to the Learning Community</h2>
-              <p className="text-white/80 text-sm">Connect, share, and learn together with fellow LRDG learners.</p>
+              <p className="text-white/80 text-sm">Connect, share, and learn together with fellow RusingÂcademy learners.</p>
             </div>
           </div>
         </div>
@@ -82,11 +82,11 @@ export default function CommunityForum() {
           {forumCategories.map((cat, i) => (
             <div
               key={i}
-              className="bg-white rounded-md border border-gray-200 p-4 hover:border-[#086FDD]/30 hover:shadow-sm transition-all cursor-pointer"
+              className="glass-card rounded-xl p-4 hover:border-[#008090]/30 hover:shadow-sm transition-all cursor-pointer"
             >
               <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-lg bg-[#D4FBF7] flex items-center justify-center flex-shrink-0">
-                  <span className="material-icons text-[#086FDD] text-[20px]">{cat.icon}</span>
+                <div className="w-10 h-10 rounded-lg bg-[rgba(0,128,144,0.08)] flex items-center justify-center flex-shrink-0">
+                  <span className="material-icons text-[#008090] text-[20px]">{cat.icon}</span>
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="text-sm font-medium text-gray-800">{cat.name}</h3>

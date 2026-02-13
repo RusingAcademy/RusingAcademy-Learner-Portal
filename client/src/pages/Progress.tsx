@@ -1,5 +1,5 @@
 /**
- * LRDG Portal - Progress Page
+ * RusingÂcademy Learning Portal - Progress Page
  * Design: Summary of modules accessed with progress table
  */
 import DashboardLayout from "@/components/DashboardLayout";
@@ -27,33 +27,33 @@ export default function Progress() {
     <DashboardLayout>
       <div className="max-w-[1200px]">
         <div className="flex items-center gap-2 mb-4">
-          <Link href="/dashboard" className="text-gray-400 hover:text-gray-600">
+          <Link href="/dashboard" className="text-gray-400 hover:text-[#008090] transition-colors">
             <span className="material-icons text-[20px]">navigate_before</span>
           </Link>
-          <h1 className="text-2xl font-medium text-gray-900">Progress</h1>
+          <h1 className="text-2xl font-bold text-[#0c1929]" style={{ fontFamily: "'Playfair Display', serif" }}>Progress</h1>
         </div>
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-          <div className="bg-white rounded-md border border-gray-200 p-4 text-center">
-            <p className="text-2xl font-bold text-[#086FDD]">1</p>
+          <div className="glass-card rounded-xl p-4 text-center">
+            <p className="text-2xl font-bold text-[#008090]">1</p>
             <p className="text-xs text-gray-500 mt-1">Modules Accessed</p>
           </div>
-          <div className="bg-white rounded-md border border-gray-200 p-4 text-center">
-            <p className="text-2xl font-bold text-[#086FDD]">1</p>
+          <div className="glass-card rounded-xl p-4 text-center">
+            <p className="text-2xl font-bold text-[#008090]">1</p>
             <p className="text-xs text-gray-500 mt-1">Activities Completed</p>
           </div>
-          <div className="bg-white rounded-md border border-gray-200 p-4 text-center">
-            <p className="text-2xl font-bold text-[#086FDD]">3%</p>
+          <div className="glass-card rounded-xl p-4 text-center">
+            <p className="text-2xl font-bold text-[#008090]">3%</p>
             <p className="text-xs text-gray-500 mt-1">Overall Progress</p>
           </div>
         </div>
 
         {/* Progress Table */}
-        <div className="bg-white rounded-md border border-gray-200 overflow-hidden">
+        <div className="glass-card rounded-xl overflow-hidden">
           <table className="w-full">
             <thead>
-              <tr className="bg-[#D4FBF7]">
+              <tr className="bg-[rgba(0,128,144,0.08)]">
                 <th className="text-left text-xs font-medium text-gray-700 px-4 py-3">Module</th>
                 <th className="text-left text-xs font-medium text-gray-700 px-4 py-3">Total Activities</th>
                 <th className="text-left text-xs font-medium text-gray-700 px-4 py-3">Completed</th>
@@ -71,7 +71,7 @@ export default function Progress() {
                     <div className="flex items-center gap-2">
                       <div className="w-20 h-2 bg-gray-200 rounded-full overflow-hidden">
                         <div
-                          className="h-full bg-[#086FDD] rounded-full"
+                          className="h-full bg-[#008090] rounded-full"
                           style={{ width: `${item.percentage}%` }}
                         />
                       </div>
