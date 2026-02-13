@@ -26,7 +26,10 @@ import LessonViewer from "./pages/LessonViewer";
 import QuizPage from "./pages/QuizPage";
 import Leaderboard from "./pages/Leaderboard";
 import WeeklyChallenges from "./pages/WeeklyChallenges";
+import SLEPractice from "./pages/SLEPractice";
+import AIAssistant from "./pages/AIAssistant";
 import CelebrationOverlay from "./components/CelebrationOverlay";
+import { LanguageProvider } from "./contexts/LanguageContext";
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
@@ -49,6 +52,8 @@ function Router() {
       <Route path="/community-forum" component={CommunityForum} />
       <Route path="/leaderboard" component={Leaderboard} />
       <Route path="/challenges" component={WeeklyChallenges} />
+      <Route path="/sle-practice" component={SLEPractice} />
+      <Route path="/ai-assistant" component={AIAssistant} />
       <Route path="/help" component={Help} />
       <Route path="/profile" component={MyProfile} />
       <Route path="/settings" component={MySettings} />
@@ -62,6 +67,7 @@ function App() {
   return (
     <ErrorBoundary>
       <ThemeProvider defaultTheme="light">
+        <LanguageProvider>
         <GamificationProvider>
           <TooltipProvider>
             <Toaster />
@@ -69,6 +75,7 @@ function App() {
             <Router />
           </TooltipProvider>
         </GamificationProvider>
+        </LanguageProvider>
       </ThemeProvider>
     </ErrorBoundary>
   );

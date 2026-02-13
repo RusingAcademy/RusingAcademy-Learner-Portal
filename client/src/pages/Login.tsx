@@ -1,6 +1,6 @@
 /**
  * Login — RusingÂcademy Learning Portal
- * Premium glassmorphism login with teal/gold branding
+ * Design: Clean white light theme, accessible, LRDG-inspired
  */
 import { useState } from "react";
 import { useLocation } from "wouter";
@@ -22,31 +22,26 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex" style={{ background: "#fefef8" }}>
-      {/* Left Side - Premium Hero */}
+    <div className="min-h-screen flex bg-white">
+      {/* Left Side — Light teal hero */}
       <div className="hidden lg:flex lg:w-1/2 items-center justify-center p-12 relative overflow-hidden" style={{
-        background: "linear-gradient(135deg, #0c1929 0%, #003040 40%, #004050 70%, #005060 100%)",
+        background: "linear-gradient(160deg, #f0fafb 0%, #e0f4f5 40%, #d0eef0 100%)",
       }}>
         {/* Decorative circles */}
-        <div className="absolute top-20 right-20 w-64 h-64 rounded-full opacity-5" style={{
-          background: "radial-gradient(circle, #f5a623, transparent)",
-        }} />
-        <div className="absolute bottom-20 left-10 w-80 h-80 rounded-full opacity-5" style={{
+        <div className="absolute top-20 right-20 w-64 h-64 rounded-full opacity-20" style={{
           background: "radial-gradient(circle, #008090, transparent)",
         }} />
-        <div className="absolute top-1/4 left-1/4 w-40 h-40 rounded-full opacity-5" style={{
+        <div className="absolute bottom-20 left-10 w-80 h-80 rounded-full opacity-10" style={{
           background: "radial-gradient(circle, #f5a623, transparent)",
         }} />
 
         <div className="relative z-10 text-center max-w-md">
-          <img src={LOGO_ICON} alt="RusingÂcademy" className="w-20 h-20 mx-auto mb-8 rounded-2xl" style={{
-            boxShadow: "0 8px 32px rgba(0,128,144,0.3)",
-          }} />
-          <h2 className="text-4xl font-bold text-white mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
+          <img src={LOGO_ICON} alt="RusingÂcademy" className="w-20 h-20 mx-auto mb-8 rounded-2xl shadow-lg" />
+          <h2 className="text-4xl font-bold text-gray-900 mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
             RusingÂcademy
           </h2>
-          <p className="text-lg text-[#f5a623] font-medium mb-2">Learning Portal</p>
-          <p className="text-white/60 text-sm leading-relaxed">
+          <p className="text-lg text-[#008090] font-medium mb-2">Learning Portal</p>
+          <p className="text-gray-600 text-sm leading-relaxed">
             Master your second official language with Canada's premier bilingual training platform. 
             Expert coaching meets innovative technology.
           </p>
@@ -54,11 +49,7 @@ export default function Login() {
           {/* Feature pills */}
           <div className="flex flex-wrap justify-center gap-2 mt-8">
             {["ESL Program", "FSL Program", "CEFR A1→C1+", "Gamification", "SLE Prep"].map((f) => (
-              <span key={f} className="text-xs px-3 py-1.5 rounded-full text-white/80 font-medium" style={{
-                background: "rgba(255,255,255,0.08)",
-                backdropFilter: "blur(4px)",
-                border: "1px solid rgba(255,255,255,0.1)",
-              }}>
+              <span key={f} className="text-xs px-3 py-1.5 rounded-full text-gray-700 font-medium bg-white/80 border border-gray-200 shadow-sm">
                 {f}
               </span>
             ))}
@@ -71,9 +62,9 @@ export default function Login() {
               { value: "192", label: "Lessons" },
               { value: "1,344", label: "Activities" },
             ].map((s) => (
-              <div key={s.label} className="text-center">
-                <div className="text-2xl font-bold text-[#f5a623]">{s.value}</div>
-                <div className="text-[10px] text-white/40 uppercase tracking-wider">{s.label}</div>
+              <div key={s.label} className="text-center bg-white/60 rounded-xl py-3 border border-gray-100">
+                <div className="text-2xl font-bold text-[#008090]">{s.value}</div>
+                <div className="text-[10px] text-gray-500 uppercase tracking-wider">{s.label}</div>
               </div>
             ))}
           </div>
@@ -81,17 +72,14 @@ export default function Login() {
       </div>
 
       {/* Right Side - Login Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white">
         <div className="w-full max-w-md">
           {/* Language Selector */}
           <div className="flex justify-end mb-8">
             <select
               value={language}
               onChange={(e) => setLanguage(e.target.value)}
-              className="border rounded-lg px-3 py-1.5 text-sm bg-white" style={{
-                borderColor: "rgba(0,128,144,0.2)",
-                color: "#0c1929",
-              }}
+              className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm bg-white text-gray-700 focus:ring-2 focus:ring-[#008090]/20 focus:border-[#008090] outline-none"
             >
               <option>English</option>
               <option>Français</option>
@@ -104,7 +92,7 @@ export default function Login() {
           </div>
 
           {/* Title */}
-          <h1 className="text-center text-lg font-medium mb-8" style={{ color: "#008090" }}>
+          <h1 className="text-center text-lg font-medium text-gray-800 mb-8">
             {language === "English" ? "Log in to your Learning Portal." : "Connectez-vous à votre portail d'apprentissage."}
           </h1>
 
@@ -118,12 +106,7 @@ export default function Login() {
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full rounded-xl px-4 py-3 text-sm outline-none transition-all duration-300" style={{
-                  border: "1px solid rgba(0,128,144,0.2)",
-                  background: "rgba(255,255,255,0.8)",
-                }}
-                onFocus={(e) => { e.target.style.borderColor = "#008090"; e.target.style.boxShadow = "0 0 0 3px rgba(0,128,144,0.1)"; }}
-                onBlur={(e) => { e.target.style.borderColor = "rgba(0,128,144,0.2)"; e.target.style.boxShadow = "none"; }}
+                className="w-full rounded-xl px-4 py-3 text-sm outline-none transition-all duration-300 border border-gray-200 bg-white text-gray-900 focus:border-[#008090] focus:ring-2 focus:ring-[#008090]/10"
               />
             </div>
 
@@ -136,12 +119,7 @@ export default function Login() {
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full rounded-xl px-4 py-3 text-sm pr-10 outline-none transition-all duration-300" style={{
-                    border: "1px solid rgba(0,128,144,0.2)",
-                    background: "rgba(255,255,255,0.8)",
-                  }}
-                  onFocus={(e) => { e.target.style.borderColor = "#008090"; e.target.style.boxShadow = "0 0 0 3px rgba(0,128,144,0.1)"; }}
-                  onBlur={(e) => { e.target.style.borderColor = "rgba(0,128,144,0.2)"; e.target.style.boxShadow = "none"; }}
+                  className="w-full rounded-xl px-4 py-3 text-sm pr-10 outline-none transition-all duration-300 border border-gray-200 bg-white text-gray-900 focus:border-[#008090] focus:ring-2 focus:ring-[#008090]/10"
                 />
                 <button
                   type="button"
@@ -157,11 +135,7 @@ export default function Login() {
 
             <button
               type="submit"
-              className="w-full text-white font-semibold py-3.5 rounded-xl transition-all duration-300 hover:shadow-lg" style={{
-                background: "linear-gradient(135deg, #008090, #006070)",
-              }}
-              onMouseEnter={(e) => { (e.target as HTMLElement).style.background = "linear-gradient(135deg, #006070, #004050)"; }}
-              onMouseLeave={(e) => { (e.target as HTMLElement).style.background = "linear-gradient(135deg, #008090, #006070)"; }}
+              className="w-full text-white font-semibold py-3.5 rounded-xl transition-all duration-300 hover:shadow-lg bg-[#008090] hover:bg-[#006d7a]"
             >
               {language === "English" ? "Log In" : "Se connecter"}
             </button>
@@ -179,13 +153,13 @@ export default function Login() {
                   {language === "English" ? "Stay Logged In" : "Rester connecté"}
                 </span>
               </label>
-              <button type="button" className="text-sm hover:underline" style={{ color: "#008090" }}>
+              <button type="button" className="text-sm text-[#008090] hover:underline">
                 {language === "English" ? "Reset Password" : "Réinitialiser"}
               </button>
             </div>
 
             <div className="text-center">
-              <button type="button" className="text-sm hover:underline" style={{ color: "#f5a623" }}>
+              <button type="button" className="text-sm text-[#008090] hover:underline">
                 {language === "English" ? "Frequently Asked Questions" : "Questions fréquentes"}
               </button>
             </div>

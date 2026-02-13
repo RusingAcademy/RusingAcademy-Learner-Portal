@@ -1,6 +1,6 @@
 /**
  * Dashboard — RusingÂcademy Learning Portal
- * Premium glassmorphism dashboard with gamification, teal/gold branding
+ * Design: Clean white LRDG-inspired layout with teal accents, high accessibility
  */
 import DashboardLayout from "@/components/DashboardLayout";
 import { Link } from "wouter";
@@ -8,11 +8,10 @@ import { useState, useMemo } from "react";
 import { useGamification } from "@/contexts/GamificationContext";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from "recharts";
-
-const LOGO_ICON = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663049070748/mrXRaWLUDJGHdcjc.png";
 
 const chartData = [
   { module: "1", score: 85 }, { module: "2", score: 72 }, { module: "3", score: 90 },
@@ -40,10 +39,10 @@ function CalendarWidget() {
   return (
     <div>
       <div className="flex items-center justify-between mb-2">
-        <span className="text-xs font-semibold text-[#0c1929]">{MONTHS[month]} {year}</span>
+        <span className="text-xs font-semibold text-gray-800">{MONTHS[month]} {year}</span>
         <div className="flex gap-1">
-          <button onClick={prevMonth} className="p-0.5 hover:bg-[#008090]/10 rounded"><span className="material-icons text-[16px] text-gray-500">chevron_left</span></button>
-          <button onClick={nextMonth} className="p-0.5 hover:bg-[#008090]/10 rounded"><span className="material-icons text-[16px] text-gray-500">chevron_right</span></button>
+          <button onClick={prevMonth} className="p-0.5 hover:bg-gray-100 rounded"><span className="material-icons text-[16px] text-gray-500">chevron_left</span></button>
+          <button onClick={nextMonth} className="p-0.5 hover:bg-gray-100 rounded"><span className="material-icons text-[16px] text-gray-500">chevron_right</span></button>
         </div>
       </div>
       <div className="grid grid-cols-7 gap-0 text-center text-[10px] text-gray-400 mb-1">
@@ -51,8 +50,7 @@ function CalendarWidget() {
       </div>
       <div className="grid grid-cols-7 gap-0 text-center text-[11px]">
         {days.map((day, i) => (
-          <div key={i} className={`py-1 rounded-full ${day === today && isCurrentMonth ? "text-white font-bold" : day ? "text-gray-700 hover:bg-[#008090]/5" : ""}`}
-            style={day === today && isCurrentMonth ? { background: "linear-gradient(135deg, #008090, #006070)" } : {}}>
+          <div key={i} className={`py-1 rounded-full ${day === today && isCurrentMonth ? "bg-[#008090] text-white font-bold" : day ? "text-gray-700 hover:bg-gray-100" : ""}`}>
             {day || ""}
           </div>
         ))}
@@ -68,11 +66,11 @@ function ProgressRing({ pct, size = 48, color = "#008090" }: { pct: number; size
   return (
     <div className="relative" style={{ width: size, height: size }}>
       <svg viewBox={`0 0 ${size} ${size}`} className="-rotate-90" style={{ width: size, height: size }}>
-        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="rgba(0,128,144,0.1)" strokeWidth="4" />
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#e5e7eb" strokeWidth="4" />
         <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={color} strokeWidth="4"
           strokeDasharray={circumference} strokeDashoffset={offset} strokeLinecap="round" />
       </svg>
-      <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-[#0c1929]">{pct}%</span>
+      <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-gray-800">{pct}%</span>
     </div>
   );
 }
@@ -80,6 +78,7 @@ function ProgressRing({ pct, size = 48, color = "#008090" }: { pct: number; size
 export default function Dashboard() {
   const { totalXP, level, levelTitle, streak, lessonsCompleted, quizzesPassed, badges, weeklyGoal, weeklyProgress, xpProgress } = useGamification();
   const { user, isAuthenticated } = useAuth();
+  const { t, lang } = useLanguage();
   const [announcementIdx, setAnnouncementIdx] = useState(0);
   const leaderboardQuery = trpc.gamification.getLeaderboard.useQuery({ limit: 5 });
   const challengesQuery = trpc.challenges.getActive.useQuery(undefined, { enabled: isAuthenticated });
@@ -98,75 +97,68 @@ export default function Dashboard() {
     { title: "New: Gamification System Active", content: "Track your progress with XP points, daily streaks, and achievement badges. Complete lessons to level up and unlock new content." },
   ];
 
+  const firstName = user?.name?.split(" ")[0] || "Student";
+
   return (
     <DashboardLayout>
       <div className="max-w-[1200px] space-y-5">
-        {/* Welcome Hero */}
-        <div className="relative rounded-2xl overflow-hidden p-6 md:p-8" style={{
-          background: "linear-gradient(135deg, #0c1929 0%, #003040 50%, #004050 100%)",
-        }}>
-          <div className="absolute top-0 right-0 w-48 h-48 rounded-full opacity-10" style={{
-            background: "radial-gradient(circle, #f5a623, transparent)", transform: "translate(20%, -20%)",
-          }} />
-          <div className="relative z-10 flex items-center justify-between flex-wrap gap-4">
-            <div>
-              <div className="flex items-center gap-3 mb-2">
-                <img src={LOGO_ICON} alt="" className="w-8 h-8 rounded-lg" />
-                <span className="text-xs font-bold uppercase tracking-widest text-[#f5a623]">Learning Portal</span>
-              </div>
-              <h1 className="text-2xl md:text-3xl font-bold text-white" style={{ fontFamily: "'Playfair Display', serif" }}>
-                Hello, Steven
-              </h1>
-              <p className="text-white/60 text-sm mt-1">Welcome back! Continue your bilingual journey.</p>
+        {/* Welcome Header — Clean white, LRDG-inspired */}
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900" style={{ fontFamily: "'Playfair Display', serif" }}>
+              {t("nav.dashboard")}
+            </h1>
+            <p className="text-sm text-gray-500 mt-1">
+              {new Date().toLocaleDateString(lang === "fr" ? "fr-CA" : "en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
+            </p>
+          </div>
+          {/* XP & Level Badge — light */}
+          <div className="flex items-center gap-4 bg-white border border-gray-200 rounded-xl px-5 py-3 shadow-sm">
+            <div className="text-center">
+              <div className="text-xl font-bold text-[#008090]">{totalXP.toLocaleString()}</div>
+              <div className="text-[10px] text-gray-400 uppercase tracking-wider">Total XP</div>
             </div>
-            {/* XP & Level Badge */}
-            <div className="flex items-center gap-4">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-[#f5a623]">{totalXP.toLocaleString()}</div>
-                <div className="text-[10px] text-white/40 uppercase tracking-wider">Total XP</div>
+            <div className="w-px h-8 bg-gray-200" />
+            <div className="text-center">
+              <div className="text-xl font-bold text-gray-800">Lv.{level}</div>
+              <div className="text-[10px] text-gray-400 uppercase tracking-wider">{levelTitle}</div>
+            </div>
+            <div className="w-px h-8 bg-gray-200" />
+            <div className="text-center">
+              <div className="flex items-center gap-1">
+                <span className="material-icons text-[#e74c3c]" style={{ fontSize: "18px" }}>local_fire_department</span>
+                <span className="text-xl font-bold text-gray-800">{streak}</span>
               </div>
-              <div className="w-px h-10 bg-white/10" />
-              <div className="text-center">
-                <div className="text-2xl font-bold text-white">Lv.{level}</div>
-                <div className="text-[10px] text-white/40 uppercase tracking-wider">{levelTitle}</div>
-              </div>
-              <div className="w-px h-10 bg-white/10" />
-              <div className="text-center">
-                <div className="flex items-center gap-1">
-                  <span className="material-icons text-[#e74c3c]" style={{ fontSize: "20px" }}>local_fire_department</span>
-                  <span className="text-2xl font-bold text-white">{streak}</span>
-                </div>
-                <div className="text-[10px] text-white/40 uppercase tracking-wider">Day Streak</div>
-              </div>
+              <div className="text-[10px] text-gray-400 uppercase tracking-wider">Day Streak</div>
             </div>
           </div>
-          {/* XP Progress Bar */}
-          <div className="relative z-10 mt-4">
-            <div className="flex items-center justify-between text-[10px] text-white/40 mb-1">
-              <span>Level {level} Progress</span>
-              <span>{Math.min(100, Math.round(xpProgress))}%</span>
-            </div>
-            <div className="h-2 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.1)" }}>
-              <div className="h-full rounded-full transition-all duration-700" style={{
-                width: `${Math.min(100, xpProgress)}%`,
-                background: "linear-gradient(90deg, #f5a623, #ffd700)",
-              }} />
-            </div>
+        </div>
+
+        {/* Level Progress Bar */}
+        <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
+          <div className="flex items-center justify-between text-xs text-gray-500 mb-1.5">
+            <span>Level {level} Progress</span>
+            <span className="font-medium text-[#008090]">{Math.min(100, Math.round(xpProgress))}%</span>
+          </div>
+          <div className="h-2.5 rounded-full overflow-hidden bg-gray-100">
+            <div className="h-full rounded-full transition-all duration-700 xp-bar" style={{
+              width: `${Math.min(100, xpProgress)}%`,
+            }} />
           </div>
         </div>
 
         {/* Quick Stats Row */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
           {[
-            { icon: "school", label: "Lessons", value: lessonsCompleted, color: "#008090" },
-            { icon: "quiz", label: "Quizzes", value: quizzesPassed, color: "#f5a623" },
-            { icon: "emoji_events", label: "Badges", value: badges.length, color: "#8b5cf6" },
-            { icon: "trending_up", label: "Weekly", value: `${weeklyProgress}/${weeklyGoal}`, color: "#059669" },
-            { icon: "auto_awesome", label: "Programs", value: "2", color: "#e74c3c" },
+            { icon: "school", label: t("dashboard.lessonsCompleted"), value: lessonsCompleted, color: "#008090" },
+            { icon: "quiz", label: t("dashboard.quizzesCompleted"), value: quizzesPassed, color: "#f5a623" },
+            { icon: "emoji_events", label: t("gamification.badges"), value: badges.length, color: "#8b5cf6" },
+            { icon: "trending_up", label: t("challenges.title").split(" ")[0], value: `${weeklyProgress}/${weeklyGoal}`, color: "#059669" },
+            { icon: "auto_awesome", label: t("programs.paths"), value: "2", color: "#e74c3c" },
           ].map((s) => (
-            <div key={s.label} className="ra-glass p-3 rounded-xl text-center">
+            <div key={s.label} className="bg-white border border-gray-200 p-3 rounded-xl text-center shadow-sm hover:shadow-md transition-shadow">
               <span className="material-icons" style={{ color: s.color, fontSize: "20px" }}>{s.icon}</span>
-              <div className="text-lg font-bold text-[#0c1929] mt-1">{s.value}</div>
+              <div className="text-lg font-bold text-gray-900 mt-1">{s.value}</div>
               <div className="text-[9px] text-gray-400 uppercase tracking-wider">{s.label}</div>
             </div>
           ))}
@@ -175,24 +167,24 @@ export default function Dashboard() {
         {/* Quick Access to Programs */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Link href="/programs/esl">
-            <div className="group ra-glass rounded-xl p-5 cursor-pointer hover:shadow-lg transition-all duration-300" style={{ borderLeft: "4px solid #2563eb" }}>
+            <div className="group bg-white border border-gray-200 rounded-xl p-5 cursor-pointer hover:shadow-md transition-all duration-300 border-l-4 border-l-[#2563eb]">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-sm font-bold text-[#0c1929]">ESL Program</h3>
-                  <p className="text-xs text-gray-400 mt-0.5">English as a Second Language</p>
-                  <p className="text-[10px] text-gray-300 mt-1">6 Paths • 96 Lessons • A1→C1+</p>
+                  <h3 className="text-sm font-bold text-gray-900">ESL Program</h3>
+                  <p className="text-xs text-gray-500 mt-0.5">English as a Second Language</p>
+                  <p className="text-[10px] text-gray-400 mt-1">6 Paths • 96 Lessons • A1→C1+</p>
                 </div>
                 <span className="material-icons text-[#2563eb] group-hover:translate-x-1 transition-transform" style={{ fontSize: "24px" }}>arrow_forward</span>
               </div>
             </div>
           </Link>
           <Link href="/programs/fsl">
-            <div className="group ra-glass rounded-xl p-5 cursor-pointer hover:shadow-lg transition-all duration-300" style={{ borderLeft: "4px solid #dc2626" }}>
+            <div className="group bg-white border border-gray-200 rounded-xl p-5 cursor-pointer hover:shadow-md transition-all duration-300 border-l-4 border-l-[#dc2626]">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-sm font-bold text-[#0c1929]">FSL Program</h3>
-                  <p className="text-xs text-gray-400 mt-0.5">Français langue seconde</p>
-                  <p className="text-[10px] text-gray-300 mt-1">6 Paths • 96 Lessons • A1→C1+</p>
+                  <h3 className="text-sm font-bold text-gray-900">FSL Program</h3>
+                  <p className="text-xs text-gray-500 mt-0.5">Français langue seconde</p>
+                  <p className="text-[10px] text-gray-400 mt-1">6 Paths • 96 Lessons • A1→C1+</p>
                 </div>
                 <span className="material-icons text-[#dc2626] group-hover:translate-x-1 transition-transform" style={{ fontSize: "24px" }}>arrow_forward</span>
               </div>
@@ -205,9 +197,9 @@ export default function Dashboard() {
           {/* Left Column */}
           <div className="space-y-4">
             {/* Results Chart */}
-            <div className="ra-glass rounded-xl p-4">
+            <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-sm font-semibold text-[#0c1929]">Results by Module</h2>
+                <h2 className="text-sm font-semibold text-gray-900">Results by Module</h2>
                 <Link href="/results" className="text-gray-400 hover:text-[#008090]">
                   <span className="material-icons text-[18px]">chevron_right</span>
                 </Link>
@@ -215,9 +207,9 @@ export default function Dashboard() {
               <div className="h-[180px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={chartData} margin={{ top: 5, right: 5, left: -25, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,128,144,0.08)" />
-                    <XAxis dataKey="module" tick={{ fontSize: 9, fill: "#999" }} />
-                    <YAxis tick={{ fontSize: 9, fill: "#999" }} domain={[0, 100]} tickFormatter={(v) => `${v}%`} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                    <XAxis dataKey="module" tick={{ fontSize: 9, fill: "#9ca3af" }} />
+                    <YAxis tick={{ fontSize: 9, fill: "#9ca3af" }} domain={[0, 100]} tickFormatter={(v) => `${v}%`} />
                     <Tooltip formatter={(value: number) => [`${value}%`, "Score"]} />
                     <Bar dataKey="score" fill="#008090" radius={[3, 3, 0, 0]} />
                   </BarChart>
@@ -226,11 +218,10 @@ export default function Dashboard() {
             </div>
 
             {/* My Notes */}
-            <div className="ra-glass rounded-xl p-4">
-              <h2 className="text-sm font-semibold text-[#0c1929] mb-2">My Notes</h2>
+            <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
+              <h2 className="text-sm font-semibold text-gray-900 mb-2">My Notes</h2>
               <textarea
-                className="w-full min-h-[80px] text-sm text-gray-600 rounded-lg p-3 resize-none focus:outline-none transition-all"
-                style={{ border: "1px solid rgba(0,128,144,0.1)", background: "rgba(0,128,144,0.02)" }}
+                className="w-full min-h-[80px] text-sm text-gray-700 rounded-lg p-3 resize-none focus:outline-none focus:ring-2 focus:ring-[#008090]/20 transition-all bg-gray-50 border border-gray-200"
                 placeholder="Write your study notes here..."
               />
             </div>
@@ -239,9 +230,9 @@ export default function Dashboard() {
           {/* Center Column */}
           <div className="space-y-4">
             {/* Current Progress */}
-            <div className="ra-glass rounded-xl p-4">
+            <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-sm font-semibold text-[#0c1929]">Current Progress</h2>
+                <h2 className="text-sm font-semibold text-gray-900">Current Progress</h2>
                 <Link href="/progress" className="text-gray-400 hover:text-[#008090]">
                   <span className="material-icons text-[18px]">chevron_right</span>
                 </Link>
@@ -254,22 +245,22 @@ export default function Dashboard() {
                 ].map((m) => (
                   <div key={m.label} className="flex flex-col items-center">
                     <ProgressRing pct={m.pct} size={50} color={m.color} />
-                    <span className="text-[10px] text-gray-400 mt-1">{m.label}</span>
+                    <span className="text-[10px] text-gray-500 mt-1">{m.label}</span>
                   </div>
                 ))}
               </div>
-              <Link href="/programs" className="text-xs font-semibold flex items-center gap-1 justify-center" style={{ color: "#008090" }}>
+              <Link href="/programs" className="text-xs font-semibold flex items-center gap-1 justify-center text-[#008090] hover:underline">
                 View All Programs <span className="material-icons" style={{ fontSize: "14px" }}>arrow_forward</span>
               </Link>
             </div>
 
             {/* Announcements */}
-            <div className="ra-glass rounded-xl p-4">
-              <h2 className="text-sm font-semibold text-[#0c1929] mb-2">Announcements</h2>
+            <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
+              <h2 className="text-sm font-semibold text-gray-900 mb-2">Announcements</h2>
               <div className="min-h-[80px]">
                 {announcements[announcementIdx] && (
                   <div>
-                    <p className="text-xs font-bold text-[#0c1929] mb-1">{announcements[announcementIdx].title}</p>
+                    <p className="text-xs font-bold text-gray-800 mb-1">{announcements[announcementIdx].title}</p>
                     <p className="text-[11px] text-gray-500 leading-relaxed">{announcements[announcementIdx].content}</p>
                   </div>
                 )}
@@ -281,7 +272,7 @@ export default function Dashboard() {
                 <div className="flex gap-1">
                   {announcements.map((_, i) => (
                     <div key={i} className={`w-1.5 h-1.5 rounded-full transition-all`} style={{
-                      background: i === announcementIdx ? "#008090" : "rgba(0,128,144,0.15)",
+                      background: i === announcementIdx ? "#008090" : "#e5e7eb",
                     }} />
                   ))}
                 </div>
@@ -292,8 +283,8 @@ export default function Dashboard() {
             </div>
 
             {/* Gamification Badges */}
-            <div className="ra-glass rounded-xl p-4">
-              <h2 className="text-sm font-semibold text-[#0c1929] mb-3">Recent Badges</h2>
+            <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
+              <h2 className="text-sm font-semibold text-gray-900 mb-3">Recent Badges</h2>
               <div className="flex flex-wrap gap-2">
                 {[
                   { id: "first-lesson", icon: "play_lesson", label: "First Lesson", color: "#008090" },
@@ -303,9 +294,10 @@ export default function Dashboard() {
                 ].map((b) => {
                   const earned = badges.some((badge) => badge.badgeId === b.id);
                   return (
-                    <div key={b.id} className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[10px] font-medium ${earned ? "" : "opacity-30"}`} style={{
-                      background: earned ? `${b.color}15` : "rgba(0,0,0,0.03)",
-                      color: earned ? b.color : "#999",
+                    <div key={b.id} className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[10px] font-medium border ${earned ? "" : "opacity-30"}`} style={{
+                      background: earned ? `${b.color}10` : "#f9fafb",
+                      borderColor: earned ? `${b.color}30` : "#e5e7eb",
+                      color: earned ? b.color : "#9ca3af",
                     }}>
                       <span className="material-icons" style={{ fontSize: "14px" }}>{b.icon}</span>
                       {b.label}
@@ -319,9 +311,9 @@ export default function Dashboard() {
           {/* Right Column */}
           <div className="space-y-4">
             {/* Mini Leaderboard */}
-            <div className="ra-glass rounded-xl p-4">
+            <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-sm font-semibold text-[#0c1929] flex items-center gap-1.5">
+                <h2 className="text-sm font-semibold text-gray-900 flex items-center gap-1.5">
                   <span className="material-icons text-[#f5a623]" style={{ fontSize: "16px" }}>leaderboard</span>
                   Leaderboard
                 </h2>
@@ -330,8 +322,8 @@ export default function Dashboard() {
                 </Link>
               </div>
               {myRank && (
-                <div className="flex items-center gap-2 mb-3 p-2 rounded-lg" style={{ background: "rgba(0,128,144,0.06)" }}>
-                  <span className="text-lg font-bold text-[#f5a623]">#{myRank}</span>
+                <div className="flex items-center gap-2 mb-3 p-2 rounded-lg bg-[#008090]/5 border border-[#008090]/10">
+                  <span className="text-lg font-bold text-[#008090]">#{myRank}</span>
                   <span className="text-xs text-gray-500">Your Rank</span>
                 </div>
               )}
@@ -345,8 +337,8 @@ export default function Dashboard() {
                       style={{ background: i === 0 ? "#f5a623" : i === 1 ? "#a0a0a0" : i === 2 ? "#cd7f32" : "#008090" }}>
                       {(entry.userName || "?").charAt(0).toUpperCase()}
                     </div>
-                    <span className="text-[11px] text-gray-600 truncate flex-1">{entry.userName || "Anonymous"}</span>
-                    <span className="text-[10px] font-bold text-[#f5a623]">{entry.totalXp.toLocaleString()}</span>
+                    <span className="text-[11px] text-gray-700 truncate flex-1">{entry.userName || "Anonymous"}</span>
+                    <span className="text-[10px] font-bold text-[#008090]">{entry.totalXp.toLocaleString()}</span>
                   </div>
                 ))}
               </div>
@@ -354,9 +346,9 @@ export default function Dashboard() {
 
             {/* Active Challenges */}
             {activeChallenges.length > 0 && (
-              <div className="ra-glass rounded-xl p-4">
+              <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
                 <div className="flex items-center justify-between mb-3">
-                  <h2 className="text-sm font-semibold text-[#0c1929] flex items-center gap-1.5">
+                  <h2 className="text-sm font-semibold text-gray-900 flex items-center gap-1.5">
                     <span className="material-icons text-[#8b5cf6]" style={{ fontSize: "16px" }}>flag</span>
                     Challenges
                     <span className="text-[10px] bg-[#8b5cf6]/10 text-[#8b5cf6] px-1.5 py-0.5 rounded-full font-bold">{activeChallenges.length}</span>
@@ -369,12 +361,12 @@ export default function Dashboard() {
                   {activeChallenges.slice(0, 3).map((c) => {
                     const progress = Math.min(100, (c.currentValue / c.targetValue) * 100);
                     return (
-                      <div key={c.id} className="p-2 rounded-lg" style={{ background: "rgba(139,92,246,0.04)" }}>
+                      <div key={c.id} className="p-2 rounded-lg bg-gray-50 border border-gray-100">
                         <div className="flex items-center justify-between mb-1">
                           <span className="text-[11px] font-medium text-gray-700 truncate">{c.title}</span>
                           <span className="text-[10px] font-bold text-[#f5a623]">+{c.xpReward}</span>
                         </div>
-                        <div className="h-1.5 rounded-full bg-gray-100 overflow-hidden">
+                        <div className="h-1.5 rounded-full bg-gray-200 overflow-hidden">
                           <div className="h-full rounded-full transition-all duration-500" style={{ width: `${progress}%`, background: "linear-gradient(90deg, #8b5cf6, #a78bfa)" }} />
                         </div>
                         <div className="text-[9px] text-gray-400 mt-0.5">{c.currentValue}/{c.targetValue}</div>
@@ -392,9 +384,9 @@ export default function Dashboard() {
             )}
 
             {/* Calendar */}
-            <div className="ra-glass rounded-xl p-4">
+            <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
               <div className="flex items-center justify-between mb-2">
-                <h2 className="text-sm font-semibold text-[#0c1929]">Calendar</h2>
+                <h2 className="text-sm font-semibold text-gray-900">Calendar</h2>
                 <Link href="/calendar" className="text-gray-400 hover:text-[#008090]">
                   <span className="material-icons text-[18px]">chevron_right</span>
                 </Link>
@@ -403,8 +395,8 @@ export default function Dashboard() {
             </div>
 
             {/* Quick Actions */}
-            <div className="ra-glass rounded-xl p-4">
-              <h2 className="text-sm font-semibold text-[#0c1929] mb-3">Quick Actions</h2>
+            <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
+              <h2 className="text-sm font-semibold text-gray-900 mb-3">Quick Actions</h2>
               <div className="space-y-2">
                 {[
                   { icon: "play_circle", label: "Continue Learning", href: "/programs", color: "#008090" },
@@ -413,9 +405,9 @@ export default function Dashboard() {
                   { icon: "forum", label: "Community Forum", href: "/community-forum", color: "#059669" },
                 ].map((qa) => (
                   <Link key={qa.label} href={qa.href}>
-                    <div className="flex items-center gap-3 p-2.5 rounded-lg cursor-pointer hover:bg-[#008090]/5 transition-all">
+                    <div className="flex items-center gap-3 p-2.5 rounded-lg cursor-pointer hover:bg-gray-50 transition-all border border-transparent hover:border-gray-100">
                       <span className="material-icons" style={{ color: qa.color, fontSize: "20px" }}>{qa.icon}</span>
-                      <span className="text-xs text-gray-600 font-medium">{qa.label}</span>
+                      <span className="text-xs text-gray-700 font-medium">{qa.label}</span>
                       <span className="material-icons text-gray-300 ml-auto" style={{ fontSize: "16px" }}>chevron_right</span>
                     </div>
                   </Link>
@@ -424,9 +416,9 @@ export default function Dashboard() {
             </div>
 
             {/* Messages */}
-            <div className="ra-glass rounded-xl p-4">
+            <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-sm font-semibold text-[#0c1929]">Messages</h2>
+                <h2 className="text-sm font-semibold text-gray-900">Messages</h2>
                 <Link href="/notifications" className="text-gray-400 hover:text-[#008090]">
                   <span className="material-icons text-[18px]">chevron_right</span>
                 </Link>
@@ -437,8 +429,8 @@ export default function Dashboard() {
                   { title: "Your FSL Path I is ready to begin", date: "02/10/2026" },
                   { title: "New: Gamification features enabled", date: "02/08/2026" },
                 ].map((n, i) => (
-                  <div key={i} className="flex items-start gap-2 py-2 border-b last:border-0" style={{ borderColor: "rgba(0,128,144,0.06)" }}>
-                    <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "rgba(0,128,144,0.06)" }}>
+                  <div key={i} className="flex items-start gap-2 py-2 border-b border-gray-50 last:border-0">
+                    <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 bg-[#008090]/5">
                       <span className="material-icons text-[#008090]" style={{ fontSize: "14px" }}>mail</span>
                     </div>
                     <div className="min-w-0 flex-1">

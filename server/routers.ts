@@ -2,6 +2,7 @@ import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
+import { invokeLLM } from "./_core/llm";
 import { z } from "zod";
 import * as db from "./db";
 import { gamificationProfiles, users } from "../drizzle/schema";
@@ -293,6 +294,67 @@ export const appRouter = router({
       .mutation(async ({ ctx, input }) => {
         await db.markNotificationRead(input.notificationId, ctx.user.id);
         return { success: true };
+      }),
+  }),
+
+  ai: router({
+    chat: protectedProcedure
+      .input(z.object({
+        messages: z.array(z.object({
+          role: z.enum(["system", "user", "assistant"]),
+          content: z.string(),
+        })),
+      }))
+      .mutation(async ({ input }) => {
+        const systemPrompt = {
+          role: "system" as const,
+          content: `You are the RusingÂcademy AI Language Coach — a bilingual (English/French) assistant specialized in helping Canadian public servants prepare for their Second Language Evaluation (SLE). You provide:
+- Grammar explanations and corrections in both English and French
+- SLE exam tips and strategies for Reading, Writing, and Oral components
+- Vocabulary building exercises relevant to the federal public service
+- Practice questions at levels A, B, and C
+- Encouragement and motivation for language learners
+
+Always be professional, supportive, and pedagogically sound. When the user writes in French, respond in French. When they write in English, respond in English. If they ask you to switch languages, do so naturally.`,
+        };
+        const msgs = [systemPrompt, ...input.messages.filter(m => m.role !== "system")];
+        try {
+          const response = await invokeLLM({ messages: msgs });
+          const rawContent = response.choices?.[0]?.message?.content;
+          const content = typeof rawContent === "string" ? rawContent : "I'm sorry, I couldn't generate a response. Please try again.";
+          return { content };
+        } catch (err) {
+          console.error("AI chat error:", err);
+          return { content: "I'm temporarily unavailable. Please try again in a moment." };
+        }
+      }),
+
+    getRecommendations: protectedProcedure
+      .query(async ({ ctx }) => {
+        const profile = await db.getOrCreateGamificationProfile(ctx.user.id);
+        const recentActivity = await db.getRecentActivity(ctx.user.id, 10);
+        const lessonsCompleted = profile?.lessonsCompleted ?? 0;
+        const quizzesPassed = profile?.quizzesCompleted ?? 0;
+        const streak = profile?.currentStreak ?? 0;
+
+        const recommendations: { title: string; description: string; icon: string; link: string; priority: number }[] = [];
+
+        if (lessonsCompleted === 0) {
+          recommendations.push({ title: "Start Your First Lesson", description: "Begin your language learning journey with Path I.", icon: "play_circle", link: "/programs", priority: 1 });
+        }
+        if (streak === 0) {
+          recommendations.push({ title: "Build a Streak", description: "Complete a lesson today to start your daily streak!", icon: "local_fire_department", link: "/programs", priority: 2 });
+        }
+        if (quizzesPassed < 3) {
+          recommendations.push({ title: "Take a Quiz", description: "Test your knowledge and earn XP with a quiz.", icon: "quiz", link: "/programs", priority: 3 });
+        }
+        if (lessonsCompleted >= 5 && quizzesPassed >= 2) {
+          recommendations.push({ title: "Try SLE Practice", description: "You're ready to practice for your SLE exam!", icon: "school", link: "/sle-practice", priority: 2 });
+        }
+        recommendations.push({ title: "Weekly Challenges", description: "Complete challenges for bonus XP and badges.", icon: "flag", link: "/challenges", priority: 4 });
+        recommendations.push({ title: "Check Leaderboard", description: "See how you rank among fellow learners.", icon: "leaderboard", link: "/leaderboard", priority: 5 });
+
+        return recommendations.sort((a, b) => a.priority - b.priority).slice(0, 4);
       }),
   }),
 });

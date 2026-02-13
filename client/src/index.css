@@ -50,39 +50,40 @@
 
 :root {
   --radius: 0.75rem;
-  /* RusingAcademy Premium Golden Glassmorphism Palette */
+  /* ═══ LIGHT THEME — White dominant, LRDG-inspired ═══ */
   --primary: oklch(0.55 0.12 195);
   --primary-foreground: oklch(0.99 0 0);
-  --background: oklch(0.993 0.003 90);
-  --foreground: oklch(0.13 0.02 260);
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0.02 260);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.13 0.02 260);
+  --card-foreground: oklch(0.145 0.02 260);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.13 0.02 260);
-  --secondary: oklch(0.96 0.01 90);
+  --popover-foreground: oklch(0.145 0.02 260);
+  --secondary: oklch(0.97 0.003 260);
   --secondary-foreground: oklch(0.3 0.02 260);
-  --muted: oklch(0.96 0.01 90);
-  --muted-foreground: oklch(0.5 0.02 260);
+  --muted: oklch(0.97 0.003 260);
+  --muted-foreground: oklch(0.45 0.02 260);
   --accent: oklch(0.75 0.15 75);
-  --accent-foreground: oklch(0.13 0.02 260);
+  --accent-foreground: oklch(0.145 0.02 260);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.91 0.01 90);
-  --input: oklch(0.91 0.01 90);
+  --border: oklch(0.92 0.004 260);
+  --input: oklch(0.92 0.004 260);
   --ring: oklch(0.55 0.12 195);
   --chart-1: oklch(0.55 0.12 195);
   --chart-2: oklch(0.75 0.15 75);
   --chart-3: oklch(0.65 0.12 195);
   --chart-4: oklch(0.45 0.12 195);
   --chart-5: oklch(0.85 0.12 75);
-  --sidebar: oklch(0.15 0.02 260);
-  --sidebar-foreground: oklch(0.92 0.01 90);
+  /* Sidebar — light white/gray to match LRDG */
+  --sidebar: oklch(0.985 0.002 260);
+  --sidebar-foreground: oklch(0.25 0.02 260);
   --sidebar-primary: oklch(0.55 0.12 195);
   --sidebar-primary-foreground: oklch(0.99 0 0);
-  --sidebar-accent: oklch(0.22 0.02 260);
-  --sidebar-accent-foreground: oklch(0.99 0 0);
-  --sidebar-border: oklch(0.25 0.02 260);
-  --sidebar-ring: oklch(0.75 0.15 75);
+  --sidebar-accent: oklch(0.96 0.01 195);
+  --sidebar-accent-foreground: oklch(0.2 0.02 260);
+  --sidebar-border: oklch(0.93 0.004 260);
+  --sidebar-ring: oklch(0.55 0.12 195);
 }
 
 @layer base {
@@ -135,41 +136,44 @@
     }
   }
 
-  /* RusingAcademy Glassmorphism Utilities */
+  /* ═══ Light Glass Cards ═══ */
   .glass {
-    background: rgba(255, 255, 255, 0.72);
-    backdrop-filter: blur(16px) saturate(180%);
-    -webkit-backdrop-filter: blur(16px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-  }
-  .glass-dark {
-    background: rgba(15, 23, 42, 0.75);
-    backdrop-filter: blur(16px) saturate(180%);
-    -webkit-backdrop-filter: blur(16px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    border: 1px solid rgba(0, 0, 0, 0.06);
   }
   .glass-card {
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(12px) saturate(160%);
-    -webkit-backdrop-filter: blur(12px) saturate(160%);
-    border: 1px solid rgba(0, 128, 144, 0.12);
-    box-shadow: 0 4px 24px rgba(0, 128, 144, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+  .glass-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06), 0 2px 4px rgba(0, 0, 0, 0.03);
   }
   .glass-gold {
-    background: linear-gradient(135deg, rgba(245, 166, 35, 0.08), rgba(255, 255, 255, 0.9));
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(245, 166, 35, 0.2);
-    box-shadow: 0 4px 24px rgba(245, 166, 35, 0.08);
+    background: linear-gradient(135deg, rgba(245, 166, 35, 0.04), rgba(255, 255, 255, 1));
+    border: 1px solid rgba(245, 166, 35, 0.15);
+    box-shadow: 0 2px 8px rgba(245, 166, 35, 0.06);
   }
   .glass-teal {
-    background: linear-gradient(135deg, rgba(0, 128, 144, 0.06), rgba(255, 255, 255, 0.92));
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(0, 128, 144, 0.15);
+    background: linear-gradient(135deg, rgba(0, 128, 144, 0.03), rgba(255, 255, 255, 1));
+    border: 1px solid rgba(0, 128, 144, 0.12);
   }
 
-  /* Premium Golden Gradient */
+  /* ═══ RusingAcademy Light Card ═══ */
+  .ra-glass {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    transition: box-shadow 0.2s ease, transform 0.15s ease;
+  }
+  .ra-glass:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  }
+
+  /* Premium Gradients (kept subtle for light theme) */
   .gradient-gold {
     background: linear-gradient(135deg, #f5a623 0%, #d4943c 50%, #f5a623 100%);
   }
@@ -197,8 +201,8 @@
     animation: fireGlow 2s ease-in-out infinite;
   }
   @keyframes fireGlow {
-    0%, 100% { filter: drop-shadow(0 0 4px rgba(245, 166, 35, 0.4)); }
-    50% { filter: drop-shadow(0 0 12px rgba(245, 166, 35, 0.8)); }
+    0%, 100% { filter: drop-shadow(0 0 4px rgba(245, 166, 35, 0.3)); }
+    50% { filter: drop-shadow(0 0 10px rgba(245, 166, 35, 0.6)); }
   }
 
   /* Badge Unlock Animation */
@@ -216,23 +220,14 @@
     animation: levelPulse 1.5s ease-out;
   }
   @keyframes levelPulse {
-    0% { box-shadow: 0 0 0 0 rgba(245, 166, 35, 0.6); }
-    50% { box-shadow: 0 0 0 20px rgba(245, 166, 35, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(245, 166, 35, 0); }
+    0% { box-shadow: 0 0 0 0 rgba(0, 128, 144, 0.4); }
+    50% { box-shadow: 0 0 0 16px rgba(0, 128, 144, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(0, 128, 144, 0); }
   }
 
-  /* RusingAcademy Glass Card (main content) */
-  .ra-glass {
-    background: rgba(255, 255, 255, 0.82);
-    backdrop-filter: blur(12px) saturate(160%);
-    -webkit-backdrop-filter: blur(12px) saturate(160%);
-    border: 1px solid rgba(0, 128, 144, 0.08);
-    box-shadow: 0 2px 16px rgba(0, 128, 144, 0.04), 0 1px 3px rgba(0, 0, 0, 0.03);
-  }
-
-  /* Sidebar active link */
+  /* Sidebar active link — light theme */
   .sidebar-link-active {
-    background: linear-gradient(90deg, rgba(0, 128, 144, 0.15), rgba(0, 128, 144, 0.05));
+    background: rgba(0, 128, 144, 0.08);
     border-left: 3px solid #008090;
     color: #008090;
   }
@@ -240,8 +235,8 @@
 
 /* ── Celebration Animations ── */
 @keyframes celebrationPulse {
-  0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(245, 166, 35, 0.2); }
-  50% { transform: scale(1.08); box-shadow: 0 0 40px rgba(245, 166, 35, 0.4); }
+  0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(0, 128, 144, 0.15); }
+  50% { transform: scale(1.06); box-shadow: 0 0 32px rgba(0, 128, 144, 0.25); }
 }
 
 @keyframes celebrationSlideUp {
@@ -251,7 +246,7 @@
 
 @keyframes celebrationBounce {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
+  50% { transform: translateY(-6px); }
 }
 
 @keyframes shimmer {

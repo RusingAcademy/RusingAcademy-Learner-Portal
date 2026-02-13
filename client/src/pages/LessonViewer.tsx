@@ -68,7 +68,7 @@ function RichContent({ content, slotKey }: { content: string; slotKey: string })
               <thead>
                 <tr style={{ background: "rgba(0,128,144,0.06)" }}>
                   {tableHeaders.map((h, i) => (
-                    <th key={i} className="px-3 py-2 text-left font-semibold text-[#0c1929] text-xs">{h.trim()}</th>
+                    <th key={i} className="px-3 py-2 text-left font-semibold text-gray-900 text-xs">{h.trim()}</th>
                   ))}
                 </tr>
               </thead>
@@ -93,7 +93,7 @@ function RichContent({ content, slotKey }: { content: string; slotKey: string })
 
   function formatInline(text: string): string {
     return text
-      .replace(/\*\*(.+?)\*\*/g, '<strong class="font-semibold text-[#0c1929]">$1</strong>')
+      .replace(/\*\*(.+?)\*\*/g, '<strong class="font-semibold text-gray-900">$1</strong>')
       .replace(/\*(.+?)\*/g, '<em class="text-gray-600">$1</em>')
       .replace(/`(.+?)`/g, '<code class="px-1 py-0.5 rounded bg-gray-100 text-[#008090] text-xs font-mono">$1</code>');
   }
@@ -153,7 +153,7 @@ function RichContent({ content, slotKey }: { content: string; slotKey: string })
     // Headers
     if (trimmed.startsWith('### ')) {
       elements.push(
-        <h4 key={`h4-${elements.length}`} className="text-base font-bold text-[#0c1929] mt-5 mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
+        <h4 key={`h4-${elements.length}`} className="text-base font-bold text-gray-900 mt-5 mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
           {trimmed.replace('### ', '')}
         </h4>
       );
@@ -161,7 +161,7 @@ function RichContent({ content, slotKey }: { content: string; slotKey: string })
     }
     if (trimmed.startsWith('## ')) {
       elements.push(
-        <h3 key={`h3-${elements.length}`} className="text-lg font-bold text-[#0c1929] mt-6 mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
+        <h3 key={`h3-${elements.length}`} className="text-lg font-bold text-gray-900 mt-6 mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
           {trimmed.replace('## ', '')}
         </h3>
       );
@@ -308,7 +308,7 @@ function FormativeQuiz({ lessonId, realQuiz, onComplete }: {
             {passed ? "emoji_events" : "refresh"}
           </span>
         </div>
-        <h3 className="text-2xl font-bold text-[#0c1929]" style={{ fontFamily: "'Playfair Display', serif" }}>
+        <h3 className="text-2xl font-bold text-gray-900" style={{ fontFamily: "'Playfair Display', serif" }}>
           {passed ? (pct >= 90 ? "Excellent !" : "Bien joué !") : "Continuez à pratiquer !"}
         </h3>
         <p className="text-4xl font-bold mt-3" style={{ color: passed ? "#f5a623" : "#e74c3c" }}>{pct}%</p>
@@ -330,7 +330,7 @@ function FormativeQuiz({ lessonId, realQuiz, onComplete }: {
                     {isCorrect ? "check_circle" : "cancel"}
                   </span>
                   <div>
-                    <p className="font-medium text-[#0c1929] text-xs">{q.q}</p>
+                    <p className="font-medium text-gray-900 text-xs">{q.q}</p>
                     {!isCorrect && <p className="text-xs text-[#008090] mt-1">Réponse correcte : <strong>{q.answer}</strong></p>}
                     {q.feedback && <p className="text-xs text-gray-500 mt-1 italic">{q.feedback}</p>}
                   </div>
@@ -375,7 +375,7 @@ function FormativeQuiz({ lessonId, realQuiz, onComplete }: {
         </span>
       </div>
 
-      <h4 className="text-lg font-semibold text-[#0c1929] leading-relaxed">{currentQuestion.q}</h4>
+      <h4 className="text-lg font-semibold text-gray-900 leading-relaxed">{currentQuestion.q}</h4>
 
       {currentQuestion.type === "fill-in-the-blank" ? (
         <div className="space-y-4">
@@ -568,7 +568,7 @@ export default function LessonViewer() {
           <span className="text-gray-300">/</span>
           <Link href={`/programs/${programId}/${pathId}`} className="hover:text-[#008090] transition-colors">Path {path.number}</Link>
           <span className="text-gray-300">/</span>
-          <span className="text-[#0c1929] font-medium">Lesson {lesson.id}</span>
+          <span className="text-gray-900 font-medium">Lesson {lesson.id}</span>
         </div>
 
         {/* Lesson Header */}
@@ -603,7 +603,7 @@ export default function LessonViewer() {
                   </span>
                 )}
               </div>
-              <h1 className="text-2xl font-bold text-[#0c1929]" style={{ fontFamily: "'Playfair Display', serif" }}>
+              <h1 className="text-2xl font-bold text-gray-900" style={{ fontFamily: "'Playfair Display', serif" }}>
                 {lesson.title}
               </h1>
               <p className="text-sm text-gray-500 mt-0.5">{lesson.titleFr}</p>
@@ -655,7 +655,7 @@ export default function LessonViewer() {
                   </span>
                 </div>
                 <div className="min-w-0">
-                  <p className="text-xs font-semibold text-[#0c1929] truncate">{slot.label}</p>
+                  <p className="text-xs font-semibold text-gray-900 truncate">{slot.label}</p>
                   <p className="text-[10px] text-gray-400">{slot.labelFr}</p>
                 </div>
               </button>
@@ -680,7 +680,7 @@ export default function LessonViewer() {
                   </span>
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-[#0c1929]" style={{ fontFamily: "'Playfair Display', serif" }}>
+                  <h2 className="text-lg font-bold text-gray-900" style={{ fontFamily: "'Playfair Display', serif" }}>
                     {slotRealContent?.title || SLOT_CONFIG[activeSlot].label}
                   </h2>
                   <p className="text-xs text-gray-400">{SLOT_CONFIG[activeSlot].description}</p>

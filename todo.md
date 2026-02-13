@@ -109,3 +109,68 @@
 - [x] Write vitest tests for new routers and components (49/49 passed)
 - [x] Quality Gate: TypeScript (0 errors) + vitest (49/49) + browser PASS
 - [x] Save checkpoint and deliver Sprint 2+3 report
+
+## Méga-Sprint 4: Bilingual FR/EN Interface Toggle
+- [x] Create i18n translation system (LanguageContext + translation files)
+- [x] Build EN and FR translation dictionaries (295 lines each, 15 sections)
+- [x] Add language toggle to Sidebar (FR/EN button with badge)
+- [x] Wire Dashboard to use t() hook for key labels
+- [x] Add LanguageProvider to App.tsx wrapping all content
+- [x] Persist language preference in localStorage
+- [x] Verify TypeScript (0 errors) after i18n integration
+
+## Méga-Sprint 5: WCAG 2.1 Accessibility Compliance
+- [x] Add ARIA labels, roles, and landmarks (DashboardLayout, Sidebar, SLEPractice)
+- [x] Add skip-to-content link and Escape key focus management
+- [x] Ensure color contrast meets AA standard (white bg + gray-900 text)
+- [x] Add aria-label, aria-pressed, aria-checked, role attributes to interactive elements
+- [x] Verify TypeScript (0 errors) after accessibility enhancements
+
+## Méga-Sprint 6: Advanced Quiz Types & SLE Simulations
+- [x] Build SLE Reading Comprehension simulation (timed, passage-based, A/B/C levels)
+- [x] Build SLE Written Expression simulation (fill-in-blank grammar, A/B/C levels)
+- [x] Build SLE Oral Interaction simulation (scenario-based prompts, A/B/C levels)
+- [x] Add countdown timer and auto-submit on timeout
+- [x] Add scoring with pass/fail feedback and color-coded results
+- [x] Create SLE Practice page with level selector and exam format cards
+- [x] Add SLE Practice to sidebar navigation and App.tsx routes
+
+## Méga-Sprint 7: AI Chatbot & Adaptive Recommendations
+- [x] Build AI Assistant page with AIChatBox component + quick topics
+- [x] Create tRPC ai.chat router with LLM integration (bilingual system prompt)
+- [x] Build adaptive recommendation engine (ai.getRecommendations)
+- [x] Add recommendations panel to AI Assistant page
+- [x] Add AI Assistant to sidebar navigation and App.tsx routes
+- [x] Verify TypeScript (0 errors) after AI integration
+
+## Méga-Sprint 8: Social Features & Enhanced Community
+- [x] Enhance Community Forum with 6 categories, bilingual labels, stats bar
+- [x] Build Study Groups tab with 5 groups, join/create buttons
+- [x] Build Recent Posts tab with author avatars, replies, likes
+- [x] Add tab navigation (Categories / Groups / Recent)
+- [x] Verify TypeScript (0 errors) after community enhancement
+
+## Méga-Sprint 9: Performance, PWA & Responsive Polish
+- [x] Add PWA manifest.json with app icons and theme color
+- [x] Add PWA meta tags to index.html (apple-mobile-web-app, theme-color)
+- [x] Responsive design verified across all pages (mobile-first Tailwind)
+- [x] Loading states in all data-fetching components
+
+## Méga-Sprint 10: Onboarding Flow & SEO
+- [x] Build full landing page for unauthenticated users (Home.tsx)
+- [x] Add SEO meta tags, Open Graph, and Twitter Card to index.html
+- [x] Add sitemap.xml with all public routes
+- [x] Add robots.txt with proper crawl directives
+- [x] Auto-redirect authenticated users from / to /dashboard
+- [x] Verify TypeScript (0 errors) after all changes
+
+## Aesthetic Redesign: Light Theme (User Request)
+- [x] Redesign index.css — white backgrounds, black text, light color palette
+- [x] Redesign Sidebar — light/white background with clean navigation
+- [x] Redesign Dashboard — white cards, clean layout, LRDG-inspired
+- [x] Redesign Login page — light teal hero, white form area
+- [x] Redesign Leaderboard and WeeklyChallenges pages to light theme
+- [x] Redesign ProgramSelect page to light theme
+- [x] Update all 16 remaining pages: replace #0c1929 text with gray-900
+- [x] Ensure high contrast for accessibility (black text on white)
+- [x] Verify TypeScript (0 errors) after redesign

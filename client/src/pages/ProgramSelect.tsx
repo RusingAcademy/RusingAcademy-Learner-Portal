@@ -1,7 +1,6 @@
 /**
  * ProgramSelect — RusingÂcademy Learning Portal
- * Gateway page for choosing ESL or FSL program
- * Design: Premium glassmorphism, teal/gold, accessible
+ * Design: Clean white light theme, accessible, LRDG-inspired
  */
 import { Link } from "wouter";
 import { programs, getTotalStats, type Program } from "@/data/courseData";
@@ -16,28 +15,19 @@ export default function ProgramSelect() {
   return (
     <DashboardLayout>
       <div className="space-y-8">
-        {/* Hero Section */}
-        <div className="relative rounded-2xl overflow-hidden p-8 md:p-10" style={{
-          background: "linear-gradient(135deg, #0c1929 0%, #003040 50%, #004050 100%)",
-          minHeight: "200px",
-        }}>
-          <div className="absolute top-0 right-0 w-64 h-64 rounded-full opacity-10" style={{
-            background: "radial-gradient(circle, #f5a623, transparent)",
-            transform: "translate(30%, -30%)",
-          }} />
-          <div className="relative z-10">
-            <div className="flex items-center gap-3 mb-3">
-              <img src={LOGO_URL} alt="RusingÂcademy" className="w-10 h-10 rounded-lg" />
-              <span className="text-xs font-bold uppercase tracking-widest text-[#f5a623]">Learning Portal</span>
-            </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-white" style={{ fontFamily: "'Playfair Display', serif" }}>
-              Choose Your Program
-            </h1>
-            <p className="text-white/70 mt-2 max-w-xl text-sm">
-              Master your second official language with RusingÂcademy's comprehensive bilingual training programs. 
-              Each program features 6 progressive Paths aligned with the CEFR framework (A1 to C1+).
-            </p>
+        {/* Hero Section — Light */}
+        <div className="bg-white border border-gray-200 rounded-xl p-8 md:p-10 shadow-sm">
+          <div className="flex items-center gap-3 mb-3">
+            <img src={LOGO_URL} alt="RusingÂcademy" className="w-10 h-10 rounded-lg" />
+            <span className="text-xs font-bold uppercase tracking-widest text-[#008090]">Learning Portal</span>
           </div>
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900" style={{ fontFamily: "'Playfair Display', serif" }}>
+            Choose Your Program
+          </h1>
+          <p className="text-gray-500 mt-2 max-w-xl text-sm">
+            Master your second official language with RusingÂcademy's comprehensive bilingual training programs. 
+            Each program features 6 progressive Paths aligned with the CEFR framework (A1 to C1+).
+          </p>
         </div>
 
         {/* Quick Stats */}
@@ -48,9 +38,9 @@ export default function ProgramSelect() {
             { icon: "local_fire_department", label: "Streak", value: `${streak} days`, color: "#e74c3c" },
             { icon: "school", label: "Lessons Done", value: lessonsCompleted.toString(), color: "#8b5cf6" },
           ].map((stat) => (
-            <div key={stat.label} className="ra-glass p-4 rounded-xl text-center">
+            <div key={stat.label} className="bg-white border border-gray-200 p-4 rounded-xl text-center shadow-sm">
               <span className="material-icons" style={{ color: stat.color, fontSize: "22px" }}>{stat.icon}</span>
-              <div className="text-sm font-bold text-[#0c1929] mt-1">{stat.value}</div>
+              <div className="text-sm font-bold text-gray-900 mt-1">{stat.value}</div>
               <div className="text-[10px] text-gray-400 uppercase tracking-wider">{stat.label}</div>
             </div>
           ))}
@@ -64,11 +54,7 @@ export default function ProgramSelect() {
 
             return (
               <Link key={prog.id} href={`/programs/${prog.id}`}>
-                <div className="group rounded-2xl overflow-hidden transition-all duration-500 hover:shadow-xl cursor-pointer" style={{
-                  background: "rgba(255,255,255,0.85)",
-                  backdropFilter: "blur(16px)",
-                  border: "1px solid rgba(0,128,144,0.1)",
-                }}>
+                <div className="group bg-white border border-gray-200 rounded-2xl overflow-hidden transition-all duration-500 hover:shadow-lg cursor-pointer">
                   {/* Card Header with gradient */}
                   <div className="relative h-40 overflow-hidden" style={{
                     background: isESL
@@ -103,7 +89,7 @@ export default function ProgramSelect() {
                         { label: "Lessons", value: stats.lessons },
                         { label: "Activities", value: stats.activities },
                       ].map((s) => (
-                        <div key={s.label} className="text-center p-2 rounded-lg" style={{ background: "rgba(0,128,144,0.04)" }}>
+                        <div key={s.label} className="text-center p-2 rounded-lg bg-gray-50">
                           <div className="text-lg font-bold text-[#008090]">{s.value}</div>
                           <div className="text-[9px] text-gray-400 uppercase">{s.label}</div>
                         </div>
@@ -118,7 +104,7 @@ export default function ProgramSelect() {
                           </span>
                         ))}
                       </div>
-                      <div className="flex items-center gap-1 text-sm font-semibold group-hover:gap-2 transition-all duration-300" style={{ color: "#008090" }}>
+                      <div className="flex items-center gap-1 text-sm font-semibold group-hover:gap-2 transition-all duration-300 text-[#008090]">
                         Explore
                         <span className="material-icons" style={{ fontSize: "18px" }}>arrow_forward</span>
                       </div>
@@ -131,14 +117,12 @@ export default function ProgramSelect() {
         </div>
 
         {/* Info Banner */}
-        <div className="ra-glass rounded-2xl p-6 flex items-start gap-4">
-          <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style={{
-            background: "linear-gradient(135deg, rgba(0,128,144,0.1), rgba(245,166,35,0.1))",
-          }}>
-            <span className="material-icons" style={{ color: "#008090" }}>info</span>
+        <div className="bg-white border border-gray-200 rounded-2xl p-6 flex items-start gap-4 shadow-sm">
+          <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 bg-[#008090]/5">
+            <span className="material-icons text-[#008090]">info</span>
           </div>
           <div>
-            <h3 className="text-sm font-bold text-[#0c1929]">About Our Programs</h3>
+            <h3 className="text-sm font-bold text-gray-900">About Our Programs</h3>
             <p className="text-xs text-gray-500 mt-1 leading-relaxed">
               Both programs are designed for Canadian public servants preparing for SLE exams. 
               Each lesson uses our 7-Slot methodology: Hook → Video → Strategy → Written → Oral → Quiz → Coaching. 

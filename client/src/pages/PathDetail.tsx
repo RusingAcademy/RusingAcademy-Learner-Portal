@@ -53,7 +53,7 @@ function ModuleCard({ mod, pathId, programId, completedLessons, isExpanded, onTo
               </span>
             )}
           </div>
-          <h3 className="font-bold text-[#0c1929]" style={{ fontFamily: "'Playfair Display', serif" }}>
+          <h3 className="font-bold text-gray-900" style={{ fontFamily: "'Playfair Display', serif" }}>
             {mod.title}
           </h3>
           <p className="text-xs text-gray-500 mt-0.5">{mod.titleFr}</p>
@@ -112,7 +112,7 @@ function ModuleCard({ mod, pathId, programId, completedLessons, isExpanded, onTo
 
                     {/* Lesson Info */}
                     <div className="flex-1 min-w-0">
-                      <h4 className="text-sm font-semibold text-[#0c1929] group-hover:text-[#008090] transition-colors">
+                      <h4 className="text-sm font-semibold text-gray-900 group-hover:text-[#008090] transition-colors">
                         {lesson.title}
                       </h4>
                       <p className="text-[11px] text-gray-400">{lesson.titleFr}</p>
@@ -151,7 +151,7 @@ function ModuleCard({ mod, pathId, programId, completedLessons, isExpanded, onTo
                   <span className="material-icons text-white" style={{ fontSize: "16px" }}>quiz</span>
                 </div>
                 <div className="flex-1">
-                  <h4 className="text-sm font-semibold text-[#0c1929]">Summative Quiz — Module {mod.id}</h4>
+                  <h4 className="text-sm font-semibold text-gray-900">Summative Quiz — Module {mod.id}</h4>
                   <p className="text-[11px] text-gray-400">Passing score: {mod.quizPassing}% — 10 questions</p>
                 </div>
                 <span className="material-icons text-[#008090]" style={{ fontSize: "18px" }}>arrow_forward</span>
@@ -199,7 +199,7 @@ export default function PathDetail() {
           <span>/</span>
           <Link href={`/programs/${programId}`} className="hover:text-[#008090] transition-colors">{program.title}</Link>
           <span>/</span>
-          <span className="text-[#0c1929] font-medium">Path {path.number}</span>
+          <span className="text-gray-900 font-medium">Path {path.number}</span>
         </div>
 
         {/* Hero Banner */}
@@ -248,7 +248,7 @@ export default function PathDetail() {
               border: "1px solid rgba(0,128,144,0.08)",
             }}>
               <span className="material-icons" style={{ color: stat.color, fontSize: "20px" }}>{stat.icon}</span>
-              <div className="text-sm font-bold text-[#0c1929] mt-1">{stat.value}</div>
+              <div className="text-sm font-bold text-gray-900 mt-1">{stat.value}</div>
               <div className="text-[10px] text-gray-400 uppercase tracking-wider">{stat.label}</div>
             </div>
           ))}
@@ -256,7 +256,7 @@ export default function PathDetail() {
 
         {/* Modules List */}
         <div className="space-y-3">
-          <h2 className="text-lg font-bold text-[#0c1929]" style={{ fontFamily: "'Playfair Display', serif" }}>
+          <h2 className="text-lg font-bold text-gray-900" style={{ fontFamily: "'Playfair Display', serif" }}>
             Modules & Lessons
           </h2>
           {path.modules.map((mod) => (
@@ -278,7 +278,7 @@ export default function PathDetail() {
           border: "2px dashed rgba(0,128,144,0.2)",
         }}>
           <span className="material-icons text-4xl" style={{ color: "#f5a623" }}>workspace_premium</span>
-          <h3 className="text-lg font-bold text-[#0c1929] mt-2" style={{ fontFamily: "'Playfair Display', serif" }}>
+          <h3 className="text-lg font-bold text-gray-900 mt-2" style={{ fontFamily: "'Playfair Display', serif" }}>
             Final Examination — Path {path.number}
           </h3>
           <p className="text-sm text-gray-500 mt-1">

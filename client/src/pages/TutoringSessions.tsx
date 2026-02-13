@@ -19,7 +19,7 @@ export default function TutoringSessions() {
           <Link href="/dashboard" className="text-gray-400 hover:text-[#008090] transition-colors">
             <span className="material-icons text-[20px]">navigate_before</span>
           </Link>
-          <h1 className="text-2xl font-bold text-[#0c1929]" style={{ fontFamily: "'Playfair Display', serif" }}>Tutoring Sessions</h1>
+          <h1 className="text-2xl font-bold text-gray-900" style={{ fontFamily: "'Playfair Display', serif" }}>Tutoring Sessions</h1>
         </div>
 
         {/* Tabs */}

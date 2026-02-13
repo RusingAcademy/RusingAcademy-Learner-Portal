@@ -119,7 +119,7 @@ export default function QuizPage() {
               <span className="material-icons text-4xl" style={{ color: "#008090" }}>quiz</span>
             </div>
 
-            <h1 className="text-2xl font-bold text-[#0c1929]" style={{ fontFamily: "'Playfair Display', serif" }}>
+            <h1 className="text-2xl font-bold text-gray-900" style={{ fontFamily: "'Playfair Display', serif" }}>
               Summative Quiz
             </h1>
             <p className="text-lg text-gray-600 mt-1">Module {currentModule.id}: {currentModule.title}</p>
@@ -152,7 +152,7 @@ export default function QuizPage() {
             <div className="mt-6 p-4 rounded-xl text-left" style={{
               background: "rgba(0,128,144,0.04)", border: "1px solid rgba(0,128,144,0.08)",
             }}>
-              <h4 className="text-sm font-semibold text-[#0c1929] mb-2">Instructions:</h4>
+              <h4 className="text-sm font-semibold text-gray-900 mb-2">Instructions:</h4>
               <ul className="text-xs text-gray-600 space-y-1">
                 <li>• This quiz covers all lessons in Module {currentModule.id}</li>
                 <li>• You need {passingScore}% ({Math.ceil(questions.length * passingScore / 100)}/{questions.length}) to pass</li>
@@ -199,7 +199,7 @@ export default function QuizPage() {
               </span>
             </div>
 
-            <h2 className="text-2xl font-bold text-[#0c1929]" style={{ fontFamily: "'Playfair Display', serif" }}>
+            <h2 className="text-2xl font-bold text-gray-900" style={{ fontFamily: "'Playfair Display', serif" }}>
               {passed ? "Congratulations!" : "Keep Going!"}
             </h2>
             <p className="text-5xl font-bold mt-3" style={{ color: passed ? "#f5a623" : "#e74c3c" }}>{pct}%</p>
@@ -302,7 +302,7 @@ export default function QuizPage() {
             </span>
           </div>
 
-          <h3 className="text-lg font-semibold text-[#0c1929] mb-6">{questions[currentQ].q}</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-6">{questions[currentQ].q}</h3>
 
           <div className="space-y-3">
             {questions[currentQ].opts.map((opt, idx) => {
@@ -335,7 +335,7 @@ export default function QuizPage() {
                       String.fromCharCode(65 + idx)
                     )}
                   </div>
-                  <span className="text-sm text-[#0c1929]">{opt}</span>
+                  <span className="text-sm text-gray-900">{opt}</span>
                 </button>
               );
             })}

@@ -43,7 +43,7 @@ function PathRow({ path, programId }: { path: Path; programId: string }) {
           <ProgressCircle value={progress} />
           <div>
             <Link href={`/programs/${programId}/${path.id}`}>
-              <span className="text-sm font-medium text-[#0c1929] hover:text-[#008090] transition-colors cursor-pointer">
+              <span className="text-sm font-medium text-gray-900 hover:text-[#008090] transition-colors cursor-pointer">
                 {path.title}
               </span>
             </Link>
@@ -97,7 +97,7 @@ export default function LearningMaterials() {
               <span className="material-icons text-[20px]">navigate_before</span>
             </Link>
             <div>
-              <h1 className="text-2xl font-bold text-[#0c1929]" style={{ fontFamily: "'Playfair Display', serif" }}>
+              <h1 className="text-2xl font-bold text-gray-900" style={{ fontFamily: "'Playfair Display', serif" }}>
                 Learning Materials
               </h1>
               <p className="text-xs text-gray-500 mt-0.5">Your courses, tests, and reference materials</p>
@@ -124,7 +124,7 @@ export default function LearningMaterials() {
                 <span className="material-icons" style={{ color: stat.color, fontSize: "20px" }}>{stat.icon}</span>
               </div>
               <div>
-                <p className="text-lg font-bold text-[#0c1929]">{stat.value}</p>
+                <p className="text-lg font-bold text-gray-900">{stat.value}</p>
                 <p className="text-[10px] text-gray-500">{stat.label}</p>
               </div>
             </div>
@@ -140,7 +140,7 @@ export default function LearningMaterials() {
               className={`px-6 py-3 text-sm font-medium transition-all relative ${
                 activeTab === i
                   ? "text-[#008090]"
-                  : "text-gray-500 hover:text-[#0c1929]"
+                  : "text-gray-500 hover:text-gray-900"
               }`}
             >
               {tab}
@@ -158,7 +158,7 @@ export default function LearningMaterials() {
               <div key={program.id} className="mb-6">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="material-icons text-[#008090]">{program.icon}</span>
-                  <h2 className="text-lg font-bold text-[#0c1929]" style={{ fontFamily: "'Playfair Display', serif" }}>
+                  <h2 className="text-lg font-bold text-gray-900" style={{ fontFamily: "'Playfair Display', serif" }}>
                     {program.title}
                   </h2>
                   <span className="text-[10px] px-2 py-0.5 rounded-full bg-[rgba(0,128,144,0.08)] text-[#008090] font-medium">
@@ -169,11 +169,11 @@ export default function LearningMaterials() {
                   <table className="w-full">
                     <thead>
                       <tr style={{ background: "linear-gradient(135deg, rgba(0,128,144,0.08), rgba(245,166,35,0.04))" }}>
-                        <th className="text-left text-[11px] font-semibold text-[#0c1929] px-4 py-3 uppercase tracking-wider">Path</th>
-                        <th className="text-left text-[11px] font-semibold text-[#0c1929] px-4 py-3 uppercase tracking-wider">Progress</th>
-                        <th className="text-left text-[11px] font-semibold text-[#0c1929] px-4 py-3 uppercase tracking-wider">Status</th>
-                        <th className="text-left text-[11px] font-semibold text-[#0c1929] px-4 py-3 uppercase tracking-wider">Modules</th>
-                        <th className="text-center text-[11px] font-semibold text-[#0c1929] px-4 py-3 uppercase tracking-wider">Go</th>
+                        <th className="text-left text-[11px] font-semibold text-gray-900 px-4 py-3 uppercase tracking-wider">Path</th>
+                        <th className="text-left text-[11px] font-semibold text-gray-900 px-4 py-3 uppercase tracking-wider">Progress</th>
+                        <th className="text-left text-[11px] font-semibold text-gray-900 px-4 py-3 uppercase tracking-wider">Status</th>
+                        <th className="text-left text-[11px] font-semibold text-gray-900 px-4 py-3 uppercase tracking-wider">Modules</th>
+                        <th className="text-center text-[11px] font-semibold text-gray-900 px-4 py-3 uppercase tracking-wider">Go</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -194,10 +194,10 @@ export default function LearningMaterials() {
             <table className="w-full">
               <thead>
                 <tr style={{ background: "linear-gradient(135deg, rgba(0,128,144,0.08), rgba(245,166,35,0.04))" }}>
-                  <th className="text-left text-[11px] font-semibold text-[#0c1929] px-4 py-3 uppercase tracking-wider">Assessment</th>
-                  <th className="text-left text-[11px] font-semibold text-[#0c1929] px-4 py-3 uppercase tracking-wider">Type</th>
-                  <th className="text-left text-[11px] font-semibold text-[#0c1929] px-4 py-3 uppercase tracking-wider">Status</th>
-                  <th className="text-left text-[11px] font-semibold text-[#0c1929] px-4 py-3 uppercase tracking-wider">Score</th>
+                  <th className="text-left text-[11px] font-semibold text-gray-900 px-4 py-3 uppercase tracking-wider">Assessment</th>
+                  <th className="text-left text-[11px] font-semibold text-gray-900 px-4 py-3 uppercase tracking-wider">Type</th>
+                  <th className="text-left text-[11px] font-semibold text-gray-900 px-4 py-3 uppercase tracking-wider">Status</th>
+                  <th className="text-left text-[11px] font-semibold text-gray-900 px-4 py-3 uppercase tracking-wider">Score</th>
                 </tr>
               </thead>
               <tbody>
@@ -212,7 +212,7 @@ export default function LearningMaterials() {
                   { name: "Path II — Module 1 Quiz", type: "Summative", status: "In Progress", score: "-" },
                 ].map((test, i) => (
                   <tr key={i} className="border-t border-[rgba(0,128,144,0.06)] hover:bg-[rgba(0,128,144,0.03)] transition-colors">
-                    <td className="px-4 py-3 text-sm font-medium text-[#0c1929]">{test.name}</td>
+                    <td className="px-4 py-3 text-sm font-medium text-gray-900">{test.name}</td>
                     <td className="px-4 py-3">
                       <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
                         test.type === "Diagnostic" ? "bg-purple-50 text-purple-600" :
@@ -255,7 +255,7 @@ export default function LearningMaterials() {
                     <span className="material-icons" style={{ color: ref.color, fontSize: "20px" }}>{ref.icon}</span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-sm font-semibold text-[#0c1929] group-hover:text-[#008090] transition-colors">{ref.name}</h3>
+                    <h3 className="text-sm font-semibold text-gray-900 group-hover:text-[#008090] transition-colors">{ref.name}</h3>
                     <div className="flex items-center gap-2 mt-1">
                       <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-100 text-gray-500 font-medium">{ref.type}</span>
                       <span className="text-[10px] text-gray-400">{ref.category}</span>

@@ -35,7 +35,7 @@ export default function PathList() {
         <div className="flex items-center gap-2 text-sm text-gray-500">
           <Link href="/programs" className="hover:text-[#008090] transition-colors">Programs</Link>
           <span>/</span>
-          <span className="text-[#0c1929] font-medium">{program.title}</span>
+          <span className="text-gray-900 font-medium">{program.title}</span>
         </div>
 
         {/* Program Hero */}
@@ -128,7 +128,7 @@ export default function PathList() {
                     <div className="flex-1 p-5">
                       <div className="flex items-start justify-between mb-2">
                         <div>
-                          <h2 className="text-xl font-bold text-[#0c1929] group-hover:text-[#008090] transition-colors" style={{
+                          <h2 className="text-xl font-bold text-gray-900 group-hover:text-[#008090] transition-colors" style={{
                             fontFamily: "'Playfair Display', serif",
                           }}>
                             {path.title}
