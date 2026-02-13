@@ -1636,7 +1636,7 @@ Un fichier audio de 30 à 45 secondes contenant votre enregistrement.
         questions: [
           {
             id: 1,
-            type: "multiple_choice" as const,
+            type: "multiple-choice" as const,
             question: "",
             options: ["Elle écrit un courriel.", "Elle répond à un appel téléphonique.", "Elle parle avec son manager.", "Elle cherche un dossier."],
             answer: "",
@@ -1644,14 +1644,14 @@ Un fichier audio de 30 à 45 secondes contenant votre enregistrement.
           },
           {
             id: 2,
-            type: "fill_in_the_blank" as const,
+            type: "fill-in-the-blank" as const,
             question: "",
             answer: "",
             feedback: "Exact. M. Dubois demande à parler à Paul Martin, le collègue d'Anna.",
           },
           {
             id: 3,
-            type: "multiple_choice" as const,
+            type: "multiple-choice" as const,
             question: "",
             options: ["dois", "veux", "peux", "suis"],
             answer: "",
@@ -1659,7 +1659,7 @@ Un fichier audio de 30 à 45 secondes contenant votre enregistrement.
           },
           {
             id: 4,
-            type: "multiple_choice" as const,
+            type: "multiple-choice" as const,
             question: "",
             options: ["Il est en vacances.", "Il est malade.", "Il est en pause-café.", "Il est en réunion."],
             answer: "",
@@ -1667,14 +1667,14 @@ Un fichier audio de 30 à 45 secondes contenant votre enregistrement.
           },
           {
             id: 5,
-            type: "fill_in_the_blank" as const,
+            type: "fill-in-the-blank" as const,
             question: "",
             answer: "",
             feedback: "Parfait. Le verbe \"devoir\" est utilisé ici pour exprimer une forte obligation.",
           },
           {
             id: 6,
-            type: "multiple_choice" as const,
+            type: "multiple-choice" as const,
             question: "",
             options: ["Le budget annuel", "Le dossier 'Phoenix'", "L'organisation d'un événement", "Un problème technique"],
             answer: "",
@@ -1682,7 +1682,7 @@ Un fichier audio de 30 à 45 secondes contenant votre enregistrement.
           },
           {
             id: 7,
-            type: "multiple_choice" as const,
+            type: "multiple-choice" as const,
             question: "",
             options: ["D'appeler Paul sur son mobile.", "D'attendre le retour de Paul.", "D'envoyer un courriel à Paul.", "De gérer le dossier elle-même."],
             answer: "",
@@ -1690,7 +1690,7 @@ Un fichier audio de 30 à 45 secondes contenant votre enregistrement.
           },
           {
             id: 8,
-            type: "fill_in_the_blank" as const,
+            type: "fill-in-the-blank" as const,
             question: "",
             answer: "",
             feedback: "Excellent ! \"Je voudrais\" (le conditionnel de politesse) est beaucoup plus approprié dans un contexte professionnel.",
