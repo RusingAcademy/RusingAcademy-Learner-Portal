@@ -461,3 +461,95 @@ export const peerReviews = mysqlTable("peer_reviews", {
 });
 
 export type PeerReview = typeof peerReviews.$inferSelect;
+
+
+/* ───────────────────── MOCK SLE EXAMS ───────────────────── */
+export const mockSleExams = mysqlTable("mock_sle_exams", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  examType: mysqlEnum("examType", ["reading", "writing", "oral"]).notNull(),
+  cefrLevel: mysqlEnum("cefrLevel", ["A1", "A2", "B1", "B2", "C1"]).default("B1").notNull(),
+  totalQuestions: int("totalQuestions").notNull(),
+  correctAnswers: int("correctAnswers"),
+  score: int("score"),
+  timeLimitSeconds: int("timeLimitSeconds").notNull(),
+  timeUsedSeconds: int("timeUsedSeconds"),
+  status: mysqlEnum("status", ["in_progress", "completed", "expired"]).default("in_progress").notNull(),
+  answers: json("answers"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  completedAt: timestamp("completedAt"),
+});
+export type MockSleExam = typeof mockSleExams.$inferSelect;
+
+/* ───────────────────── COACH ASSIGNMENTS ───────────────────── */
+export const coachAssignments = mysqlTable("coach_assignments", {
+  id: int("id").autoincrement().primaryKey(),
+  coachId: int("coachId").notNull(),
+  studentId: int("studentId").notNull(),
+  status: mysqlEnum("status", ["active", "paused", "completed"]).default("active").notNull(),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
+});
+export type CoachAssignment = typeof coachAssignments.$inferSelect;
+
+/* ───────────────────── STUDY GROUPS ───────────────────── */
+export const studyGroups = mysqlTable("study_groups", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 200 }).notNull(),
+  description: text("description"),
+  creatorId: int("creatorId").notNull(),
+  maxMembers: int("maxMembers").default(10).notNull(),
+  cefrLevel: mysqlEnum("cefrLevel", ["A1", "A2", "B1", "B2", "C1"]).default("B1").notNull(),
+  isPublic: boolean("isPublic").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type StudyGroup = typeof studyGroups.$inferSelect;
+
+export const studyGroupMembers = mysqlTable("study_group_members", {
+  id: int("id").autoincrement().primaryKey(),
+  groupId: int("groupId").notNull(),
+  userId: int("userId").notNull(),
+  role: mysqlEnum("role", ["member", "admin"]).default("member").notNull(),
+  joinedAt: timestamp("joinedAt").defaultNow().notNull(),
+});
+export type StudyGroupMember = typeof studyGroupMembers.$inferSelect;
+
+/* ───────────────────── BOOKMARKS ───────────────────── */
+export const bookmarks = mysqlTable("bookmarks", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  itemType: mysqlEnum("itemType", ["lesson", "note", "vocabulary", "discussion", "flashcard_deck"]).notNull(),
+  itemId: int("itemId").notNull(),
+  itemTitle: varchar("itemTitle", { length: 500 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type Bookmark = typeof bookmarks.$inferSelect;
+
+/* ───────────────────── DICTATION EXERCISES ───────────────────── */
+export const dictationExercises = mysqlTable("dictation_exercises", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  cefrLevel: mysqlEnum("cefrLevel", ["A1", "A2", "B1", "B2", "C1"]).default("B1").notNull(),
+  totalSentences: int("totalSentences").notNull(),
+  correctSentences: int("correctSentences"),
+  accuracy: int("accuracy"),
+  timeSpentSeconds: int("timeSpentSeconds"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type DictationExercise = typeof dictationExercises.$inferSelect;
+
+/* ───────────────────── ONBOARDING ───────────────────── */
+export const onboardingProfiles = mysqlTable("onboarding_profiles", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  currentLevel: mysqlEnum("currentLevel", ["A1", "A2", "B1", "B2", "C1"]).default("A1").notNull(),
+  targetLevel: mysqlEnum("targetLevel", ["A1", "A2", "B1", "B2", "C1"]).default("B2").notNull(),
+  learningGoal: mysqlEnum("learningGoal", ["sle_prep", "conversation", "professional", "academic", "travel"]).default("sle_prep").notNull(),
+  weeklyHours: int("weeklyHours").default(5).notNull(),
+  preferredTime: mysqlEnum("preferredTime", ["morning", "afternoon", "evening"]).default("morning").notNull(),
+  completedOnboarding: boolean("completedOnboarding").default(false).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
+});
+export type OnboardingProfile = typeof onboardingProfiles.$inferSelect;

@@ -42,6 +42,15 @@ import ListeningLab from "./pages/ListeningLab";
 import GrammarDrills from "./pages/GrammarDrills";
 import ProgressAnalytics from "./pages/ProgressAnalytics";
 import PeerReview from "./pages/PeerReview";
+import MockSLEExam from "./pages/MockSLEExam";
+import CoachDashboard from "./pages/CoachDashboard";
+import StudyGroups from "./pages/StudyGroups";
+import DictationExercises from "./pages/DictationExercises";
+import CulturalImmersion from "./pages/CulturalImmersion";
+import Bookmarks from "./pages/Bookmarks";
+import GlobalSearch from "./pages/GlobalSearch";
+import OnboardingWizard from "./pages/OnboardingWizard";
+import DailyReview from "./pages/DailyReview";
 import CelebrationOverlay from "./components/CelebrationOverlay";
 import FloatingAICompanion from "./components/FloatingAICompanion";
 import { LanguageProvider } from "./contexts/LanguageContext";
@@ -85,6 +94,15 @@ function Router() {
       <Route path="/grammar-drills" component={GrammarDrills} />
       <Route path="/analytics" component={ProgressAnalytics} />
       <Route path="/peer-review" component={PeerReview} />
+      <Route path="/mock-sle" component={MockSLEExam} />
+      <Route path="/coach" component={CoachDashboard} />
+      <Route path="/study-groups" component={StudyGroups} />
+      <Route path="/dictation" component={DictationExercises} />
+      <Route path="/cultural-immersion" component={CulturalImmersion} />
+      <Route path="/bookmarks" component={Bookmarks} />
+      <Route path="/search" component={GlobalSearch} />
+      <Route path="/onboarding" component={OnboardingWizard} />
+      <Route path="/daily-review" component={DailyReview} />
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />

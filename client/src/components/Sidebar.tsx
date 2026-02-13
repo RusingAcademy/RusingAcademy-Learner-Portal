@@ -35,6 +35,7 @@ const mainNav: NavItem[] = [
 const studyToolsNav: NavItem[] = [
   { icon: "note_alt", label: "Study Notes", path: "/notes" },
   { icon: "style", label: "Flashcards", path: "/flashcards" },
+  { icon: "replay", label: "Daily Review", path: "/daily-review" },
   { icon: "event_note", label: "Study Planner", path: "/study-planner" },
   { icon: "translate", label: "Vocabulary", path: "/vocabulary" },
   { icon: "edit_note", label: "Writing Portfolio", path: "/writing-portfolio" },
@@ -42,13 +43,19 @@ const studyToolsNav: NavItem[] = [
   { icon: "auto_stories", label: "Reading Lab", path: "/reading-lab" },
   { icon: "headphones", label: "Listening Lab", path: "/listening-lab" },
   { icon: "spellcheck", label: "Grammar Drills", path: "/grammar-drills" },
+  { icon: "hearing", label: "Dictation", path: "/dictation" },
 ];
 
 const secondaryNav: NavItem[] = [
+  { icon: "assignment", label: "Mock SLE Exam", path: "/mock-sle" },
   { icon: "insights", label: "Analytics", path: "/analytics" },
   { icon: "rate_review", label: "Peer Review", path: "/peer-review" },
+  { icon: "groups", label: "Study Groups", path: "/study-groups" },
+  { icon: "public", label: "Cultural Immersion", path: "/cultural-immersion" },
   { icon: "notifications", label: "Notifications", path: "/notifications", badge: 3 },
   { icon: "forum", label: "Discussions", path: "/discussions" },
+  { icon: "bookmark", label: "Bookmarks", path: "/bookmarks" },
+  { icon: "search", label: "Search", path: "/search" },
   { icon: "emoji_events", label: "Achievements", path: "/achievements" },
   { icon: "help_outline", label: "Help Center", path: "/help" },
 ];

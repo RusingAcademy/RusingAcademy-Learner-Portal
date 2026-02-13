@@ -43,6 +43,13 @@
       "when": 1770999197063,
       "tag": "0005_certain_oracle",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1771000750917,
+      "tag": "0006_shallow_northstar",
+      "breakpoints": true
     }
   ]
 }

@@ -423,3 +423,76 @@
 - [x] Performance audit — server running clean, no console errors
 - [x] Verify bilingual i18n coverage for all Sprint 31-40 features (EN/FR)
 - [x] Final checkpoint and delivery report
+
+## Méga-Sprint 41: Mock SLE Exams
+- [x] Add mock_sle_exams and mock_sle_results DB tables
+- [x] Build tRPC routers for SLE exam generation, submission, and scoring
+- [x] Build MockSLEExam page with timed sections (Reading, Writing, Oral Comprehension)
+- [x] Add exam timer with auto-submit on expiry
+- [x] Add detailed score report with section breakdown and CEFR estimation
+- [x] Verify TypeScript (0 errors) after Sprint 41
+
+## Méga-Sprint 42: Coach Dashboard
+- [x] Add coach_assignments DB table (coach-student relationships)
+- [x] Build tRPC routers for coach assignment management and student progress viewing
+- [x] Build CoachDashboard page with student roster, progress overview, and feedback tools
+- [x] Add coach feedback on writing submissions and exam results
+- [x] Add coach-specific sidebar navigation (role-based)
+- [x] Verify TypeScript (0 errors) after Sprint 42
+
+## Méga-Sprint 43: Spaced Repetition Scheduler
+- [x] Build daily review queue from SM-2 algorithm due dates across all flashcard decks
+- [x] Add DailyReview page with card queue, progress bar, and session stats
+- [x] Add review reminder notifications (daily due cards count)
+- [x] Wire review completion to gamification XP rewards
+- [x] Verify TypeScript (0 errors) after Sprint 43
+
+## Méga-Sprint 44: Study Groups
+- [x] Add study_groups and study_group_members DB tables
+- [x] Build tRPC routers for group CRUD, membership, and group activity
+- [x] Build StudyGroups page with group listing, creation, and member management
+- [x] Add group activity feed (shared notes, discussion, progress)
+- [x] Verify TypeScript (0 errors) after Sprint 44
+
+## Méga-Sprint 45: Dictation Exercises
+- [x] Build Dictation page with TTS-powered dictation exercises by CEFR level
+- [x] Add sentence-by-sentence dictation with auto-check
+- [x] Add accent and special character input helper
+- [x] Add dictation history with accuracy tracking
+- [x] Verify TypeScript (0 errors) after Sprint 45
+
+## Méga-Sprint 46: Cultural Immersion Corner
+- [x] Build CulturalImmersion page with Canadian French culture content
+- [x] Add cultural articles, idioms, and expressions by region
+- [x] Add daily cultural fact widget
+- [x] Add cultural quiz mode
+- [x] Verify TypeScript (0 errors) after Sprint 46
+
+## Méga-Sprint 47: Bookmarks & Favorites System
+- [x] Add bookmarks DB table (polymorphic: lessons, notes, vocabulary, discussions)
+- [x] Build tRPC routers for bookmark CRUD
+- [x] Build Bookmarks page with categorized saved items
+- [x] Add bookmark toggle button to lessons, notes, vocabulary, and discussions
+- [x] Verify TypeScript (0 errors) after Sprint 47
+
+## Méga-Sprint 48: Global Search
+- [x] Build tRPC search.global procedure (search across lessons, notes, vocabulary, discussions)
+- [x] Build SearchResults page with categorized results
+- [x] Add search bar to sidebar/header with keyboard shortcut (Ctrl+K)
+- [x] Add search suggestions and recent searches
+- [x] Verify TypeScript (0 errors) after Sprint 48
+
+## Méga-Sprint 49: Onboarding Wizard
+- [x] Build OnboardingWizard component with step-by-step setup flow
+- [x] Add language level assessment (quick placement test)
+- [x] Add learning goals selection (SLE prep, conversation, professional)
+- [x] Add study schedule preferences
+- [x] Auto-redirect new users to onboarding after first login
+- [x] Verify TypeScript (0 errors) after Sprint 49
+
+## Méga-Sprint 50: Final Production QA & Comprehensive Testing
+- [x] Run full vitest suite — 212 tests passing (11 test files)
+- [x] Run TypeScript check — 0 errors
+- [x] Audit all 47 routes for authentication and authorization
+- [x] Verify bilingual i18n coverage for all Sprint 41-50 features (EN/FR)
+- [x] Final checkpoint and delivery report
