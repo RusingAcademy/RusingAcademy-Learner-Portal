@@ -39,9 +39,14 @@ const studyToolsNav: NavItem[] = [
   { icon: "translate", label: "Vocabulary", path: "/vocabulary" },
   { icon: "edit_note", label: "Writing Portfolio", path: "/writing-portfolio" },
   { icon: "record_voice_over", label: "Pronunciation Lab", path: "/pronunciation-lab" },
+  { icon: "auto_stories", label: "Reading Lab", path: "/reading-lab" },
+  { icon: "headphones", label: "Listening Lab", path: "/listening-lab" },
+  { icon: "spellcheck", label: "Grammar Drills", path: "/grammar-drills" },
 ];
 
 const secondaryNav: NavItem[] = [
+  { icon: "insights", label: "Analytics", path: "/analytics" },
+  { icon: "rate_review", label: "Peer Review", path: "/peer-review" },
   { icon: "notifications", label: "Notifications", path: "/notifications", badge: 3 },
   { icon: "forum", label: "Discussions", path: "/discussions" },
   { icon: "emoji_events", label: "Achievements", path: "/achievements" },

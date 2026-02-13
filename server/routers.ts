@@ -8,6 +8,7 @@ import { z } from "zod";
 import * as db from "./db";
 import { notesRouter, flashcardsRouter, studyPlannerRouter, vocabularyRouter } from "./routers-sprint17";
 import { aiVocabularyRouter, dailyGoalsRouter, discussionsRouter, writingRouter, recommendationsRouter } from "./routers-sprint22";
+import { certificateRouter, readingLabRouter, listeningLabRouter, grammarDrillsRouter, peerReviewRouter } from "./routers-sprint31";
 import { gamificationProfiles, users } from "../drizzle/schema";
 import { desc, eq, sql } from "drizzle-orm";
 
@@ -370,6 +371,11 @@ Always be professional, supportive, and pedagogically sound. When the user write
   discussions: discussionsRouter,
   writing: writingRouter,
   recommendations: recommendationsRouter,
+  certificates: certificateRouter,
+  readingLab: readingLabRouter,
+  listeningLab: listeningLabRouter,
+  grammarDrills: grammarDrillsRouter,
+  peerReview: peerReviewRouter,
 
   admin: router({
     overview: protectedProcedure.query(async ({ ctx }) => {

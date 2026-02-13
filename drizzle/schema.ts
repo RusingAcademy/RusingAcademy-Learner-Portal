@@ -373,3 +373,91 @@ export const writingSubmissions = mysqlTable("writing_submissions", {
 });
 
 export type WritingSubmission = typeof writingSubmissions.$inferSelect;
+
+/* ───────────────────────── CERTIFICATES ──────────────────────── */
+export const certificates = mysqlTable("certificates", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  type: mysqlEnum("type", ["path_completion", "level_achievement", "challenge_winner"]).default("path_completion").notNull(),
+  title: varchar("title", { length: 512 }).notNull(),
+  titleFr: varchar("titleFr", { length: 512 }),
+  description: text("description"),
+  descriptionFr: text("descriptionFr"),
+  pathId: varchar("pathId", { length: 64 }),
+  cefrLevel: mysqlEnum("cefrLevel", ["A1", "A2", "B1", "B2", "C1"]),
+  issuedAt: timestamp("issuedAt").defaultNow().notNull(),
+  certificateUrl: text("certificateUrl"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type Certificate = typeof certificates.$inferSelect;
+
+/* ───────────────────────── READING EXERCISES ──────────────────── */
+export const readingExercises = mysqlTable("reading_exercises", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  passageTitle: varchar("passageTitle", { length: 512 }).notNull(),
+  cefrLevel: mysqlEnum("cefrLevel", ["A1", "A2", "B1", "B2", "C1"]).notNull(),
+  wordsPerMinute: int("wordsPerMinute"),
+  score: int("score"),
+  totalQuestions: int("totalQuestions").default(5).notNull(),
+  correctAnswers: int("correctAnswers").default(0).notNull(),
+  timeSpentSeconds: int("timeSpentSeconds"),
+  language: mysqlEnum("language", ["en", "fr"]).default("fr").notNull(),
+  completedAt: timestamp("completedAt").defaultNow().notNull(),
+});
+
+export type ReadingExercise = typeof readingExercises.$inferSelect;
+
+/* ───────────────────────── LISTENING EXERCISES ─────────────────── */
+export const listeningExercises = mysqlTable("listening_exercises", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  exerciseTitle: varchar("exerciseTitle", { length: 512 }).notNull(),
+  cefrLevel: mysqlEnum("cefrLevel", ["A1", "A2", "B1", "B2", "C1"]).notNull(),
+  score: int("score"),
+  totalQuestions: int("totalQuestions").default(5).notNull(),
+  correctAnswers: int("correctAnswers").default(0).notNull(),
+  timeSpentSeconds: int("timeSpentSeconds"),
+  language: mysqlEnum("language", ["en", "fr"]).default("fr").notNull(),
+  completedAt: timestamp("completedAt").defaultNow().notNull(),
+});
+
+export type ListeningExercise = typeof listeningExercises.$inferSelect;
+
+/* ───────────────────────── GRAMMAR DRILLS ──────────────────────── */
+export const grammarDrills = mysqlTable("grammar_drills", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  topic: varchar("topic", { length: 256 }).notNull(),
+  cefrLevel: mysqlEnum("cefrLevel", ["A1", "A2", "B1", "B2", "C1"]).notNull(),
+  drillType: mysqlEnum("drillType", ["fill_blank", "conjugation", "reorder", "multiple_choice"]).default("fill_blank").notNull(),
+  score: int("score"),
+  totalQuestions: int("totalQuestions").default(10).notNull(),
+  correctAnswers: int("correctAnswers").default(0).notNull(),
+  timeSpentSeconds: int("timeSpentSeconds"),
+  language: mysqlEnum("language", ["en", "fr"]).default("fr").notNull(),
+  completedAt: timestamp("completedAt").defaultNow().notNull(),
+});
+
+export type GrammarDrill = typeof grammarDrills.$inferSelect;
+
+/* ───────────────────────── PEER REVIEWS ──────────────────────── */
+export const peerReviews = mysqlTable("peer_reviews", {
+  id: int("id").autoincrement().primaryKey(),
+  submissionId: int("submissionId").notNull(),
+  reviewerId: int("reviewerId").notNull(),
+  authorId: int("authorId").notNull(),
+  grammarScore: int("grammarScore"),
+  vocabularyScore: int("vocabularyScore"),
+  coherenceScore: int("coherenceScore"),
+  overallScore: int("overallScore"),
+  feedback: text("feedback"),
+  strengths: text("strengths"),
+  improvements: text("improvements"),
+  status: mysqlEnum("status", ["pending", "completed"]).default("pending").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  completedAt: timestamp("completedAt"),
+});
+
+export type PeerReview = typeof peerReviews.$inferSelect;

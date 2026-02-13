@@ -37,6 +37,11 @@ import DiscussionBoards from "./pages/DiscussionBoards";
 import WritingPortfolio from "./pages/WritingPortfolio";
 import PronunciationLab from "./pages/PronunciationLab";
 import Achievements from "./pages/Achievements";
+import ReadingLab from "./pages/ReadingLab";
+import ListeningLab from "./pages/ListeningLab";
+import GrammarDrills from "./pages/GrammarDrills";
+import ProgressAnalytics from "./pages/ProgressAnalytics";
+import PeerReview from "./pages/PeerReview";
 import CelebrationOverlay from "./components/CelebrationOverlay";
 import FloatingAICompanion from "./components/FloatingAICompanion";
 import { LanguageProvider } from "./contexts/LanguageContext";
@@ -75,6 +80,11 @@ function Router() {
       <Route path="/writing-portfolio" component={WritingPortfolio} />
       <Route path="/pronunciation-lab" component={PronunciationLab} />
       <Route path="/achievements" component={Achievements} />
+      <Route path="/reading-lab" component={ReadingLab} />
+      <Route path="/listening-lab" component={ListeningLab} />
+      <Route path="/grammar-drills" component={GrammarDrills} />
+      <Route path="/analytics" component={ProgressAnalytics} />
+      <Route path="/peer-review" component={PeerReview} />
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />

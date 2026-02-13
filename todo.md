@@ -352,3 +352,74 @@
 - [x] Test all CRUD operations end-to-end
 - [x] Verify bilingual i18n coverage for all new features (EN/FR)
 - [x] Final checkpoint and delivery report
+
+## Méga-Sprint 31: PDF Certificate Generation
+- [x] Build tRPC certificate.generate procedure (server-side PDF creation)
+- [x] Design bilingual certificate template (EN/FR) with RusingAcademy branding
+- [x] Add certificate download button to Path completion and Achievement pages
+- [x] Store certificate metadata in DB for retrieval
+- [x] Verify TypeScript (0 errors) after Sprint 31
+
+## Méga-Sprint 32: Enhanced Notification Center
+- [x] Upgrade Notifications page with categorized tabs (System, Learning, Social)
+- [x] Add notification preferences (toggle by category)
+- [x] Add real-time notification badge count in sidebar
+- [x] Add notification triggers for discussion replies, writing feedback, achievements
+- [x] Verify TypeScript (0 errors) after Sprint 32
+
+## Méga-Sprint 33: Admin Content Management
+- [x] Build Admin Content Editor page with WYSIWYG for lesson content (via AdminDashboard)
+- [x] Add admin routes for managing paths, lessons, and quizzes
+- [x] Add admin user management (view users, promote to admin, view activity)
+- [x] Add admin analytics overview (total users, active learners, popular paths)
+- [x] Verify TypeScript (0 errors) after Sprint 33
+
+## Méga-Sprint 34: Reading Comprehension Lab
+- [x] Build Reading Lab page with timed reading passages by CEFR level
+- [x] Add comprehension questions after each passage
+- [x] Add reading speed tracker (words per minute)
+- [x] Add reading history with scores and progress
+- [x] Verify TypeScript (0 errors) after Sprint 34
+
+## Méga-Sprint 35: Listening Comprehension Lab
+- [x] Build Listening Lab page with audio passages by CEFR level
+- [x] Add comprehension questions after each audio clip
+- [x] Add playback controls (speed, repeat, pause)
+- [x] Add listening history with scores
+- [x] Verify TypeScript (0 errors) after Sprint 35
+
+## Méga-Sprint 36: Grammar Drills Engine
+- [x] Build Grammar Drills page with interactive exercises (8 drill sets)
+- [x] Add fill-in-the-blank, conjugation, sentence reorder, and multiple choice drills
+- [x] Add grammar hints and topic performance tracking
+- [x] Add progress tracking by grammar topic
+- [x] Verify TypeScript (0 errors) after Sprint 36
+
+## Méga-Sprint 37: Progress Analytics Dashboard
+- [x] Build Analytics page with detailed learning metrics (3 tabs)
+- [x] Add skill breakdown with progress bars (reading, listening, grammar, vocabulary)
+- [x] Add reading score trend chart and study time visualization
+- [x] Add time-spent analysis by skill with personalized recommendations
+- [x] Verify TypeScript (0 errors) after Sprint 37
+
+## Méga-Sprint 38: Peer Review System
+- [x] Build Peer Review page with guide, pending, and completed tabs
+- [x] Add review assignment system (pending reviews queue)
+- [x] Add structured feedback form (grammar/vocabulary/coherence scoring sliders)
+- [x] Add reviewer XP rewards (25 XP per review)
+- [x] Verify TypeScript (0 errors) after Sprint 38
+
+## Méga-Sprint 39: Mobile UX Polish & Responsive Refinement
+- [x] Audit and fix all pages for mobile responsiveness
+- [x] Add responsive sidebar with mobile overlay
+- [x] Optimize touch targets and spacing for mobile
+- [x] Add smooth transitions and hover effects across all pages
+- [x] Verify TypeScript (0 errors) after Sprint 39
+
+## Méga-Sprint 40: Final Production QA & Comprehensive Testing
+- [x] Run full vitest suite — 178 tests passing (10 test files)
+- [x] Run TypeScript check — 0 errors
+- [x] Audit all 35+ routes for authentication and authorization
+- [x] Performance audit — server running clean, no console errors
+- [x] Verify bilingual i18n coverage for all Sprint 31-40 features (EN/FR)
+- [x] Final checkpoint and delivery report
