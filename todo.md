@@ -174,3 +174,37 @@
 - [x] Update all 16 remaining pages: replace #0c1929 text with gray-900
 - [x] Ensure high contrast for accessibility (black text on white)
 - [x] Verify TypeScript (0 errors) after redesign
+
+## Méga-Sprint 11: Ecosystem Hub Landing Page + Booking Integration
+- [x] Redesign Home.tsx as premium ecosystem hub (3 brand pillars: RusingÂcademy, Lingueefy, Barholex Media)
+- [x] Build "The Cost of Inaction" section with Bilingual Excellence Trilemma cards
+- [x] Build "Our 3-Step Method" section (Diagnose, Train, Validate) with connecting line
+- [x] Build "Who Benefits Most" section with 6 persona cards
+- [x] Build Testimonials section with 4 real quotes and star ratings
+- [x] Build Team/Coaches section with 4 experts and LinkedIn links
+- [x] Build FAQ accordion section with 5 expandable questions
+- [x] Build YouTube carousel (6 coach shorts + 4 SLE exam tip videos)
+- [x] Add Calendly booking links (Book a Diagnostic, Book a Discovery Call)
+- [x] Add "Ready to Take the Next Step?" CTA section with 3 action buttons
+- [x] Build professional 4-column footer with ecosystem nav, social links, contact
+- [x] Add sticky navigation with mobile hamburger menu
+- [x] Verify TypeScript (0 errors) after landing page
+
+## Méga-Sprint 12: Floating SLE AI Companion + Notification System
+- [x] Build FloatingAICompanion widget (bottom-right, expandable chat with quick prompts)
+- [x] Enhance AI chat with SLE-specific system prompt and bilingual support
+- [x] Rewrite Notifications page with live tRPC data, mark-as-read, filtering
+- [x] Add unread badge count and type-based filtering (Achievement/System/Info)
+- [x] Add FloatingAICompanion to App.tsx (appears on all authenticated pages)
+- [x] Add fadeInUp animation for smooth panel opening
+- [x] Verify TypeScript (0 errors) after Sprint 12
+
+## Méga-Sprint 13: Admin Dashboard + Analytics + Content Management
+- [x] Build admin panel with role-based access (TRPCError FORBIDDEN for non-admins)
+- [x] Build user management table (search, filter, role promote/demote)
+- [x] Build analytics overview (8 stat cards + recent signups panel)
+- [x] Build challenge CRUD admin (create form, activate/deactivate toggle)
+- [x] Build announcement broadcast system (send notifications to all users)
+- [x] Add admin route to App.tsx and admin nav to Sidebar (purple accent, admin-only)
+- [x] Build 4-tab admin interface (Analytics, Users, Challenges, Announcements)
+- [x] Verify TypeScript (0 errors) + dev server clean after admin panel

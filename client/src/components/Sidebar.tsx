@@ -5,6 +5,7 @@
 import { Link, useLocation } from "wouter";
 import { useGamification } from "@/contexts/GamificationContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/_core/hooks/useAuth";
 
 const LOGO_ICON = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663049070748/mrXRaWLUDJGHdcjc.png";
 
@@ -37,6 +38,10 @@ const secondaryNav: NavItem[] = [
   { icon: "help_outline", label: "Help Center", path: "/help" },
 ];
 
+const adminNav: NavItem[] = [
+  { icon: "admin_panel_settings", label: "Admin Panel", path: "/admin" },
+];
+
 interface SidebarProps {
   collapsed?: boolean;
   onToggle?: () => void;
@@ -46,6 +51,7 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const [location, setLocation] = useLocation();
   const { totalXP, level, levelTitle, streak } = useGamification();
   const { lang, toggleLang, t } = useLanguage();
+  const { user } = useAuth();
 
   const isActive = (path: string) => {
     if (path === "/programs") return location.startsWith("/programs");
@@ -153,6 +159,28 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
               </div>
             </Link>
           ))}
+
+          {/* Admin Section - only visible for admins */}
+          {user?.role === "admin" && (
+            <>
+              <div className="mx-3 my-2 border-t border-gray-100" />
+              <div className="text-[10px] text-purple-500 uppercase tracking-wider px-3 mb-1 font-semibold">Admin</div>
+              {adminNav.map((item) => (
+                <Link key={item.path} href={item.path} onClick={onToggle}>
+                  <div className={`flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] transition-all duration-200 group ${
+                    isActive(item.path)
+                      ? "bg-purple-50 text-purple-600 font-semibold border-l-[3px] border-purple-500"
+                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-50 border-l-[3px] border-transparent"
+                  }`}>
+                    <span className={`material-icons text-lg ${isActive(item.path) ? "text-purple-500" : "text-gray-400 group-hover:text-gray-600"}`}>
+                      {item.icon}
+                    </span>
+                    <span className="font-medium">{item.label}</span>
+                  </div>
+                </Link>
+              ))}
+            </>
+          )}
         </nav>
 
         {/* User Profile Section */}

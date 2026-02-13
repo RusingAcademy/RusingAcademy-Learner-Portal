@@ -550,3 +550,125 @@ export async function getLeaderboard(limit = 20) {
     .orderBy(desc(gamificationProfiles.totalXp))
     .limit(limit);
 }
+
+
+/* ─────────────── ADMIN: USER MANAGEMENT ─────────────── */
+
+export async function getAllUsers(limit = 200) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select({
+    id: users.id,
+    openId: users.openId,
+    name: users.name,
+    email: users.email,
+    role: users.role,
+    preferredLanguage: users.preferredLanguage,
+    createdAt: users.createdAt,
+    lastSignedIn: users.lastSignedIn,
+  }).from(users).orderBy(desc(users.lastSignedIn)).limit(limit);
+}
+
+export async function updateUserRole(userId: number, role: "user" | "admin") {
+  const db = await getDb();
+  if (!db) return null;
+  await db.update(users).set({ role }).where(eq(users.id, userId));
+  return { userId, role };
+}
+
+/* ─────────────── ADMIN: ANALYTICS ─────────────── */
+
+export async function getAnalyticsOverview() {
+  const db = await getDb();
+  if (!db) return null;
+  const [userCount] = await db.select({ count: sql<number>`count(*)` }).from(users);
+  const [lessonCount] = await db.select({ count: sql<number>`count(*)` }).from(lessonProgress).where(eq(lessonProgress.isCompleted, true));
+  const [quizCount] = await db.select({ count: sql<number>`count(*)` }).from(quizAttempts);
+  const [enrollmentCount] = await db.select({ count: sql<number>`count(*)` }).from(pathEnrollments);
+  const [activityCount] = await db.select({ count: sql<number>`count(*)` }).from(activityLog);
+  const [avgScore] = await db.select({ avg: sql<number>`COALESCE(AVG(score), 0)` }).from(quizAttempts);
+  const [perfectCount] = await db.select({ count: sql<number>`count(*)` }).from(quizAttempts).where(eq(quizAttempts.isPerfect, true));
+
+  // Recent signups (last 7 days)
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+  const [recentSignups] = await db.select({ count: sql<number>`count(*)` }).from(users).where(sql`${users.createdAt} >= ${sevenDaysAgo}`);
+
+  // Active users (last 7 days)
+  const [activeUsers] = await db.select({ count: sql<number>`count(*)` }).from(users).where(sql`${users.lastSignedIn} >= ${sevenDaysAgo}`);
+
+  return {
+    totalUsers: userCount?.count ?? 0,
+    totalLessonsCompleted: lessonCount?.count ?? 0,
+    totalQuizAttempts: quizCount?.count ?? 0,
+    totalEnrollments: enrollmentCount?.count ?? 0,
+    totalActivities: activityCount?.count ?? 0,
+    averageQuizScore: Math.round(avgScore?.avg ?? 0),
+    perfectQuizCount: perfectCount?.count ?? 0,
+    recentSignups: recentSignups?.count ?? 0,
+    activeUsersLast7Days: activeUsers?.count ?? 0,
+  };
+}
+
+export async function getRecentSignups(limit = 10) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select({
+    id: users.id,
+    name: users.name,
+    email: users.email,
+    role: users.role,
+    createdAt: users.createdAt,
+    lastSignedIn: users.lastSignedIn,
+  }).from(users).orderBy(desc(users.createdAt)).limit(limit);
+}
+
+export async function getActivityTimeline(days = 14) {
+  const db = await getDb();
+  if (!db) return [];
+  const startDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+  return db.select({
+    date: sql<string>`DATE(${activityLog.createdAt})`.as("date"),
+    count: sql<number>`count(*)`.as("count"),
+    type: activityLog.activityType,
+  })
+    .from(activityLog)
+    .where(sql`${activityLog.createdAt} >= ${startDate}`)
+    .groupBy(sql`DATE(${activityLog.createdAt})`, activityLog.activityType)
+    .orderBy(sql`DATE(${activityLog.createdAt})`);
+}
+
+/* ─────────────── ADMIN: CHALLENGE MANAGEMENT ─────────────── */
+
+export async function updateChallenge(challengeId: number, data: { isActive?: boolean; targetValue?: number; xpReward?: number }) {
+  const db = await getDb();
+  if (!db) return null;
+  await db.update(weeklyChallenges).set(data).where(eq(weeklyChallenges.id, challengeId));
+  return { challengeId, ...data };
+}
+
+/* ─────────────── ADMIN: ANNOUNCEMENTS ─────────────── */
+
+export async function createAnnouncement(data: {
+  title: string; message: string; targetUserIds?: number[];
+}) {
+  const db = await getDb();
+  if (!db) return null;
+  // If targetUserIds specified, create individual notifications
+  const userIds = data.targetUserIds;
+  if (userIds && userIds.length > 0) {
+    for (const userId of userIds) {
+      await db.insert(notifications).values({
+        userId, title: data.title, message: data.message, type: "system",
+      });
+    }
+    return { sent: userIds.length };
+  }
+  // Otherwise broadcast to all users
+  const allUsers = await db.select({ id: users.id }).from(users);
+  for (const u of allUsers) {
+    await db.insert(notifications).values({
+      userId: u.id, title: data.title, message: data.message, type: "system",
+    });
+  }
+  return { sent: allUsers.length };
+}

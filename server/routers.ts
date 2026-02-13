@@ -2,6 +2,7 @@ import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
+import { TRPCError } from "@trpc/server";
 import { invokeLLM } from "./_core/llm";
 import { z } from "zod";
 import * as db from "./db";
@@ -355,6 +356,75 @@ Always be professional, supportive, and pedagogically sound. When the user write
         recommendations.push({ title: "Check Leaderboard", description: "See how you rank among fellow learners.", icon: "leaderboard", link: "/leaderboard", priority: 5 });
 
         return recommendations.sort((a, b) => a.priority - b.priority).slice(0, 4);
+      }),
+  }),
+
+  admin: router({
+    overview: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
+      return db.getAnalyticsOverview();
+    }),
+    users: protectedProcedure
+      .input(z.object({ limit: z.number().min(1).max(500).optional() }))
+      .query(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
+        return db.getAllUsers(input.limit ?? 200);
+      }),
+    updateUserRole: protectedProcedure
+      .input(z.object({ userId: z.number(), role: z.enum(["user", "admin"]) }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
+        return db.updateUserRole(input.userId, input.role);
+      }),
+    recentSignups: protectedProcedure
+      .input(z.object({ limit: z.number().min(1).max(50).optional() }))
+      .query(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
+        return db.getRecentSignups(input.limit ?? 10);
+      }),
+    activityTimeline: protectedProcedure
+      .input(z.object({ days: z.number().min(1).max(90).optional() }))
+      .query(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
+        return db.getActivityTimeline(input.days ?? 14);
+      }),
+    challenges: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
+      return db.getAllChallenges();
+    }),
+    createChallenge: protectedProcedure
+      .input(z.object({
+        title: z.string(), titleFr: z.string(),
+        description: z.string(), descriptionFr: z.string(),
+        challengeType: z.enum(["complete_lessons", "earn_xp", "perfect_quizzes", "maintain_streak", "complete_slots", "study_time"]),
+        targetValue: z.number(), xpReward: z.number(),
+        weekStartDate: z.string(), weekEndDate: z.string(),
+        badgeReward: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
+        return db.createChallenge(input);
+      }),
+    updateChallenge: protectedProcedure
+      .input(z.object({
+        challengeId: z.number(),
+        isActive: z.boolean().optional(),
+        targetValue: z.number().optional(),
+        xpReward: z.number().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
+        const { challengeId, ...data } = input;
+        return db.updateChallenge(challengeId, data);
+      }),
+    sendAnnouncement: protectedProcedure
+      .input(z.object({
+        title: z.string(), message: z.string(),
+        targetUserIds: z.array(z.number()).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
+        return db.createAnnouncement(input);
       }),
   }),
 });

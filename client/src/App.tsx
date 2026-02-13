@@ -28,7 +28,9 @@ import Leaderboard from "./pages/Leaderboard";
 import WeeklyChallenges from "./pages/WeeklyChallenges";
 import SLEPractice from "./pages/SLEPractice";
 import AIAssistant from "./pages/AIAssistant";
+import AdminDashboard from "./pages/AdminDashboard";
 import CelebrationOverlay from "./components/CelebrationOverlay";
+import FloatingAICompanion from "./components/FloatingAICompanion";
 import { LanguageProvider } from "./contexts/LanguageContext";
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -57,6 +59,7 @@ function Router() {
       <Route path="/help" component={Help} />
       <Route path="/profile" component={MyProfile} />
       <Route path="/settings" component={MySettings} />
+      <Route path="/admin" component={AdminDashboard} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
@@ -72,6 +75,7 @@ function App() {
           <TooltipProvider>
             <Toaster />
             <CelebrationOverlay />
+            <FloatingAICompanion />
             <Router />
           </TooltipProvider>
         </GamificationProvider>
