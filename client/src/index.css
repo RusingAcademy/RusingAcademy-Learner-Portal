@@ -237,3 +237,24 @@
     color: #008090;
   }
 }
+
+/* ── Celebration Animations ── */
+@keyframes celebrationPulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(245, 166, 35, 0.2); }
+  50% { transform: scale(1.08); box-shadow: 0 0 40px rgba(245, 166, 35, 0.4); }
+}
+
+@keyframes celebrationSlideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes celebrationBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}

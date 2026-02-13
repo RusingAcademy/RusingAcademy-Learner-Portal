@@ -7835,13 +7835,19 @@ export const fslLessonContent: Record<string, LessonContent> = {
   },
 };
 
-// Helper to get lesson content
-export function getLessonContent(lessonId: string): LessonContent | undefined {
+// Import ESL content
+import { eslLessonContent } from "./eslLessonContent";
+
+// Helper to get lesson content — routes by program
+export function getLessonContent(lessonId: string, programId?: string): LessonContent | undefined {
+  if (programId === "esl") {
+    return eslLessonContent[lessonId] || fslLessonContent[lessonId];
+  }
   return fslLessonContent[lessonId];
 }
 
-// Get specific slot content
-export function getSlotContent(lessonId: string, slotKey: SlotKey): SlotContent | undefined {
-  const lesson = fslLessonContent[lessonId];
+// Get specific slot content — routes by program
+export function getSlotContent(lessonId: string, slotKey: SlotKey, programId?: string): SlotContent | undefined {
+  const lesson = getLessonContent(lessonId, programId);
   return lesson?.[slotKey];
 }

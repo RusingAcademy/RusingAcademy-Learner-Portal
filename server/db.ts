@@ -1,4 +1,4 @@
-import { eq, and, desc, sql } from "drizzle-orm";
+import { eq, and, desc, sql, gte, lte } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import {
   InsertUser,
@@ -10,6 +10,9 @@ import {
   pathEnrollments,
   activityLog,
   notifications,
+  weeklyChallenges,
+  challengeProgress,
+  celebrationEvents,
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -371,4 +374,179 @@ export async function createNotification(data: {
     ...data,
     type: data.type ?? "info",
   });
+}
+
+/* ─────────────── WEEKLY CHALLENGES ─────────────── */
+
+export async function getActiveChallenges() {
+  const db = await getDb();
+  if (!db) return [];
+  const today = new Date().toISOString().slice(0, 10);
+  return db.select().from(weeklyChallenges)
+    .where(and(
+      eq(weeklyChallenges.isActive, true),
+      lte(weeklyChallenges.weekStartDate, today),
+      gte(weeklyChallenges.weekEndDate, today)
+    ))
+    .orderBy(desc(weeklyChallenges.createdAt));
+}
+
+export async function getAllChallenges() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(weeklyChallenges).orderBy(desc(weeklyChallenges.createdAt));
+}
+
+export async function createChallenge(data: {
+  title: string;
+  titleFr: string;
+  description: string;
+  descriptionFr: string;
+  challengeType: "complete_lessons" | "earn_xp" | "perfect_quizzes" | "maintain_streak" | "complete_slots" | "study_time";
+  targetValue: number;
+  xpReward: number;
+  badgeReward?: string;
+  weekStartDate: string;
+  weekEndDate: string;
+}) {
+  const db = await getDb();
+  if (!db) return null;
+  await db.insert(weeklyChallenges).values(data);
+  return data;
+}
+
+export async function getUserChallengeProgress(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select({
+    progress: challengeProgress,
+    challenge: weeklyChallenges,
+  })
+    .from(challengeProgress)
+    .innerJoin(weeklyChallenges, eq(weeklyChallenges.id, challengeProgress.challengeId))
+    .where(eq(challengeProgress.userId, userId))
+    .orderBy(desc(challengeProgress.updatedAt));
+}
+
+export async function upsertChallengeProgress(userId: number, challengeId: number, increment: number) {
+  const db = await getDb();
+  if (!db) return null;
+  const existing = await db.select().from(challengeProgress)
+    .where(and(
+      eq(challengeProgress.userId, userId),
+      eq(challengeProgress.challengeId, challengeId)
+    )).limit(1);
+
+  if (existing.length > 0) {
+    const record = existing[0];
+    if (record.isCompleted) return record;
+    const newValue = record.currentValue + increment;
+    // Check if challenge is now completed
+    const challenge = await db.select().from(weeklyChallenges)
+      .where(eq(weeklyChallenges.id, challengeId)).limit(1);
+    const isNowComplete = challenge[0] ? newValue >= challenge[0].targetValue : false;
+    await db.update(challengeProgress)
+      .set({
+        currentValue: newValue,
+        isCompleted: isNowComplete,
+        completedAt: isNowComplete ? new Date() : undefined,
+      })
+      .where(eq(challengeProgress.id, record.id));
+    return { ...record, currentValue: newValue, isCompleted: isNowComplete };
+  }
+
+  // Create new progress entry
+  await db.insert(challengeProgress).values({ userId, challengeId, currentValue: increment });
+  const created = await db.select().from(challengeProgress)
+    .where(and(
+      eq(challengeProgress.userId, userId),
+      eq(challengeProgress.challengeId, challengeId)
+    )).limit(1);
+  return created[0] ?? null;
+}
+
+export async function initChallengeProgressForUser(userId: number) {
+  const db = await getDb();
+  if (!db) return;
+  const active = await getActiveChallenges();
+  for (const challenge of active) {
+    const existing = await db.select().from(challengeProgress)
+      .where(and(
+        eq(challengeProgress.userId, userId),
+        eq(challengeProgress.challengeId, challenge.id)
+      )).limit(1);
+    if (existing.length === 0) {
+      await db.insert(challengeProgress).values({ userId, challengeId: challenge.id, currentValue: 0 });
+    }
+  }
+}
+
+/* ─────────────── CELEBRATION EVENTS ─────────────── */
+
+export async function createCelebration(data: {
+  userId: number;
+  eventType: "level_up" | "badge_earned" | "challenge_completed" | "streak_milestone" | "path_completed" | "perfect_quiz" | "first_lesson";
+  metadata?: Record<string, unknown>;
+}) {
+  const db = await getDb();
+  if (!db) return null;
+  await db.insert(celebrationEvents).values(data);
+  return data;
+}
+
+export async function getUnseenCelebrations(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(celebrationEvents)
+    .where(and(
+      eq(celebrationEvents.userId, userId),
+      eq(celebrationEvents.seen, false)
+    ))
+    .orderBy(desc(celebrationEvents.createdAt))
+    .limit(10);
+}
+
+export async function markCelebrationSeen(celebrationId: number, userId: number) {
+  const db = await getDb();
+  if (!db) return;
+  await db.update(celebrationEvents)
+    .set({ seen: true })
+    .where(and(
+      eq(celebrationEvents.id, celebrationId),
+      eq(celebrationEvents.userId, userId)
+    ));
+}
+
+export async function markAllCelebrationsSeen(userId: number) {
+  const db = await getDb();
+  if (!db) return;
+  await db.update(celebrationEvents)
+    .set({ seen: true })
+    .where(and(
+      eq(celebrationEvents.userId, userId),
+      eq(celebrationEvents.seen, false)
+    ));
+}
+
+/* ─────────────── LEADERBOARD (Enhanced) ─────────────── */
+
+export async function getLeaderboard(limit = 20) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select({
+    userId: gamificationProfiles.userId,
+    totalXp: gamificationProfiles.totalXp,
+    level: gamificationProfiles.level,
+    currentStreak: gamificationProfiles.currentStreak,
+    longestStreak: gamificationProfiles.longestStreak,
+    lessonsCompleted: gamificationProfiles.lessonsCompleted,
+    quizzesCompleted: gamificationProfiles.quizzesCompleted,
+    perfectQuizzes: gamificationProfiles.perfectQuizzes,
+    userName: users.name,
+    avatarUrl: users.avatarUrl,
+  })
+    .from(gamificationProfiles)
+    .leftJoin(users, eq(users.id, gamificationProfiles.userId))
+    .orderBy(desc(gamificationProfiles.totalXp))
+    .limit(limit);
 }

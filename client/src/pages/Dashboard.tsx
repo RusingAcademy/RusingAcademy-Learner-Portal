@@ -4,8 +4,10 @@
  */
 import DashboardLayout from "@/components/DashboardLayout";
 import { Link } from "wouter";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useGamification } from "@/contexts/GamificationContext";
+import { trpc } from "@/lib/trpc";
+import { useAuth } from "@/_core/hooks/useAuth";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from "recharts";
@@ -77,7 +79,19 @@ function ProgressRing({ pct, size = 48, color = "#008090" }: { pct: number; size
 
 export default function Dashboard() {
   const { totalXP, level, levelTitle, streak, lessonsCompleted, quizzesPassed, badges, weeklyGoal, weeklyProgress, xpProgress } = useGamification();
+  const { user, isAuthenticated } = useAuth();
   const [announcementIdx, setAnnouncementIdx] = useState(0);
+  const leaderboardQuery = trpc.gamification.getLeaderboard.useQuery({ limit: 5 });
+  const challengesQuery = trpc.challenges.getActive.useQuery(undefined, { enabled: isAuthenticated });
+
+  const myRank = useMemo(() => {
+    if (!user || !leaderboardQuery.data) return null;
+    const idx = leaderboardQuery.data.findIndex((e) => e.userId === user.id);
+    return idx >= 0 ? idx + 1 : null;
+  }, [user, leaderboardQuery.data]);
+
+  const activeChallenges = challengesQuery.data?.filter((c) => !c.isCompleted) ?? [];
+  const completedCount = challengesQuery.data?.filter((c) => c.isCompleted).length ?? 0;
 
   const announcements = [
     { title: "Welcome to RusingÂcademy Learning Portal!", content: "Your bilingual training journey starts here. Explore our ESL and FSL programs, earn XP, unlock badges, and prepare for your SLE exams with confidence." },
@@ -304,6 +318,79 @@ export default function Dashboard() {
 
           {/* Right Column */}
           <div className="space-y-4">
+            {/* Mini Leaderboard */}
+            <div className="ra-glass rounded-xl p-4">
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-sm font-semibold text-[#0c1929] flex items-center gap-1.5">
+                  <span className="material-icons text-[#f5a623]" style={{ fontSize: "16px" }}>leaderboard</span>
+                  Leaderboard
+                </h2>
+                <Link href="/leaderboard" className="text-gray-400 hover:text-[#008090]">
+                  <span className="material-icons text-[18px]">chevron_right</span>
+                </Link>
+              </div>
+              {myRank && (
+                <div className="flex items-center gap-2 mb-3 p-2 rounded-lg" style={{ background: "rgba(0,128,144,0.06)" }}>
+                  <span className="text-lg font-bold text-[#f5a623]">#{myRank}</span>
+                  <span className="text-xs text-gray-500">Your Rank</span>
+                </div>
+              )}
+              <div className="space-y-1.5">
+                {leaderboardQuery.data?.slice(0, 5).map((entry, i) => (
+                  <div key={entry.userId} className="flex items-center gap-2 py-1">
+                    <span className={`text-[10px] font-bold w-5 text-center ${i === 0 ? "text-[#f5a623]" : i === 1 ? "text-gray-400" : i === 2 ? "text-[#cd7f32]" : "text-gray-300"}`}>
+                      {i + 1}
+                    </span>
+                    <div className="w-6 h-6 rounded-full flex items-center justify-center text-white text-[9px] font-bold flex-shrink-0"
+                      style={{ background: i === 0 ? "#f5a623" : i === 1 ? "#a0a0a0" : i === 2 ? "#cd7f32" : "#008090" }}>
+                      {(entry.userName || "?").charAt(0).toUpperCase()}
+                    </div>
+                    <span className="text-[11px] text-gray-600 truncate flex-1">{entry.userName || "Anonymous"}</span>
+                    <span className="text-[10px] font-bold text-[#f5a623]">{entry.totalXp.toLocaleString()}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Active Challenges */}
+            {activeChallenges.length > 0 && (
+              <div className="ra-glass rounded-xl p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <h2 className="text-sm font-semibold text-[#0c1929] flex items-center gap-1.5">
+                    <span className="material-icons text-[#8b5cf6]" style={{ fontSize: "16px" }}>flag</span>
+                    Challenges
+                    <span className="text-[10px] bg-[#8b5cf6]/10 text-[#8b5cf6] px-1.5 py-0.5 rounded-full font-bold">{activeChallenges.length}</span>
+                  </h2>
+                  <Link href="/challenges" className="text-gray-400 hover:text-[#008090]">
+                    <span className="material-icons text-[18px]">chevron_right</span>
+                  </Link>
+                </div>
+                <div className="space-y-2">
+                  {activeChallenges.slice(0, 3).map((c) => {
+                    const progress = Math.min(100, (c.currentValue / c.targetValue) * 100);
+                    return (
+                      <div key={c.id} className="p-2 rounded-lg" style={{ background: "rgba(139,92,246,0.04)" }}>
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-[11px] font-medium text-gray-700 truncate">{c.title}</span>
+                          <span className="text-[10px] font-bold text-[#f5a623]">+{c.xpReward}</span>
+                        </div>
+                        <div className="h-1.5 rounded-full bg-gray-100 overflow-hidden">
+                          <div className="h-full rounded-full transition-all duration-500" style={{ width: `${progress}%`, background: "linear-gradient(90deg, #8b5cf6, #a78bfa)" }} />
+                        </div>
+                        <div className="text-[9px] text-gray-400 mt-0.5">{c.currentValue}/{c.targetValue}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+                {completedCount > 0 && (
+                  <div className="text-[10px] text-[#10b981] font-medium mt-2 flex items-center gap-1">
+                    <span className="material-icons" style={{ fontSize: "12px" }}>check_circle</span>
+                    {completedCount} completed this week
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Calendar */}
             <div className="ra-glass rounded-xl p-4">
               <div className="flex items-center justify-between mb-2">

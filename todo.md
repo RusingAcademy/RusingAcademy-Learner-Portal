@@ -72,3 +72,40 @@
 - [ ] Sprint 8: Social features and B2B/B2G dashboards
 - [ ] Sprint 9: Performance, PWA, responsive polish
 - [ ] Sprint 10: Monetization (Stripe), onboarding, SEO
+
+## Méga-Sprint 3: Advanced Gamification
+- [ ] Extend DB schema: weekly_challenges, challenge_progress, leaderboard_cache tables
+- [ ] Build tRPC routers: leaderboard, challenges
+- [ ] Build Leaderboard page with rankings, filters (weekly/monthly/all-time), animated entries
+- [ ] Build Weekly Challenges system with progress tracking and XP/badge rewards
+- [ ] Build animated celebrations: confetti on quiz pass, level-up modal, streak milestone, badge unlock
+- [ ] Create CelebrationOverlay component with framer-motion animations
+- [ ] Integrate celebrations into LessonViewer, QuizPage, and Dashboard
+- [ ] Add gamification stats to Dashboard hero section (rank, challenges, streaks)
+- [ ] Update Sidebar with challenge progress indicator
+- [ ] Write vitest tests for leaderboard and challenge routers
+- [ ] Quality Gate: Browser E2E testing PASS
+
+## Méga-Sprint 2: ESL Distinct Content
+- [x] Locate and extract ESL_Path_COMPLET.zip source files
+- [x] Parse all 96 ESL lesson markdown files (6 Paths × 4 modules × 4 lessons)
+- [x] Build eslLessonContent.ts with distinct English pedagogical content (3348 lines, 672 slots, 46 quizzes)
+- [x] Update courseData.ts ESL paths with English-specific titles, descriptions, objectives
+- [x] Wire LessonViewer to serve ESL content from eslLessonContent.ts (programId routing)
+- [x] Verify ESL and FSL programs show distinct content in browser (0 TS errors)
+- [x] Quality Gate: vitest (28/28 passed) + TypeScript (0 errors) + browser E2E
+
+## Méga-Sprint 3: Advanced Gamification (Updated)
+- [x] Add weekly_challenges, challenge_progress, celebration_events DB tables
+- [x] Build challenge tRPC router with CRUD + progress tracking
+- [x] Build celebration events tRPC router (unseen, markSeen, markAllSeen)
+- [x] Enhance leaderboard with avatars, streaks, perfectQuizzes in API
+- [x] Build Leaderboard page with rankings, avatars, XP display, podium
+- [x] Build Weekly Challenges page with progress bars, rewards, countdown
+- [x] Build CelebrationOverlay component (confetti, level-up, streak, badge unlock)
+- [x] Integrate celebrations into App.tsx (global overlay + polling)
+- [x] Add leaderboard rank + challenge progress widgets to Dashboard
+- [x] Add Leaderboard and Challenges nav items to Sidebar
+- [x] Write vitest tests for new routers and components (49/49 passed)
+- [x] Quality Gate: TypeScript (0 errors) + vitest (49/49) + browser PASS
+- [x] Save checkpoint and deliver Sprint 2+3 report

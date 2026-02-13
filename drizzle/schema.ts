@@ -152,3 +152,54 @@ export const notifications = mysqlTable("notifications", {
 });
 
 export type Notification = typeof notifications.$inferSelect;
+
+/* ───────────────────────── WEEKLY CHALLENGES ─────────────────────── */
+export const weeklyChallenges = mysqlTable("weekly_challenges", {
+  id: int("id").autoincrement().primaryKey(),
+  title: varchar("title", { length: 256 }).notNull(),
+  titleFr: varchar("titleFr", { length: 256 }).notNull(),
+  description: text("description").notNull(),
+  descriptionFr: text("descriptionFr").notNull(),
+  challengeType: mysqlEnum("challengeType", [
+    "complete_lessons", "earn_xp", "perfect_quizzes", "maintain_streak",
+    "complete_slots", "study_time"
+  ]).notNull(),
+  targetValue: int("targetValue").notNull(),
+  xpReward: int("xpReward").default(200).notNull(),
+  badgeReward: varchar("badgeReward", { length: 64 }),
+  weekStartDate: varchar("weekStartDate", { length: 10 }).notNull(),
+  weekEndDate: varchar("weekEndDate", { length: 10 }).notNull(),
+  isActive: boolean("isActive").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type WeeklyChallenge = typeof weeklyChallenges.$inferSelect;
+
+/* ───────────────────────── CHALLENGE PROGRESS ────────────────────── */
+export const challengeProgress = mysqlTable("challenge_progress", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  challengeId: int("challengeId").notNull(),
+  currentValue: int("currentValue").default(0).notNull(),
+  isCompleted: boolean("isCompleted").default(false).notNull(),
+  completedAt: timestamp("completedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ChallengeProgress = typeof challengeProgress.$inferSelect;
+
+/* ───────────────────────── CELEBRATION EVENTS ────────────────────── */
+export const celebrationEvents = mysqlTable("celebration_events", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  eventType: mysqlEnum("eventType", [
+    "level_up", "badge_earned", "challenge_completed", "streak_milestone",
+    "path_completed", "perfect_quiz", "first_lesson"
+  ]).notNull(),
+  metadata: json("metadata").$type<Record<string, unknown>>(),
+  seen: boolean("seen").default(false).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type CelebrationEvent = typeof celebrationEvents.$inferSelect;

@@ -22,6 +22,8 @@ const mainNav: NavItem[] = [
   { icon: "event", label: "Tutoring Sessions", path: "/tutoring-sessions" },
   { icon: "verified", label: "Authorizations", path: "/authorizations" },
   { icon: "trending_up", label: "Progress", path: "/progress" },
+  { icon: "leaderboard", label: "Leaderboard", path: "/leaderboard" },
+  { icon: "flag", label: "Challenges", path: "/challenges" },
   { icon: "bar_chart", label: "Results", path: "/results" },
   { icon: "description", label: "Reports", path: "/reports" },
   { icon: "calendar_today", label: "Calendar", path: "/calendar" },

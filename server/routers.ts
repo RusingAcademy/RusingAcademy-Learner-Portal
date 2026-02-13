@@ -21,6 +21,8 @@ const BADGE_DEFS: Record<string, { name: string; description: string; icon: stri
   streak_30: { name: "Monthly Champion", description: "30-day learning streak", icon: "diamond", color: "#f5a623", xp: 1000 },
   path_complete: { name: "Path Pioneer", description: "Complete an entire Path", icon: "flag", color: "#27ae60", xp: 500 },
   first_enrollment: { name: "Adventurer", description: "Enroll in your first Path", icon: "explore", color: "#008090", xp: 25 },
+  challenge_champion: { name: "Challenge Champion", description: "Complete a weekly challenge", icon: "emoji_events", color: "#f59e0b", xp: 250 },
+  five_challenges: { name: "Challenge Master", description: "Complete 5 weekly challenges", icon: "military_tech", color: "#8b5cf6", xp: 500 },
 };
 
 async function checkAndAwardBadges(userId: number, profile: NonNullable<Awaited<ReturnType<typeof db.getOrCreateGamificationProfile>>>) {
@@ -54,10 +56,37 @@ async function checkAndAwardBadges(userId: number, profile: NonNullable<Awaited<
           message: `${def.description} (+${def.xp} XP)`, type: "achievement",
         });
         await db.logActivity({ userId, activityType: "badge_earned", metadata: { badgeId: check.id }, xpEarned: def.xp });
+        // Create celebration event for badge
+        await db.createCelebration({ userId, eventType: "badge_earned", metadata: { badgeId: check.id, badgeName: def.name, badgeIcon: def.icon, badgeColor: def.color } });
       }
     }
   }
   return awarded;
+}
+
+/** Helper: update active challenge progress after user actions */
+async function updateChallengeProgress(userId: number, challengeType: string, increment: number) {
+  const activeChallenges = await db.getActiveChallenges();
+  for (const challenge of activeChallenges) {
+    if (challenge.challengeType === challengeType) {
+      const result = await db.upsertChallengeProgress(userId, challenge.id, increment);
+      if (result && typeof result === "object" && "isCompleted" in result && result.isCompleted) {
+        // Award XP and create celebration
+        await db.addXp(userId, challenge.xpReward);
+        await db.createCelebration({
+          userId,
+          eventType: "challenge_completed",
+          metadata: { challengeId: challenge.id, title: challenge.title, xpReward: challenge.xpReward },
+        });
+        await db.createNotification({
+          userId,
+          title: `Challenge Completed: ${challenge.title}`,
+          message: `You earned ${challenge.xpReward} XP! Great work!`,
+          type: "achievement",
+        });
+      }
+    }
+  }
 }
 
 export const appRouter = router({
@@ -81,25 +110,82 @@ export const appRouter = router({
     addXp: protectedProcedure
       .input(z.object({ amount: z.number().min(1).max(1000) }))
       .mutation(async ({ ctx, input }) => {
+        const oldProfile = await db.getOrCreateGamificationProfile(ctx.user.id);
+        const oldLevel = oldProfile?.level ?? 1;
         const result = await db.addXp(ctx.user.id, input.amount);
         await db.updateStreak(ctx.user.id);
         const profile = await db.getOrCreateGamificationProfile(ctx.user.id);
+        // Check for level up celebration
+        if (profile && profile.level > oldLevel) {
+          await db.createCelebration({
+            userId: ctx.user.id,
+            eventType: "level_up",
+            metadata: { oldLevel, newLevel: profile.level },
+          });
+        }
         if (profile) await checkAndAwardBadges(ctx.user.id, profile);
+        // Update earn_xp challenges
+        await updateChallengeProgress(ctx.user.id, "earn_xp", input.amount);
         return result;
       }),
-    getLeaderboard: publicProcedure.query(async () => {
-      const dbInstance = await db.getDb();
-      if (!dbInstance) return [];
-      return dbInstance
-        .select({
-          userId: gamificationProfiles.userId, totalXp: gamificationProfiles.totalXp,
-          level: gamificationProfiles.level, currentStreak: gamificationProfiles.currentStreak,
-          lessonsCompleted: gamificationProfiles.lessonsCompleted, userName: users.name,
-        })
-        .from(gamificationProfiles)
-        .leftJoin(users, eq(users.id, gamificationProfiles.userId))
-        .orderBy(desc(gamificationProfiles.totalXp))
-        .limit(20);
+    getLeaderboard: publicProcedure
+      .input(z.object({ limit: z.number().min(1).max(100).optional() }).optional())
+      .query(async ({ input }) => {
+        return db.getLeaderboard(input?.limit ?? 20);
+      }),
+  }),
+
+  challenges: router({
+    getActive: protectedProcedure.query(async ({ ctx }) => {
+      await db.initChallengeProgressForUser(ctx.user.id);
+      const challenges = await db.getActiveChallenges();
+      const progress = await db.getUserChallengeProgress(ctx.user.id);
+      return challenges.map(c => {
+        const p = progress.find(p => p.progress.challengeId === c.id);
+        return {
+          ...c,
+          currentValue: p?.progress.currentValue ?? 0,
+          isCompleted: p?.progress.isCompleted ?? false,
+          completedAt: p?.progress.completedAt ?? null,
+        };
+      });
+    }),
+    getHistory: protectedProcedure.query(async ({ ctx }) => {
+      return db.getUserChallengeProgress(ctx.user.id);
+    }),
+    // Admin: create a new weekly challenge
+    create: protectedProcedure
+      .input(z.object({
+        title: z.string().min(1),
+        titleFr: z.string().min(1),
+        description: z.string().min(1),
+        descriptionFr: z.string().min(1),
+        challengeType: z.enum(["complete_lessons", "earn_xp", "perfect_quizzes", "maintain_streak", "complete_slots", "study_time"]),
+        targetValue: z.number().min(1),
+        xpReward: z.number().min(1).default(200),
+        badgeReward: z.string().optional(),
+        weekStartDate: z.string(),
+        weekEndDate: z.string(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") throw new Error("Admin only");
+        return db.createChallenge(input);
+      }),
+  }),
+
+  celebrations: router({
+    getUnseen: protectedProcedure.query(async ({ ctx }) => {
+      return db.getUnseenCelebrations(ctx.user.id);
+    }),
+    markSeen: protectedProcedure
+      .input(z.object({ celebrationId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        await db.markCelebrationSeen(input.celebrationId, ctx.user.id);
+        return { success: true };
+      }),
+    markAllSeen: protectedProcedure.mutation(async ({ ctx }) => {
+      await db.markAllCelebrationsSeen(ctx.user.id);
+      return { success: true };
     }),
   }),
 
@@ -128,9 +214,19 @@ export const appRouter = router({
           }
           await db.logActivity({ userId: ctx.user.id, activityType: "lesson_completed", programId: input.programId, pathId: input.pathId, lessonId: input.lessonId, xpEarned });
           const profile = await db.getOrCreateGamificationProfile(ctx.user.id);
-          if (profile) await checkAndAwardBadges(ctx.user.id, profile);
+          if (profile) {
+            await checkAndAwardBadges(ctx.user.id, profile);
+            // First lesson celebration
+            if (profile.lessonsCompleted === 1) {
+              await db.createCelebration({ userId: ctx.user.id, eventType: "first_lesson", metadata: { lessonId: input.lessonId } });
+            }
+          }
+          // Update lesson challenges
+          await updateChallengeProgress(ctx.user.id, "complete_lessons", 1);
         } else {
           await db.logActivity({ userId: ctx.user.id, activityType: "slot_completed", programId: input.programId, pathId: input.pathId, lessonId: input.lessonId, xpEarned });
+          // Update slot challenges
+          await updateChallengeProgress(ctx.user.id, "complete_slots", 1);
         }
         return { result, xpEarned };
       }),
@@ -170,6 +266,11 @@ export const appRouter = router({
         await db.logActivity({ userId: ctx.user.id, activityType: "quiz_completed", programId: input.programId, pathId: input.pathId, lessonId: input.lessonId, metadata: { score: input.score, isPerfect }, xpEarned });
         const profile = await db.getOrCreateGamificationProfile(ctx.user.id);
         if (profile) await checkAndAwardBadges(ctx.user.id, profile);
+        // Perfect quiz celebration
+        if (isPerfect) {
+          await db.createCelebration({ userId: ctx.user.id, eventType: "perfect_quiz", metadata: { score: input.score, lessonId: input.lessonId } });
+          await updateChallengeProgress(ctx.user.id, "perfect_quizzes", 1);
+        }
         return { ...result, xpEarned, isPerfect };
       }),
     getAttempts: protectedProcedure

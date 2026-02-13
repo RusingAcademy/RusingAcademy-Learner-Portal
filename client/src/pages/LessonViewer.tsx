@@ -488,7 +488,7 @@ export default function LessonViewer() {
   }
 
   // Get real lesson content from extracted data
-  const realContent = useMemo(() => getLessonContent(lessonId), [lessonId]);
+  const realContent = useMemo(() => getLessonContent(lessonId, programId), [lessonId, programId]);
 
   const { completedLessons, addXP, completeLesson, completeSlot } = useGamification();
   const moduleIndex = currentModule ? path!.modules.indexOf(currentModule) : 0;
