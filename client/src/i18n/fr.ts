@@ -271,6 +271,88 @@ export const fr = {
     progressOverview: "Aperçu du progrès",
   },
 
+  // Study Tools
+  studyTools: {
+    notes: "Notes d'étude",
+    flashcards: "Cartes mémoire",
+    studyPlanner: "Planificateur d'étude",
+    vocabulary: "Vocabulaire",
+  },
+
+  // Notes
+  notes: {
+    title: "Notes d'étude",
+    newNote: "Nouvelle note",
+    editNote: "Modifier la note",
+    searchNotes: "Rechercher des notes...",
+    noNotes: "Aucune note pour le moment",
+    noNotesDesc: "Créez votre première note pour organiser vos études !",
+    pinned: "Épinglé",
+    tags: "Étiquettes",
+    lastEdited: "Dernière modification",
+    deleteConfirm: "Supprimer cette note ?",
+  },
+
+  // Flashcards
+  flashcards: {
+    title: "Cartes mémoire",
+    newDeck: "Nouveau paquet",
+    addCard: "Ajouter une carte",
+    reviewDeck: "Réviser le paquet",
+    cardsToReview: "cartes à réviser",
+    noDecks: "Aucun paquet de cartes pour le moment",
+    noDecksDesc: "Créez votre premier paquet pour apprendre avec la répétition espacée !",
+    front: "Recto",
+    back: "Verso",
+    again: "Encore",
+    hard: "Difficile",
+    good: "Bien",
+    easy: "Facile",
+    reviewComplete: "Révision terminée !",
+    mastery: "Maîtrise",
+  },
+
+  // Study Planner
+  studyPlanner: {
+    title: "Planificateur d'étude",
+    newSession: "Nouvelle séance",
+    editSession: "Modifier la séance",
+    sessionType: "Type de séance",
+    upcoming: "À venir",
+    planned: "Planifié",
+    completed: "Terminé",
+    noSessions: "Aucune séance planifiée",
+    deleteConfirm: "Supprimer cette séance ?",
+    duration: "Durée",
+    minutes: "minutes",
+  },
+
+  // Vocabulary
+  vocabulary: {
+    title: "Constructeur de vocabulaire",
+    addWord: "Ajouter un mot",
+    quizMode: "Mode quiz",
+    searchWords: "Rechercher des mots...",
+    noWords: "Aucun mot de vocabulaire pour le moment",
+    noWordsDesc: "Commencez à enrichir votre vocabulaire en ajoutant des mots !",
+    word: "Mot",
+    translation: "Traduction",
+    definition: "Définition",
+    example: "Phrase d'exemple",
+    pronunciation: "Prononciation",
+    partOfSpeech: "Partie du discours",
+    mastery: "Maîtrise",
+    new: "Nouveau",
+    learning: "En apprentissage",
+    familiar: "Familier",
+    mastered: "Maîtrisé",
+    quizComplete: "Quiz terminé !",
+    correct: "Correct",
+    incorrect: "Incorrect",
+    tryAgain: "Réessayer",
+    deleteConfirm: "Supprimer ce mot ?",
+  },
+
   // Auth
   auth: {
     loginTitle: "Bienvenue à RusingÂcademy",

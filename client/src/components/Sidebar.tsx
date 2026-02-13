@@ -32,6 +32,13 @@ const mainNav: NavItem[] = [
   { icon: "calendar_today", label: "Calendar", path: "/calendar" },
 ];
 
+const studyToolsNav: NavItem[] = [
+  { icon: "note_alt", label: "Study Notes", path: "/notes" },
+  { icon: "style", label: "Flashcards", path: "/flashcards" },
+  { icon: "event_note", label: "Study Planner", path: "/study-planner" },
+  { icon: "translate", label: "Vocabulary", path: "/vocabulary" },
+];
+
 const secondaryNav: NavItem[] = [
   { icon: "notifications", label: "Notifications", path: "/notifications", badge: 3 },
   { icon: "forum", label: "Community", path: "/community-forum" },
@@ -133,6 +140,24 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
                     {item.badge}
                   </span>
                 )}
+              </div>
+            </Link>
+          ))}
+
+          <div className="mx-3 my-2 border-t border-gray-100" />
+
+          <div className="text-[10px] text-gray-400 uppercase tracking-wider px-3 mb-1 font-semibold">Study Tools</div>
+          {studyToolsNav.map((item) => (
+            <Link key={item.path} href={item.path} onClick={onToggle}>
+              <div className={`flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] transition-all duration-200 group ${
+                isActive(item.path)
+                  ? "bg-[#008090]/8 text-[#008090] font-semibold border-l-[3px] border-[#008090]"
+                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-50 border-l-[3px] border-transparent"
+              }`}>
+                <span className={`material-icons text-lg ${isActive(item.path) ? "text-[#008090]" : "text-gray-400 group-hover:text-gray-600"}`}>
+                  {item.icon}
+                </span>
+                <span className="font-medium">{item.label}</span>
               </div>
             </Link>
           ))}

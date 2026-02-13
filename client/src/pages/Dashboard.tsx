@@ -415,6 +415,28 @@ export default function Dashboard() {
               </div>
             </div>
 
+            {/* Study Tools */}
+            <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
+              <h2 className="text-sm font-semibold text-gray-900 mb-3">Study Tools</h2>
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  { icon: "note_alt", label: "Notes", href: "/notes", color: "#008090", bg: "#008090" },
+                  { icon: "style", label: "Flashcards", href: "/flashcards", color: "#8b5cf6", bg: "#8b5cf6" },
+                  { icon: "event_note", label: "Planner", href: "/study-planner", color: "#f59e0b", bg: "#f59e0b" },
+                  { icon: "translate", label: "Vocabulary", href: "/vocabulary", color: "#3b82f6", bg: "#3b82f6" },
+                ].map((tool) => (
+                  <Link key={tool.label} href={tool.href}>
+                    <div className="flex flex-col items-center gap-1.5 p-3 rounded-xl cursor-pointer hover:shadow-sm transition-all border border-gray-100 hover:border-gray-200">
+                      <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: tool.bg + '12' }}>
+                        <span className="material-icons text-lg" style={{ color: tool.color }}>{tool.icon}</span>
+                      </div>
+                      <span className="text-[10px] text-gray-600 font-medium">{tool.label}</span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+
             {/* Messages */}
             <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
               <div className="flex items-center justify-between mb-3">

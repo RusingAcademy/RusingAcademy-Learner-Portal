@@ -271,6 +271,88 @@ export const en = {
     progressOverview: "Progress Overview",
   },
 
+  // Study Tools
+  studyTools: {
+    notes: "Study Notes",
+    flashcards: "Flashcards",
+    studyPlanner: "Study Planner",
+    vocabulary: "Vocabulary",
+  },
+
+  // Notes
+  notes: {
+    title: "Study Notes",
+    newNote: "New Note",
+    editNote: "Edit Note",
+    searchNotes: "Search notes...",
+    noNotes: "No notes yet",
+    noNotesDesc: "Create your first note to start organizing your studies!",
+    pinned: "Pinned",
+    tags: "Tags",
+    lastEdited: "Last edited",
+    deleteConfirm: "Delete this note?",
+  },
+
+  // Flashcards
+  flashcards: {
+    title: "Flashcards",
+    newDeck: "New Deck",
+    addCard: "Add Card",
+    reviewDeck: "Review Deck",
+    cardsToReview: "cards to review",
+    noDecks: "No flashcard decks yet",
+    noDecksDesc: "Create your first deck to start learning with spaced repetition!",
+    front: "Front",
+    back: "Back",
+    again: "Again",
+    hard: "Hard",
+    good: "Good",
+    easy: "Easy",
+    reviewComplete: "Review Complete!",
+    mastery: "Mastery",
+  },
+
+  // Study Planner
+  studyPlanner: {
+    title: "Study Planner",
+    newSession: "New Session",
+    editSession: "Edit Session",
+    sessionType: "Session Type",
+    upcoming: "Upcoming",
+    planned: "Planned",
+    completed: "Completed",
+    noSessions: "No sessions planned",
+    deleteConfirm: "Delete this session?",
+    duration: "Duration",
+    minutes: "minutes",
+  },
+
+  // Vocabulary
+  vocabulary: {
+    title: "Vocabulary Builder",
+    addWord: "Add Word",
+    quizMode: "Quiz Mode",
+    searchWords: "Search words...",
+    noWords: "No vocabulary words yet",
+    noWordsDesc: "Start building your vocabulary by adding words!",
+    word: "Word",
+    translation: "Translation",
+    definition: "Definition",
+    example: "Example Sentence",
+    pronunciation: "Pronunciation",
+    partOfSpeech: "Part of Speech",
+    mastery: "Mastery",
+    new: "New",
+    learning: "Learning",
+    familiar: "Familiar",
+    mastered: "Mastered",
+    quizComplete: "Quiz Complete!",
+    correct: "Correct",
+    incorrect: "Incorrect",
+    tryAgain: "Try Again",
+    deleteConfirm: "Delete this word?",
+  },
+
   // Auth
   auth: {
     loginTitle: "Welcome to RusingÂcademy",

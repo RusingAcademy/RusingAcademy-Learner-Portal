@@ -22,6 +22,13 @@
       "when": 1770962785590,
       "tag": "0002_sloppy_wallop",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1770996859639,
+      "tag": "0003_regular_siren",
+      "breakpoints": true
     }
   ]
 }

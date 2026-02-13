@@ -29,6 +29,10 @@ import WeeklyChallenges from "./pages/WeeklyChallenges";
 import SLEPractice from "./pages/SLEPractice";
 import AIAssistant from "./pages/AIAssistant";
 import AdminDashboard from "./pages/AdminDashboard";
+import Notes from "./pages/Notes";
+import Flashcards from "./pages/Flashcards";
+import StudyPlanner from "./pages/StudyPlanner";
+import Vocabulary from "./pages/Vocabulary";
 import CelebrationOverlay from "./components/CelebrationOverlay";
 import FloatingAICompanion from "./components/FloatingAICompanion";
 import { LanguageProvider } from "./contexts/LanguageContext";
@@ -59,6 +63,10 @@ function Router() {
       <Route path="/help" component={Help} />
       <Route path="/profile" component={MyProfile} />
       <Route path="/settings" component={MySettings} />
+      <Route path="/notes" component={Notes} />
+      <Route path="/flashcards" component={Flashcards} />
+      <Route path="/study-planner" component={StudyPlanner} />
+      <Route path="/vocabulary" component={Vocabulary} />
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />

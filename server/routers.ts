@@ -6,6 +6,7 @@ import { TRPCError } from "@trpc/server";
 import { invokeLLM } from "./_core/llm";
 import { z } from "zod";
 import * as db from "./db";
+import { notesRouter, flashcardsRouter, studyPlannerRouter, vocabularyRouter } from "./routers-sprint17";
 import { gamificationProfiles, users } from "../drizzle/schema";
 import { desc, eq, sql } from "drizzle-orm";
 
@@ -358,6 +359,11 @@ Always be professional, supportive, and pedagogically sound. When the user write
         return recommendations.sort((a, b) => a.priority - b.priority).slice(0, 4);
       }),
   }),
+
+  notes: notesRouter,
+  flashcards: flashcardsRouter,
+  studyPlanner: studyPlannerRouter,
+  vocabulary: vocabularyRouter,
 
   admin: router({
     overview: protectedProcedure.query(async ({ ctx }) => {

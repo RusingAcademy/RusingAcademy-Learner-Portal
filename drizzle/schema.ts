@@ -203,3 +203,100 @@ export const celebrationEvents = mysqlTable("celebration_events", {
 });
 
 export type CelebrationEvent = typeof celebrationEvents.$inferSelect;
+
+/* ───────────────────────────── STUDY NOTES ──────────────────────────── */
+export const studyNotes = mysqlTable("study_notes", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  title: varchar("title", { length: 256 }).notNull(),
+  content: text("content").notNull(),
+  tags: json("tags").$type<string[]>(),
+  programId: varchar("programId", { length: 16 }),
+  pathId: varchar("pathId", { length: 64 }),
+  lessonId: varchar("lessonId", { length: 16 }),
+  isPinned: boolean("isPinned").default(false).notNull(),
+  color: varchar("color", { length: 16 }).default("default").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type StudyNote = typeof studyNotes.$inferSelect;
+
+/* ───────────────────────────── FLASHCARD DECKS ─────────────────────── */
+export const flashcardDecks = mysqlTable("flashcard_decks", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  name: varchar("name", { length: 256 }).notNull(),
+  description: text("description"),
+  programId: varchar("programId", { length: 16 }),
+  pathId: varchar("pathId", { length: 64 }),
+  cardCount: int("cardCount").default(0).notNull(),
+  color: varchar("color", { length: 16 }).default("teal").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type FlashcardDeck = typeof flashcardDecks.$inferSelect;
+
+/* ───────────────────────────── FLASHCARDS ───────────────────────────── */
+export const flashcards = mysqlTable("flashcards", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  deckId: int("deckId").notNull(),
+  front: text("front").notNull(),
+  back: text("back").notNull(),
+  hint: text("hint"),
+  easeFactor: int("easeFactor").default(250).notNull(),
+  interval: int("interval_days").default(0).notNull(),
+  repetitions: int("repetitions").default(0).notNull(),
+  nextReviewDate: varchar("nextReviewDate", { length: 10 }),
+  lastReviewDate: varchar("lastReviewDate", { length: 10 }),
+  status: mysqlEnum("status", ["new", "learning", "review", "mastered"]).default("new").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Flashcard = typeof flashcards.$inferSelect;
+
+/* ───────────────────────────── STUDY SESSIONS ───────────────────────── */
+export const studySessions = mysqlTable("study_sessions", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  title: varchar("title", { length: 256 }).notNull(),
+  description: text("description"),
+  sessionType: mysqlEnum("sessionType", ["lesson", "quiz", "sle_practice", "flashcard_review", "tutoring", "custom"]).default("custom").notNull(),
+  scheduledDate: varchar("scheduledDate", { length: 10 }).notNull(),
+  scheduledTime: varchar("scheduledTime", { length: 5 }),
+  durationMinutes: int("durationMinutes").default(30).notNull(),
+  isCompleted: boolean("isCompleted").default(false).notNull(),
+  programId: varchar("programId", { length: 16 }),
+  pathId: varchar("pathId", { length: 64 }),
+  lessonId: varchar("lessonId", { length: 16 }),
+  completedAt: timestamp("completedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type StudySession = typeof studySessions.$inferSelect;
+
+/* ───────────────────────────── VOCABULARY ────────────────────────────── */
+export const vocabularyItems = mysqlTable("vocabulary_items", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  word: varchar("word", { length: 256 }).notNull(),
+  translation: varchar("translation", { length: 256 }).notNull(),
+  definition: text("definition"),
+  exampleSentence: text("exampleSentence"),
+  pronunciation: varchar("pronunciation", { length: 256 }),
+  partOfSpeech: varchar("partOfSpeech", { length: 32 }),
+  programId: varchar("programId", { length: 16 }),
+  pathId: varchar("pathId", { length: 64 }),
+  lessonId: varchar("lessonId", { length: 16 }),
+  mastery: mysqlEnum("mastery", ["new", "learning", "familiar", "mastered"]).default("new").notNull(),
+  reviewCount: int("reviewCount").default(0).notNull(),
+  correctCount: int("correctCount").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type VocabularyItem = typeof vocabularyItems.$inferSelect;
