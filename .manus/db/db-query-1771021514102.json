@@ -1,0 +1,37 @@
+{
+  "query": "SHOW CREATE TABLE coach_profiles;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user cYPAHDVF1MZtM6S.caf383761fdf --database Rc5qDPWJcsCQwb6WK47Ybr --execute SHOW CREATE TABLE coach_profiles;",
+  "rows": [
+    {
+      "Table": "coach_profiles",
+      "Create Table": "CREATE TABLE `coach_profiles` ("
+    }
+  ],
+  "messages": [
+    "  `id` int(11) NOT NULL AUTO_INCREMENT,",
+    "  `userId` int(11) NOT NULL,",
+    "  `displayName` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL,",
+    "  `bio` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,",
+    "  `specializations` json DEFAULT NULL,",
+    "  `languages` json DEFAULT NULL,",
+    "  `cefrLevels` json DEFAULT NULL,",
+    "  `hourlyRate` int(11) DEFAULT NULL,",
+    "  `status` enum('pending','active','suspended','inactive') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',",
+    "  `avatarUrl` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,",
+    "  `linkedinUrl` varchar(512) COLLATE utf8mb4_unicode_ci DEFAULT NULL,",
+    "  `totalStudents` int(11) NOT NULL DEFAULT '0',",
+    "  `totalSessions` int(11) NOT NULL DEFAULT '0',",
+    "  `averageRating` int(11) NOT NULL DEFAULT '0',",
+    "  `suspendedAt` timestamp NULL DEFAULT NULL,",
+    "  `suspendedReason` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,",
+    "  `approvedAt` timestamp NULL DEFAULT NULL,",
+    "  `approvedBy` int(11) DEFAULT NULL,",
+    "  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,",
+    "  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,",
+    "  PRIMARY KEY (`id`) /*T![clustered_index] CLUSTERED */",
+    ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+  ],
+  "stdout": "Table\tCreate Table\ncoach_profiles\tCREATE TABLE `coach_profiles` (\n  `id` int(11) NOT NULL AUTO_INCREMENT,\n  `userId` int(11) NOT NULL,\n  `displayName` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `bio` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `specializations` json DEFAULT NULL,\n  `languages` json DEFAULT NULL,\n  `cefrLevels` json DEFAULT NULL,\n  `hourlyRate` int(11) DEFAULT NULL,\n  `status` enum('pending','active','suspended','inactive') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',\n  `avatarUrl` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `linkedinUrl` varchar(512) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `totalStudents` int(11) NOT NULL DEFAULT '0',\n  `totalSessions` int(11) NOT NULL DEFAULT '0',\n  `averageRating` int(11) NOT NULL DEFAULT '0',\n  `suspendedAt` timestamp NULL DEFAULT NULL,\n  `suspendedReason` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `approvedAt` timestamp NULL DEFAULT NULL,\n  `approvedBy` int(11) DEFAULT NULL,\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  PRIMARY KEY (`id`) /*T![clustered_index] CLUSTERED */\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci\n",
+  "stderr": "",
+  "execution_time_ms": 57
+}

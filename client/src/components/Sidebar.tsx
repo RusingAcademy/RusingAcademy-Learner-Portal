@@ -62,6 +62,9 @@ const secondaryNav: NavItem[] = [
 
 const adminNav: NavItem[] = [
   { icon: "admin_panel_settings", label: "Admin Panel", path: "/admin" },
+  { icon: "people", label: "Coach Hub", path: "/admin/coaches" },
+  { icon: "bar_chart", label: "Executive Summary", path: "/admin/analytics" },
+  { icon: "edit_note", label: "Content Pipeline", path: "/admin/content-pipeline" },
 ];
 
 interface SidebarProps {

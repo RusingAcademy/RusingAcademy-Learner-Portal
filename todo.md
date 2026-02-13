@@ -496,3 +496,15 @@
 - [x] Audit all 47 routes for authentication and authorization
 - [x] Verify bilingual i18n coverage for all Sprint 41-50 features (EN/FR)
 - [x] Final checkpoint and delivery report
+
+## Sprint 2-5 Admin UI: Coach Hub, Executive Summary, Content Pipeline
+- [x] Create shared admin components (StatusBadge, AdminStatsGrid, AdminEmptyState, AdminSectionShell)
+- [x] Build AdminCoachHub page (applications, profiles, lifecycle stats, commission tiers, payouts)
+- [x] Build AdminExecutiveSummary page (8 KPIs, platform health, revenue trend, top performers, activity)
+- [x] Build AdminContentPipeline page (pipeline stats, workflow, calendar, quality scores, templates)
+- [x] Fix AdminCoachHub TypeScript errors (toast import, commission analytics field names)
+- [x] Fix Drizzle schema to match actual DB (coachProfiles, coachPayouts, contentTemplates, commissionTiers)
+- [x] Wire routes in App.tsx (/admin/coaches, /admin/analytics, /admin/content-pipeline)
+- [x] Add Coach Hub, Executive Summary, Content Pipeline to sidebar admin nav
+- [x] Write vitest tests for Sprint 2-5 admin procedures (20/20 passing)
+- [x] Verify TypeScript (0 errors) after all Sprint 2-5 changes

@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS `coach_profiles` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `userId` int NOT NULL,\n  `displayName` varchar(200) NOT NULL,\n  `bio` text,\n  `specializations` text,\n  `languages` text,\n  `certifications` text,\n  `hourlyRate` int DEFAULT 0,\n  `status` enum('pending','active','suspended','inactive') NOT NULL DEFAULT 'pending',\n  `averageRating` int DEFAULT 0,\n  `totalSessions` int DEFAULT 0,\n  `totalStudents` int DEFAULT 0,\n  `suspendedAt` timestamp,\n  `suspendedReason` text,\n  `activatedAt` timestamp,\n  `createdAt` timestamp NOT NULL DEFAULT (now()),\n  `updatedAt` timestamp NOT NULL DEFAULT (now()),\n  CONSTRAINT `coach_profiles_id` PRIMARY KEY(`id`)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user cYPAHDVF1MZtM6S.caf383761fdf --database Rc5qDPWJcsCQwb6WK47Ybr --execute CREATE TABLE IF NOT EXISTS `coach_profiles` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `userId` int NOT NULL,\n  `displayName` varchar(200) NOT NULL,\n  `bio` text,\n  `specializations` text,\n  `languages` text,\n  `certifications` text,\n  `hourlyRate` int DEFAULT 0,\n  `status` enum('pending','active','suspended','inactive') NOT NULL DEFAULT 'pending',\n  `averageRating` int DEFAULT 0,\n  `totalSessions` int DEFAULT 0,\n  `totalStudents` int DEFAULT 0,\n  `suspendedAt` timestamp,\n  `suspendedReason` text,\n  `activatedAt` timestamp,\n  `createdAt` timestamp NOT NULL DEFAULT (now()),\n  `updatedAt` timestamp NOT NULL DEFAULT (now()),\n  CONSTRAINT `coach_profiles_id` PRIMARY KEY(`id`)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 112
+}

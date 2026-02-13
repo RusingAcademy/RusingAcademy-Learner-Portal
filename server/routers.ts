@@ -10,6 +10,7 @@ import { notesRouter, flashcardsRouter, studyPlannerRouter, vocabularyRouter } f
 import { aiVocabularyRouter, dailyGoalsRouter, discussionsRouter, writingRouter, recommendationsRouter } from "./routers-sprint22";
 import { certificateRouter, readingLabRouter, listeningLabRouter, grammarDrillsRouter, peerReviewRouter } from "./routers-sprint31";
 import { mockSleRouter, coachRouter, studyGroupRouter, bookmarkRouter, dictationRouter, searchRouter, onboardingRouter, dailyReviewRouter } from "./routers-sprint41";
+import * as adminDb from "./db-admin";
 import { gamificationProfiles, users } from "../drizzle/schema";
 import { desc, eq, sql } from "drizzle-orm";
 
@@ -454,6 +455,131 @@ Always be professional, supportive, and pedagogically sound. When the user write
       .mutation(async ({ ctx, input }) => {
         if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
         return db.createAnnouncement(input);
+      }),
+
+    /* ═══ Sprint 2: Coach Hub & Commission ═══ */
+    coachApplications: protectedProcedure
+      .input(z.object({ status: z.string().optional() }))
+      .query(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
+        return adminDb.getCoachApplications(input.status);
+      }),
+    updateApplicationStatus: protectedProcedure
+      .input(z.object({ id: z.number(), status: z.string(), notes: z.string().optional() }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
+        return adminDb.updateApplicationStatus(input.id, input.status, ctx.user.id, input.notes);
+      }),
+    coachProfiles: protectedProcedure
+      .input(z.object({ status: z.string().optional() }))
+      .query(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
+        return adminDb.getCoachProfiles(input.status);
+      }),
+    suspendCoach: protectedProcedure
+      .input(z.object({ coachId: z.number(), reason: z.string() }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
+        return adminDb.suspendCoach(input.coachId, input.reason);
+      }),
+    reactivateCoach: protectedProcedure
+      .input(z.object({ coachId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
+        return adminDb.reactivateCoach(input.coachId);
+      }),
+    coachLifecycleStats: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
+      return adminDb.getCoachLifecycleStats();
+    }),
+    commissionTiers: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
+      return adminDb.getCommissionTiers();
+    }),
+    createCommissionTier: protectedProcedure
+      .input(z.object({ name: z.string(), description: z.string().optional(), commissionRate: z.number(), minStudents: z.number().optional(), maxStudents: z.number().optional() }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
+        return adminDb.createCommissionTier(input);
+      }),
+    updateCommissionTier: protectedProcedure
+      .input(z.object({ id: z.number(), name: z.string().optional(), commissionRate: z.number().optional(), isActive: z.boolean().optional() }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
+        return adminDb.updateCommissionTier(input.id, input);
+      }),
+    coachPayouts: protectedProcedure
+      .input(z.object({ coachId: z.number().optional() }))
+      .query(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
+        return adminDb.getCoachPayouts(input.coachId);
+      }),
+    commissionAnalytics: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
+      return adminDb.getCommissionAnalytics();
+    }),
+
+    /* ═══ Sprint 4: Executive Summary ═══ */
+    executiveKPIs: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
+      return adminDb.getExecutiveKPIs();
+    }),
+    platformHealth: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
+      return adminDb.getPlatformHealth();
+    }),
+    revenueTrend: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
+      return adminDb.getRevenueTrend();
+    }),
+    topPerformers: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
+      return adminDb.getTopPerformers();
+    }),
+    recentActivity: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
+      return adminDb.getRecentAdminActivity();
+    }),
+
+    /* ═══ Sprint 5: Content Pipeline ═══ */
+    contentPipelineStats: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
+      return adminDb.getContentPipelineStats();
+    }),
+    contentPipelineItems: protectedProcedure
+      .input(z.object({ status: z.string().optional() }))
+      .query(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
+        return adminDb.getContentPipelineItems(input.status);
+      }),
+    updateContentStatus: protectedProcedure
+      .input(z.object({ id: z.number(), status: z.string() }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
+        return adminDb.updateContentItemStatus(input.id, input.status, ctx.user.id);
+      }),
+    contentCalendar: protectedProcedure
+      .input(z.object({ startDate: z.string().optional(), endDate: z.string().optional() }))
+      .query(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
+        return adminDb.getContentCalendarEntries(
+          input.startDate ? new Date(input.startDate) : undefined,
+          input.endDate ? new Date(input.endDate) : undefined
+        );
+      }),
+    contentQualityScores: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
+      return adminDb.getContentQualityScores();
+    }),
+    contentTemplates: protectedProcedure.query(async ({ ctx }) => {
+      if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
+      return adminDb.getContentTemplatesList();
+    }),
+    createContentItem: protectedProcedure
+      .input(z.object({ title: z.string(), titleFr: z.string().optional(), contentType: z.string(), body: z.string().optional() }))
+      .mutation(async ({ ctx, input }) => {
+        if (ctx.user.role !== "admin") throw new TRPCError({ code: "FORBIDDEN" });
+        return adminDb.createContentItem({ ...input, authorId: ctx.user.id });
       }),
   }),
 });

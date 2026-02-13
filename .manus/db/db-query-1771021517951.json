@@ -1,0 +1,29 @@
+{
+  "query": "SHOW CREATE TABLE coach_payouts;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user cYPAHDVF1MZtM6S.caf383761fdf --database Rc5qDPWJcsCQwb6WK47Ybr --execute SHOW CREATE TABLE coach_payouts;",
+  "rows": [
+    {
+      "Table": "coach_payouts",
+      "Create Table": "CREATE TABLE `coach_payouts` ("
+    }
+  ],
+  "messages": [
+    "  `id` int(11) NOT NULL AUTO_INCREMENT,",
+    "  `coachId` int(11) NOT NULL,",
+    "  `amount` int(11) NOT NULL,",
+    "  `currency` varchar(3) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'CAD',",
+    "  `periodStart` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,",
+    "  `periodEnd` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,",
+    "  `sessionsCount` int(11) NOT NULL DEFAULT '0',",
+    "  `commissionRate` int(11) NOT NULL,",
+    "  `status` enum('pending','processing','paid','failed') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',",
+    "  `paidAt` timestamp NULL DEFAULT NULL,",
+    "  `notes` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,",
+    "  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,",
+    "  PRIMARY KEY (`id`) /*T![clustered_index] CLUSTERED */",
+    ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+  ],
+  "stdout": "Table\tCreate Table\ncoach_payouts\tCREATE TABLE `coach_payouts` (\n  `id` int(11) NOT NULL AUTO_INCREMENT,\n  `coachId` int(11) NOT NULL,\n  `amount` int(11) NOT NULL,\n  `currency` varchar(3) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'CAD',\n  `periodStart` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `periodEnd` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `sessionsCount` int(11) NOT NULL DEFAULT '0',\n  `commissionRate` int(11) NOT NULL,\n  `status` enum('pending','processing','paid','failed') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pending',\n  `paidAt` timestamp NULL DEFAULT NULL,\n  `notes` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  PRIMARY KEY (`id`) /*T![clustered_index] CLUSTERED */\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci\n",
+  "stderr": "",
+  "execution_time_ms": 55
+}

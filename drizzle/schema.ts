@@ -553,3 +553,129 @@ export const onboardingProfiles = mysqlTable("onboarding_profiles", {
   updatedAt: timestamp("updatedAt").defaultNow().notNull(),
 });
 export type OnboardingProfile = typeof onboardingProfiles.$inferSelect;
+
+
+/* ═══════════════════════════════════════════════════════════
+   SPRINT 2-5: LRDG-GRADE ADMIN FEATURES
+   ═══════════════════════════════════════════════════════════ */
+
+/* ───────────────────── COACH PROFILES ───────────────────── */
+export const coachProfiles = mysqlTable("coach_profiles", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  displayName: varchar("displayName", { length: 200 }).notNull(),
+  bio: text("bio"),
+  specializations: json("specializations"),
+  languages: json("languages"),
+  cefrLevels: json("cefrLevels"),
+  hourlyRate: int("hourlyRate"),
+  status: mysqlEnum("status", ["pending", "active", "suspended", "inactive"]).default("pending").notNull(),
+  avatarUrl: text("avatarUrl"),
+  linkedinUrl: varchar("linkedinUrl", { length: 512 }),
+  totalStudents: int("totalStudents").default(0).notNull(),
+  totalSessions: int("totalSessions").default(0).notNull(),
+  averageRating: int("averageRating").default(0).notNull(),
+  suspendedAt: timestamp("suspendedAt"),
+  suspendedReason: text("suspendedReason"),
+  approvedAt: timestamp("approvedAt"),
+  approvedBy: int("approvedBy"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type CoachProfile = typeof coachProfiles.$inferSelect;
+
+/* ───────────────────── COACH APPLICATIONS ───────────────────── */
+export const coachApplications = mysqlTable("coach_applications", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  fullName: varchar("fullName", { length: 200 }).notNull(),
+  email: varchar("email", { length: 300 }).notNull(),
+  phone: varchar("phone", { length: 50 }),
+  experience: text("experience"),
+  qualifications: text("qualifications"),
+  motivation: text("motivation"),
+  status: mysqlEnum("status", ["pending", "approved", "rejected", "withdrawn"]).default("pending").notNull(),
+  reviewedBy: int("reviewedBy"),
+  reviewedAt: timestamp("reviewedAt"),
+  reviewNotes: text("reviewNotes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
+});
+export type CoachApplication = typeof coachApplications.$inferSelect;
+
+/* ───────────────────── COMMISSION TIERS ───────────────────── */
+export const commissionTiers = mysqlTable("commission_tiers", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 128 }).notNull(),
+  description: text("description"),
+  commissionRate: int("commissionRate").notNull(),
+  minStudents: int("minStudents").default(0).notNull(),
+  maxStudents: int("maxStudents"),
+  isActive: boolean("isActive").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type CommissionTier = typeof commissionTiers.$inferSelect;
+
+/* ───────────────────── COACH PAYOUTS ───────────────────── */
+export const coachPayouts = mysqlTable("coach_payouts", {
+  id: int("id").autoincrement().primaryKey(),
+  coachId: int("coachId").notNull(),
+  amount: int("amount").notNull(), // cents
+  currency: varchar("currency", { length: 3 }).default("CAD").notNull(),
+  periodStart: varchar("periodStart", { length: 10 }).notNull(),
+  periodEnd: varchar("periodEnd", { length: 10 }).notNull(),
+  sessionsCount: int("sessionsCount").default(0).notNull(),
+  commissionRate: int("commissionRate").notNull(),
+  status: mysqlEnum("status", ["pending", "processing", "paid", "failed"]).default("pending").notNull(),
+  paidAt: timestamp("paidAt"),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type CoachPayout = typeof coachPayouts.$inferSelect;
+
+/* ───────────────────── CONTENT ITEMS (CMS Pipeline) ───────────────────── */
+export const contentItems = mysqlTable("content_items", {
+  id: int("id").autoincrement().primaryKey(),
+  title: varchar("title", { length: 500 }).notNull(),
+  titleFr: varchar("titleFr", { length: 500 }),
+  contentType: mysqlEnum("contentType", ["lesson", "quiz", "article", "video", "podcast", "exercise"]).default("lesson").notNull(),
+  status: mysqlEnum("status", ["draft", "review", "approved", "published", "archived"]).default("draft").notNull(),
+  authorId: int("authorId"),
+  reviewerId: int("reviewerId"),
+  qualityScore: int("qualityScore"), // 0-100
+  scheduledPublishAt: timestamp("scheduledPublishAt"),
+  publishedAt: timestamp("publishedAt"),
+  body: text("body"),
+  metadata: text("metadata"), // JSON
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
+});
+export type ContentItem = typeof contentItems.$inferSelect;
+
+/* ───────────────────── CONTENT TEMPLATES ───────────────────── */
+export const contentTemplates = mysqlTable("content_templates", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 256 }).notNull(),
+  nameFr: varchar("nameFr", { length: 256 }),
+  description: text("description"),
+  templateType: mysqlEnum("templateType", ["lesson", "quiz", "evaluation", "article", "podcast_script"]).default("lesson").notNull(),
+  structure: json("structure"),
+  isDefault: boolean("isDefault").default(false).notNull(),
+  usageCount: int("usageCount").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type ContentTemplate = typeof contentTemplates.$inferSelect;
+
+/* ───────────────────── CONTENT CALENDAR ───────────────────── */
+export const contentCalendar = mysqlTable("content_calendar", {
+  id: int("id").autoincrement().primaryKey(),
+  contentItemId: int("contentItemId"),
+  title: varchar("title", { length: 500 }).notNull(),
+  scheduledDate: timestamp("scheduledDate").notNull(),
+  contentType: mysqlEnum("contentType", ["lesson", "quiz", "article", "video", "podcast", "exercise"]).default("lesson").notNull(),
+  status: mysqlEnum("status", ["scheduled", "published", "cancelled"]).default("scheduled").notNull(),
+  assignedTo: int("assignedTo"),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type ContentCalendarEntry = typeof contentCalendar.$inferSelect;

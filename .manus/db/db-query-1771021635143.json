@@ -1,0 +1,25 @@
+{
+  "query": "SHOW CREATE TABLE commission_tiers;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user cYPAHDVF1MZtM6S.caf383761fdf --database Rc5qDPWJcsCQwb6WK47Ybr --execute SHOW CREATE TABLE commission_tiers;",
+  "rows": [
+    {
+      "Table": "commission_tiers",
+      "Create Table": "CREATE TABLE `commission_tiers` ("
+    }
+  ],
+  "messages": [
+    "  `id` int(11) NOT NULL AUTO_INCREMENT,",
+    "  `name` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL,",
+    "  `description` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,",
+    "  `commissionRate` int(11) NOT NULL,",
+    "  `minStudents` int(11) NOT NULL DEFAULT '0',",
+    "  `maxStudents` int(11) DEFAULT NULL,",
+    "  `isActive` tinyint(1) NOT NULL DEFAULT '1',",
+    "  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,",
+    "  PRIMARY KEY (`id`) /*T![clustered_index] CLUSTERED */",
+    ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+  ],
+  "stdout": "Table\tCreate Table\ncommission_tiers\tCREATE TABLE `commission_tiers` (\n  `id` int(11) NOT NULL AUTO_INCREMENT,\n  `name` varchar(128) COLLATE utf8mb4_unicode_ci NOT NULL,\n  `description` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n  `commissionRate` int(11) NOT NULL,\n  `minStudents` int(11) NOT NULL DEFAULT '0',\n  `maxStudents` int(11) DEFAULT NULL,\n  `isActive` tinyint(1) NOT NULL DEFAULT '1',\n  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  PRIMARY KEY (`id`) /*T![clustered_index] CLUSTERED */\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci\n",
+  "stderr": "",
+  "execution_time_ms": 53
+}

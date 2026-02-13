@@ -51,6 +51,9 @@ import Bookmarks from "./pages/Bookmarks";
 import GlobalSearch from "./pages/GlobalSearch";
 import OnboardingWizard from "./pages/OnboardingWizard";
 import DailyReview from "./pages/DailyReview";
+import AdminCoachHub from "./pages/AdminCoachHub";
+import AdminExecutiveSummary from "./pages/AdminExecutiveSummary";
+import AdminContentPipeline from "./pages/AdminContentPipeline";
 import CelebrationOverlay from "./components/CelebrationOverlay";
 import FloatingAICompanion from "./components/FloatingAICompanion";
 import { LanguageProvider } from "./contexts/LanguageContext";
@@ -104,6 +107,9 @@ function Router() {
       <Route path="/onboarding" component={OnboardingWizard} />
       <Route path="/daily-review" component={DailyReview} />
       <Route path="/admin" component={AdminDashboard} />
+      <Route path="/admin/coaches" component={AdminCoachHub} />
+      <Route path="/admin/analytics" component={AdminExecutiveSummary} />
+      <Route path="/admin/content-pipeline" component={AdminContentPipeline} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
