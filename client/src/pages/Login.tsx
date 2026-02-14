@@ -7,7 +7,6 @@ import { useLocation } from "wouter";
 
 const LOGO_FULL = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663049070748/zDHqHOSjzqRLzEVj.png";
 const LOGO_ICON = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663049070748/mrXRaWLUDJGHdcjc.png";
-const HERO_IMAGE = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663049070748/PRzUOfddVHuCQRax.jpeg";
 
 export default function Login() {
   const [, setLocation] = useLocation();
@@ -24,26 +23,25 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex bg-white">
-      {/* Left Side — Hero with student photo */}
-      <div className="hidden lg:flex lg:w-1/2 items-center justify-center p-12 relative overflow-hidden">
-        {/* Background photo */}
-        <img
-          src={HERO_IMAGE}
-          alt="Happy diverse students learning languages in Canada"
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-        {/* Gradient overlay for text readability */}
-        <div className="absolute inset-0" style={{
-          background: "linear-gradient(160deg, rgba(0,128,144,0.82) 0%, rgba(0,100,112,0.75) 40%, rgba(0,80,90,0.85) 100%)",
+      {/* Left Side — Light teal hero */}
+      <div className="hidden lg:flex lg:w-1/2 items-center justify-center p-12 relative overflow-hidden" style={{
+        background: "linear-gradient(160deg, #f0fafb 0%, #e0f4f5 40%, #d0eef0 100%)",
+      }}>
+        {/* Decorative circles */}
+        <div className="absolute top-20 right-20 w-64 h-64 rounded-full opacity-20" style={{
+          background: "radial-gradient(circle, #008090, transparent)",
+        }} />
+        <div className="absolute bottom-20 left-10 w-80 h-80 rounded-full opacity-10" style={{
+          background: "radial-gradient(circle, #f5a623, transparent)",
         }} />
 
         <div className="relative z-10 text-center max-w-md">
           <img src={LOGO_ICON} alt="RusingÂcademy" className="w-20 h-20 mx-auto mb-8 rounded-2xl shadow-lg" />
-          <h2 className="text-4xl font-bold text-white mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
+          <h2 className="text-4xl font-bold text-gray-900 mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
             RusingÂcademy
           </h2>
-          <p className="text-lg text-teal-200 font-medium mb-2">Learning Portal</p>
-          <p className="text-white/90 text-sm leading-relaxed">
+          <p className="text-lg text-[#008090] font-medium mb-2">Learning Portal</p>
+          <p className="text-gray-600 text-sm leading-relaxed">
             Master your second official language with Canada's premier bilingual training platform. 
             Expert coaching meets innovative technology.
           </p>
@@ -51,7 +49,7 @@ export default function Login() {
           {/* Feature pills */}
           <div className="flex flex-wrap justify-center gap-2 mt-8">
             {["ESL Program", "FSL Program", "CEFR A1→C1+", "Gamification", "SLE Prep"].map((f) => (
-              <span key={f} className="text-xs px-3 py-1.5 rounded-full text-white font-medium bg-white/15 border border-white/30 shadow-sm backdrop-blur-sm">
+              <span key={f} className="text-xs px-3 py-1.5 rounded-full text-gray-700 font-medium bg-white/80 border border-gray-200 shadow-sm">
                 {f}
               </span>
             ))}
@@ -64,9 +62,9 @@ export default function Login() {
               { value: "192", label: "Lessons" },
               { value: "1,344", label: "Activities" },
             ].map((s) => (
-              <div key={s.label} className="text-center bg-white/15 backdrop-blur-sm rounded-xl py-3 border border-white/20">
-                <div className="text-2xl font-bold text-white">{s.value}</div>
-                <div className="text-[10px] text-white/70 uppercase tracking-wider">{s.label}</div>
+              <div key={s.label} className="text-center bg-white/60 rounded-xl py-3 border border-gray-100">
+                <div className="text-2xl font-bold text-[#008090]">{s.value}</div>
+                <div className="text-[10px] text-gray-500 uppercase tracking-wider">{s.label}</div>
               </div>
             ))}
           </div>

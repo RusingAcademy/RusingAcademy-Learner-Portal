@@ -29,11 +29,11 @@ const campaigns: Campaign[] = [
 ];
 
 const segments = [
-  { name: (lang: string) => lang === "fr" ? "Fonctionnaires fédéraux" : "Federal Public Servants", count: 523, growth: "+12%" },
-  { name: (lang: string) => lang === "fr" ? "Apprenants FSL" : "FSL Learners", count: 412, growth: "+8%" },
-  { name: (lang: string) => lang === "fr" ? "Candidats SLE" : "SLE Candidates", count: 189, growth: "+22%" },
-  { name: (lang: string) => lang === "fr" ? "Gestionnaires RH" : "HR Managers", count: 45, growth: "+5%" },
-  { name: (lang: string) => lang === "fr" ? "Organisations" : "Organizations", count: 12, growth: "+1" },
+  { name: lang => lang === "fr" ? "Fonctionnaires fédéraux" : "Federal Public Servants", count: 523, growth: "+12%" },
+  { name: lang => lang === "fr" ? "Apprenants FSL" : "FSL Learners", count: 412, growth: "+8%" },
+  { name: lang => lang === "fr" ? "Candidats SLE" : "SLE Candidates", count: 189, growth: "+22%" },
+  { name: lang => lang === "fr" ? "Gestionnaires RH" : "HR Managers", count: 45, growth: "+5%" },
+  { name: lang => lang === "fr" ? "Organisations" : "Organizations", count: 12, growth: "+1" },
 ];
 
 const typeIcons: Record<string, string> = { email: "email", promo: "local_offer", webinar: "videocam", social: "share" };

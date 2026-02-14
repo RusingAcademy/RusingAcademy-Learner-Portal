@@ -45,7 +45,7 @@ export default function HRTeam() {
   const [search, setSearch] = useState("");
   const [deptFilter, setDeptFilter] = useState("all");
 
-  const departments = Array.from(new Set(mockEmployees.map(e => e.department)));
+  const departments = [...new Set(mockEmployees.map(e => e.department))];
   const filtered = mockEmployees.filter(e => {
     if (deptFilter !== "all" && e.department !== deptFilter) return false;
     if (search && !e.name.toLowerCase().includes(search.toLowerCase())) return false;

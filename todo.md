@@ -549,11 +549,4 @@
 - [x] Write vitest tests for all 3 portals (32 tests passing)
 - [x] Verify runtime server compiles and runs (LSP OOM is project size, not code errors)
 - [x] Browser test all 3 portal dashboards (Coach, HR, Admin — all loading correctly)
-- [x] Save checkpoint and deliver to user (version: 2064a7b9)
-
-## Visual Edit: Login Page Hero Image
-- [x] Find/source a high-resolution realistic photo of happy diverse Canadian students (non-AI aesthetic)
-- [x] Apply the image to the Login.tsx hero section with teal gradient overlay for text readability
-- [x] Verify in browser — 0 TypeScript errors, hero image loading correctly
-- [x] Fix AdminMarketing.tsx implicit any type errors (3 fixes)
-- [x] Fix HRTeam.tsx Set iteration error (Array.from)
+- [ ] Save checkpoint and deliver to user (pending)
