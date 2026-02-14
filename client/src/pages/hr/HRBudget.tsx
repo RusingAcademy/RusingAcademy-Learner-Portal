@@ -1,6 +1,7 @@
 /**
- * HRBudget — Budget tracking for HR Portal
- * Features: Budget allocation, spending breakdown, forecasting
+ * HRBudget — Billing & Budget for Client Portal
+ * Shows the client department's training contract budget, spending, and invoicing.
+ * Features: Contract budget allocation, spending breakdown, forecasting
  */
 import HRLayout from "@/components/HRLayout";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -39,9 +40,9 @@ export default function HRBudget() {
       <div className="max-w-7xl mx-auto">
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-900" style={{ fontFamily: "'Playfair Display', serif" }}>
-            {lang === "fr" ? "Budget de formation" : "Training Budget"}
+            {lang === "fr" ? "Facturation et budget" : "Billing & Budget"}
           </h1>
-          <p className="text-sm text-gray-500">{lang === "fr" ? "Exercice financier 2025-2026" : "Fiscal Year 2025-2026"}</p>
+          <p className="text-sm text-gray-500">{lang === "fr" ? "Contrat de formation — Exercice financier 2025-2026" : "Training Contract — Fiscal Year 2025-2026"}</p>
         </div>
 
         {/* Summary Cards */}

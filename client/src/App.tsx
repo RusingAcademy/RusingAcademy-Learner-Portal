@@ -3,6 +3,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
+import AuthGuard from "./components/AuthGuard";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { GamificationProvider } from "./contexts/GamificationContext";
 import Login from "./pages/Login";
@@ -74,79 +75,101 @@ import AdminKPIs from "./pages/admin/AdminKPIs";
 import CelebrationOverlay from "./components/CelebrationOverlay";
 import FloatingAICompanion from "./components/FloatingAICompanion";
 import { LanguageProvider } from "./contexts/LanguageContext";
+
+/**
+ * Helper: wraps a component in AuthGuard for protected routes.
+ * This ensures the user must be authenticated before accessing the page.
+ */
+function Protected({ children, requiredRole }: { children: React.ReactNode; requiredRole?: string }) {
+  return <AuthGuard requiredRole={requiredRole}>{children}</AuthGuard>;
+}
+
 function Router() {
-  // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
+      {/* Public routes — no authentication required */}
       <Route path="/" component={Login} />
-      <Route path="/dashboard" component={Dashboard} />
-      <Route path="/programs" component={ProgramSelect} />
-      <Route path="/programs/:programId" component={PathList} />
-      <Route path="/programs/:programId/:pathId" component={PathDetail} />
-      <Route path="/programs/:programId/:pathId/quiz/:quizId" component={QuizPage} />
-      <Route path="/programs/:programId/:pathId/:lessonId" component={LessonViewer} />
-      <Route path="/learning-materials" component={LearningMaterials} />
-      <Route path="/tutoring-sessions" component={TutoringSessions} />
-      <Route path="/authorizations" component={Authorizations} />
-      <Route path="/progress" component={Progress} />
-      <Route path="/results" component={Results} />
-      <Route path="/reports" component={Reports} />
-      <Route path="/calendar" component={CalendarPage} />
-      <Route path="/notifications" component={Notifications} />
-      <Route path="/community-forum" component={CommunityForum} />
-      <Route path="/leaderboard" component={Leaderboard} />
-      <Route path="/challenges" component={WeeklyChallenges} />
-      <Route path="/sle-practice" component={SLEPractice} />
-      <Route path="/ai-assistant" component={AIAssistant} />
-      <Route path="/help" component={Help} />
-      <Route path="/profile" component={MyProfile} />
-      <Route path="/settings" component={MySettings} />
-      <Route path="/notes" component={Notes} />
-      <Route path="/flashcards" component={Flashcards} />
-      <Route path="/study-planner" component={StudyPlanner} />
-      <Route path="/vocabulary" component={Vocabulary} />
-      <Route path="/discussions" component={DiscussionBoards} />
-      <Route path="/writing-portfolio" component={WritingPortfolio} />
-      <Route path="/pronunciation-lab" component={PronunciationLab} />
-      <Route path="/achievements" component={Achievements} />
-      <Route path="/reading-lab" component={ReadingLab} />
-      <Route path="/listening-lab" component={ListeningLab} />
-      <Route path="/grammar-drills" component={GrammarDrills} />
-      <Route path="/analytics" component={ProgressAnalytics} />
-      <Route path="/peer-review" component={PeerReview} />
-      <Route path="/mock-sle" component={MockSLEExam} />
-      <Route path="/coach" component={CoachDashboard} />
-      <Route path="/study-groups" component={StudyGroups} />
-      <Route path="/dictation" component={DictationExercises} />
-      <Route path="/cultural-immersion" component={CulturalImmersion} />
-      <Route path="/bookmarks" component={Bookmarks} />
-      <Route path="/search" component={GlobalSearch} />
-      <Route path="/onboarding" component={OnboardingWizard} />
-      <Route path="/daily-review" component={DailyReview} />
-      <Route path="/admin" component={AdminDashboard} />
-      <Route path="/admin/coaches" component={AdminCoachHub} />
-      <Route path="/admin/analytics" component={AdminExecutiveSummary} />
-      <Route path="/admin/content-pipeline" component={AdminContentPipeline} />
-      {/* Coach Portal Routes */}
-      <Route path="/coach/portal" component={CoachDashboardHome} />
-      <Route path="/coach/students" component={CoachStudents} />
-      <Route path="/coach/sessions" component={CoachSessions} />
-      <Route path="/coach/revenue" component={CoachRevenue} />
-      <Route path="/coach/performance" component={CoachPerformance} />
-      {/* HR Portal Routes */}
-      <Route path="/hr/portal" component={HRDashboardHome} />
-      <Route path="/hr/team" component={HRTeam} />
-      <Route path="/hr/cohorts" component={HRCohorts} />
-      <Route path="/hr/budget" component={HRBudget} />
-      <Route path="/hr/compliance" component={HRCompliance} />
-      {/* Admin Control System Routes */}
-      <Route path="/admin/control" component={AdminDashboardHome} />
-      <Route path="/admin/control/users" component={AdminUsers} />
-      <Route path="/admin/control/courses" component={AdminCourses} />
-      <Route path="/admin/control/commerce" component={AdminCommerce} />
-      <Route path="/admin/control/marketing" component={AdminMarketing} />
-      <Route path="/admin/control/kpis" component={AdminKPIs} />
       <Route path="/404" component={NotFound} />
+
+      {/* Protected Learner Portal routes — require authentication */}
+      <Route path="/dashboard">{() => <Protected><Dashboard /></Protected>}</Route>
+      <Route path="/programs">{() => <Protected><ProgramSelect /></Protected>}</Route>
+      <Route path="/programs/:programId">{() => <Protected><PathList /></Protected>}</Route>
+      <Route path="/programs/:programId/:pathId">{() => <Protected><PathDetail /></Protected>}</Route>
+      <Route path="/programs/:programId/:pathId/quiz/:quizId">{() => <Protected><QuizPage /></Protected>}</Route>
+      <Route path="/programs/:programId/:pathId/:lessonId">{() => <Protected><LessonViewer /></Protected>}</Route>
+      <Route path="/learning-materials">{() => <Protected><LearningMaterials /></Protected>}</Route>
+      <Route path="/tutoring-sessions">{() => <Protected><TutoringSessions /></Protected>}</Route>
+      <Route path="/authorizations">{() => <Protected><Authorizations /></Protected>}</Route>
+      <Route path="/progress">{() => <Protected><Progress /></Protected>}</Route>
+      <Route path="/results">{() => <Protected><Results /></Protected>}</Route>
+      <Route path="/reports">{() => <Protected><Reports /></Protected>}</Route>
+      <Route path="/calendar">{() => <Protected><CalendarPage /></Protected>}</Route>
+      <Route path="/notifications">{() => <Protected><Notifications /></Protected>}</Route>
+      <Route path="/community-forum">{() => <Protected><CommunityForum /></Protected>}</Route>
+      <Route path="/leaderboard">{() => <Protected><Leaderboard /></Protected>}</Route>
+      <Route path="/challenges">{() => <Protected><WeeklyChallenges /></Protected>}</Route>
+      <Route path="/sle-practice">{() => <Protected><SLEPractice /></Protected>}</Route>
+      <Route path="/ai-assistant">{() => <Protected><AIAssistant /></Protected>}</Route>
+      <Route path="/help">{() => <Protected><Help /></Protected>}</Route>
+      <Route path="/profile">{() => <Protected><MyProfile /></Protected>}</Route>
+      <Route path="/settings">{() => <Protected><MySettings /></Protected>}</Route>
+      <Route path="/notes">{() => <Protected><Notes /></Protected>}</Route>
+      <Route path="/flashcards">{() => <Protected><Flashcards /></Protected>}</Route>
+      <Route path="/study-planner">{() => <Protected><StudyPlanner /></Protected>}</Route>
+      <Route path="/vocabulary">{() => <Protected><Vocabulary /></Protected>}</Route>
+      <Route path="/discussions">{() => <Protected><DiscussionBoards /></Protected>}</Route>
+      <Route path="/writing-portfolio">{() => <Protected><WritingPortfolio /></Protected>}</Route>
+      <Route path="/pronunciation-lab">{() => <Protected><PronunciationLab /></Protected>}</Route>
+      <Route path="/achievements">{() => <Protected><Achievements /></Protected>}</Route>
+      <Route path="/reading-lab">{() => <Protected><ReadingLab /></Protected>}</Route>
+      <Route path="/listening-lab">{() => <Protected><ListeningLab /></Protected>}</Route>
+      <Route path="/grammar-drills">{() => <Protected><GrammarDrills /></Protected>}</Route>
+      <Route path="/analytics">{() => <Protected><ProgressAnalytics /></Protected>}</Route>
+      <Route path="/peer-review">{() => <Protected><PeerReview /></Protected>}</Route>
+      <Route path="/mock-sle">{() => <Protected><MockSLEExam /></Protected>}</Route>
+      <Route path="/study-groups">{() => <Protected><StudyGroups /></Protected>}</Route>
+      <Route path="/dictation">{() => <Protected><DictationExercises /></Protected>}</Route>
+      <Route path="/cultural-immersion">{() => <Protected><CulturalImmersion /></Protected>}</Route>
+      <Route path="/bookmarks">{() => <Protected><Bookmarks /></Protected>}</Route>
+      <Route path="/search">{() => <Protected><GlobalSearch /></Protected>}</Route>
+      <Route path="/onboarding">{() => <Protected><OnboardingWizard /></Protected>}</Route>
+      <Route path="/daily-review">{() => <Protected><DailyReview /></Protected>}</Route>
+
+      {/* Protected Coach Portal routes */}
+      <Route path="/coach">{() => <Protected><CoachDashboard /></Protected>}</Route>
+      <Route path="/coach/portal">{() => <Protected><CoachDashboardHome /></Protected>}</Route>
+      <Route path="/coach/students">{() => <Protected><CoachStudents /></Protected>}</Route>
+      <Route path="/coach/sessions">{() => <Protected><CoachSessions /></Protected>}</Route>
+      <Route path="/coach/revenue">{() => <Protected><CoachRevenue /></Protected>}</Route>
+      <Route path="/coach/performance">{() => <Protected><CoachPerformance /></Protected>}</Route>
+
+      {/* Protected Client Portal (HR) routes */}
+      <Route path="/hr/portal">{() => <Protected><HRDashboardHome /></Protected>}</Route>
+      <Route path="/hr/portal/dashboard">{() => <Protected><HRDashboardHome /></Protected>}</Route>
+      <Route path="/hr/portal/team">{() => <Protected><HRTeam /></Protected>}</Route>
+      <Route path="/hr/portal/cohorts">{() => <Protected><HRCohorts /></Protected>}</Route>
+      <Route path="/hr/portal/budget">{() => <Protected><HRBudget /></Protected>}</Route>
+      <Route path="/hr/portal/compliance">{() => <Protected><HRCompliance /></Protected>}</Route>
+      {/* Legacy HR routes redirect to new portal paths */}
+      <Route path="/hr/team">{() => <Protected><HRTeam /></Protected>}</Route>
+      <Route path="/hr/cohorts">{() => <Protected><HRCohorts /></Protected>}</Route>
+      <Route path="/hr/budget">{() => <Protected><HRBudget /></Protected>}</Route>
+      <Route path="/hr/compliance">{() => <Protected><HRCompliance /></Protected>}</Route>
+
+      {/* Protected Admin routes — require admin role */}
+      <Route path="/admin">{() => <Protected requiredRole="admin"><AdminDashboard /></Protected>}</Route>
+      <Route path="/admin/coaches">{() => <Protected requiredRole="admin"><AdminCoachHub /></Protected>}</Route>
+      <Route path="/admin/analytics">{() => <Protected requiredRole="admin"><AdminExecutiveSummary /></Protected>}</Route>
+      <Route path="/admin/content-pipeline">{() => <Protected requiredRole="admin"><AdminContentPipeline /></Protected>}</Route>
+      <Route path="/admin/control">{() => <Protected requiredRole="admin"><AdminDashboardHome /></Protected>}</Route>
+      <Route path="/admin/control/users">{() => <Protected requiredRole="admin"><AdminUsers /></Protected>}</Route>
+      <Route path="/admin/control/courses">{() => <Protected requiredRole="admin"><AdminCourses /></Protected>}</Route>
+      <Route path="/admin/control/commerce">{() => <Protected requiredRole="admin"><AdminCommerce /></Protected>}</Route>
+      <Route path="/admin/control/marketing">{() => <Protected requiredRole="admin"><AdminMarketing /></Protected>}</Route>
+      <Route path="/admin/control/kpis">{() => <Protected requiredRole="admin"><AdminKPIs /></Protected>}</Route>
+
+      {/* Catch-all */}
       <Route component={NotFound} />
     </Switch>
   );

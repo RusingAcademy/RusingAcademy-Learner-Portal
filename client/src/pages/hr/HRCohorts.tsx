@@ -1,5 +1,6 @@
 /**
- * HRCohorts — Cohort management for HR Portal
+ * HRCohorts — Training Cohorts for Client Portal
+ * Shows training cohorts assigned to the client department.
  * Features: Cohort cards, progress tracking, enrollment management
  */
 import HRLayout from "@/components/HRLayout";
@@ -92,13 +93,13 @@ export default function HRCohorts() {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div>
             <h1 className="text-2xl font-bold text-gray-900" style={{ fontFamily: "'Playfair Display', serif" }}>
-              {lang === "fr" ? "Cohortes" : "Cohorts"}
+              {lang === "fr" ? "Cohortes de formation" : "Training Cohorts"}
             </h1>
-            <p className="text-sm text-gray-500">{mockCohorts.length} {lang === "fr" ? "cohortes au total" : "total cohorts"}</p>
+            <p className="text-sm text-gray-500">{mockCohorts.length} {lang === "fr" ? "cohortes pour votre département" : "cohorts for your department"}</p>
           </div>
           <button className="inline-flex items-center gap-2 px-4 py-2 bg-[#2563eb] text-white text-sm font-medium rounded-lg hover:bg-[#1d4ed8] transition-colors shadow-sm">
             <span className="material-icons text-lg">add</span>
-            {lang === "fr" ? "Nouvelle cohorte" : "New Cohort"}
+            {lang === "fr" ? "Demander une cohorte" : "Request a Cohort"}
           </button>
         </div>
 

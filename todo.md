@@ -578,3 +578,15 @@
 
 ## Login Footer Copyright
 - [x] Update Login page footer to "© 2026 Rusinga International Consulting Ltd." (visual edit)
+
+## HR Portal Redesign + Auth Protection + GitHub Merge
+- [x] Redesign HR Portal as client-facing portal for government departments/organizations (not internal HR)
+  - [x] Update HRDashboardHome: client department overview, training progress, compliance dashboard
+  - [x] Update HRTeam: department participants enrolled in training programs
+  - [x] Update HRCohorts: department training cohorts/groups
+  - [x] Update HRBudget: department billing & budget
+  - [x] Update HRCompliance: department compliance with official language requirements
+  - [x] Update HRSidebar: rename labels to reflect client-facing terminology (Client Portal)
+  - [x] Update HRLayout: adjust branding/header for client portal
+- [x] Protect Dashboard/Coach/HR/Admin routes with redirectOnUnauthenticated: true (AuthGuard component)
+- [ ] Push all changes to GitHub feat/pwa and merge PR

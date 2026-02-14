@@ -1,5 +1,6 @@
 /**
- * HRCompliance — SLE Compliance Reports for HR Portal
+ * HRCompliance — SLE Compliance Reports for Client Portal
+ * Shows the client department's SLE compliance status for their participants.
  * Features: Compliance dashboard, risk assessment, deadline tracking, reporting
  */
 import HRLayout from "@/components/HRLayout";
