@@ -55,6 +55,22 @@ import AdminCoachHub from "./pages/AdminCoachHub";
 import AdminExecutiveSummary from "./pages/AdminExecutiveSummary";
 import AdminContentPipeline from "./pages/AdminContentPipeline";
 import PortalComingSoon from "./pages/PortalComingSoon";
+import CoachDashboardHome from "./pages/coach/CoachDashboardHome";
+import CoachStudents from "./pages/coach/CoachStudents";
+import CoachSessions from "./pages/coach/CoachSessions";
+import CoachRevenue from "./pages/coach/CoachRevenue";
+import CoachPerformance from "./pages/coach/CoachPerformance";
+import HRDashboardHome from "./pages/hr/HRDashboardHome";
+import HRTeam from "./pages/hr/HRTeam";
+import HRCohorts from "./pages/hr/HRCohorts";
+import HRBudget from "./pages/hr/HRBudget";
+import HRCompliance from "./pages/hr/HRCompliance";
+import AdminDashboardHome from "./pages/admin/AdminDashboardHome";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminCourses from "./pages/admin/AdminCourses";
+import AdminCommerce from "./pages/admin/AdminCommerce";
+import AdminMarketing from "./pages/admin/AdminMarketing";
+import AdminKPIs from "./pages/admin/AdminKPIs";
 import CelebrationOverlay from "./components/CelebrationOverlay";
 import FloatingAICompanion from "./components/FloatingAICompanion";
 import { LanguageProvider } from "./contexts/LanguageContext";
@@ -111,9 +127,25 @@ function Router() {
       <Route path="/admin/coaches" component={AdminCoachHub} />
       <Route path="/admin/analytics" component={AdminExecutiveSummary} />
       <Route path="/admin/content-pipeline" component={AdminContentPipeline} />
-      <Route path="/coach/portal">{() => <PortalComingSoon portalKey="coach" />}</Route>
-      <Route path="/hr/portal">{() => <PortalComingSoon portalKey="hr" />}</Route>
-      <Route path="/admin/control">{() => <PortalComingSoon portalKey="admin" />}</Route>
+      {/* Coach Portal Routes */}
+      <Route path="/coach/portal" component={CoachDashboardHome} />
+      <Route path="/coach/students" component={CoachStudents} />
+      <Route path="/coach/sessions" component={CoachSessions} />
+      <Route path="/coach/revenue" component={CoachRevenue} />
+      <Route path="/coach/performance" component={CoachPerformance} />
+      {/* HR Portal Routes */}
+      <Route path="/hr/portal" component={HRDashboardHome} />
+      <Route path="/hr/team" component={HRTeam} />
+      <Route path="/hr/cohorts" component={HRCohorts} />
+      <Route path="/hr/budget" component={HRBudget} />
+      <Route path="/hr/compliance" component={HRCompliance} />
+      {/* Admin Control System Routes */}
+      <Route path="/admin/control" component={AdminDashboardHome} />
+      <Route path="/admin/control/users" component={AdminUsers} />
+      <Route path="/admin/control/courses" component={AdminCourses} />
+      <Route path="/admin/control/commerce" component={AdminCommerce} />
+      <Route path="/admin/control/marketing" component={AdminMarketing} />
+      <Route path="/admin/control/kpis" component={AdminKPIs} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
