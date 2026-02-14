@@ -575,3 +575,6 @@
 - [x] Add social links (Facebook, Instagram, LinkedIn) to Dashboard footer and all portal footers (shared SocialLinks component)
 - [x] Connect Login form to Manus OAuth authentication (replace direct /dashboard redirect)
 - [x] Run tests and verify all changes (320/320 tests passing, 0 TS errors)
+
+## Login Footer Copyright
+- [x] Update Login page footer to "© 2026 Rusinga International Consulting Ltd." (visual edit)

@@ -235,7 +235,7 @@ export default function Login() {
 
           {/* Footer */}
           <p className="text-center text-xs text-gray-400 mt-6">
-            © 2026 RusingÂcademy — Barholex Media Inc.
+            © 2026 Rusinga International Consulting Ltd.
           </p>
         </div>
       </div>
