@@ -360,10 +360,16 @@ describe("Client Portal — Schema Structure", () => {
     expect(procedures).toContain("clientPortal.createCoachingSession");
     expect(procedures).toContain("clientPortal.updateCoachingSession");
     expect(procedures).toContain("clientPortal.getSessionStats");
+    // Invitation procedures
+    expect(procedures).toContain("clientPortal.sendInvitation");
+    expect(procedures).toContain("clientPortal.getInvitations");
+    expect(procedures).toContain("clientPortal.revokeInvitation");
+    expect(procedures).toContain("clientPortal.acceptInvitation");
+    expect(procedures).toContain("clientPortal.validateInvitation");
   });
 
-  it("clientPortal router has exactly 22 procedures", () => {
+  it("clientPortal router has exactly 28 procedures (22 core + 6 invitation)", () => {
     const cpProcedures = Object.keys(appRouter._def.procedures).filter(p => p.startsWith("clientPortal."));
-    expect(cpProcedures.length).toBe(22);
+    expect(cpProcedures.length).toBe(28);
   });
 });

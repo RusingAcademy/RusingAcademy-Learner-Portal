@@ -72,6 +72,7 @@ import AdminCourses from "./pages/admin/AdminCourses";
 import AdminCommerce from "./pages/admin/AdminCommerce";
 import AdminMarketing from "./pages/admin/AdminMarketing";
 import AdminKPIs from "./pages/admin/AdminKPIs";
+import AcceptInvitation from "./pages/AcceptInvitation";
 import CelebrationOverlay from "./components/CelebrationOverlay";
 import FloatingAICompanion from "./components/FloatingAICompanion";
 import { LanguageProvider } from "./contexts/LanguageContext";
@@ -89,6 +90,7 @@ function Router() {
     <Switch>
       {/* Public routes — no authentication required */}
       <Route path="/" component={Login} />
+      <Route path="/invite/:token" component={AcceptInvitation} />
       <Route path="/404" component={NotFound} />
 
       {/* Protected Learner Portal routes — require authentication */}

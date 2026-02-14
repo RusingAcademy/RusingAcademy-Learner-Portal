@@ -858,3 +858,23 @@ export const coachingSessions = mysqlTable("coaching_sessions", {
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
 export type CoachingSession = typeof coachingSessions.$inferSelect;
+
+
+/* ───────────────────── HR MANAGER INVITATIONS ───────────────────── */
+export const hrInvitations = mysqlTable("hr_invitations", {
+  id: int("id").autoincrement().primaryKey(),
+  organizationId: int("organizationId").notNull(),
+  email: varchar("email", { length: 320 }).notNull(),
+  invitedName: varchar("invitedName", { length: 200 }),
+  role: mysqlEnum("role", ["primary_contact", "training_manager", "observer"]).default("training_manager").notNull(),
+  token: varchar("token", { length: 128 }).notNull().unique(),
+  status: mysqlEnum("status", ["pending", "accepted", "expired", "revoked"]).default("pending").notNull(),
+  invitedBy: int("invitedBy").notNull(),
+  expiresAt: timestamp("expiresAt").notNull(),
+  acceptedAt: timestamp("acceptedAt"),
+  acceptedByUserId: int("acceptedByUserId"),
+  message: text("message"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type HrInvitation = typeof hrInvitations.$inferSelect;

@@ -1,0 +1,42 @@
+{
+  "query": "SELECT 'orgs' AS t, COUNT(*) AS c FROM client_organizations UNION ALL SELECT 'parts', COUNT(*) FROM participants UNION ALL SELECT 'cohorts', COUNT(*) FROM training_cohorts UNION ALL SELECT 'cp', COUNT(*) FROM cohort_participants UNION ALL SELECT 'billing', COUNT(*) FROM billing_records UNION ALL SELECT 'budget', COUNT(*) FROM budget_allocations UNION ALL SELECT 'compliance', COUNT(*) FROM compliance_records UNION ALL SELECT 'sessions', COUNT(*) FROM coaching_sessions",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user cYPAHDVF1MZtM6S.caf383761fdf --database Rc5qDPWJcsCQwb6WK47Ybr --execute SELECT 'orgs' AS t, COUNT(*) AS c FROM client_organizations UNION ALL SELECT 'parts', COUNT(*) FROM participants UNION ALL SELECT 'cohorts', COUNT(*) FROM training_cohorts UNION ALL SELECT 'cp', COUNT(*) FROM cohort_participants UNION ALL SELECT 'billing', COUNT(*) FROM billing_records UNION ALL SELECT 'budget', COUNT(*) FROM budget_allocations UNION ALL SELECT 'compliance', COUNT(*) FROM compliance_records UNION ALL SELECT 'sessions', COUNT(*) FROM coaching_sessions",
+  "rows": [
+    {
+      "t": "orgs",
+      "c": "1"
+    },
+    {
+      "t": "billing",
+      "c": "5"
+    },
+    {
+      "t": "parts",
+      "c": "12"
+    },
+    {
+      "t": "cohorts",
+      "c": "3"
+    },
+    {
+      "t": "cp",
+      "c": "13"
+    },
+    {
+      "t": "compliance",
+      "c": "14"
+    },
+    {
+      "t": "budget",
+      "c": "4"
+    },
+    {
+      "t": "sessions",
+      "c": "0"
+    }
+  ],
+  "messages": [],
+  "stdout": "t\tc\norgs\t1\nbilling\t5\nparts\t12\ncohorts\t3\ncp\t13\ncompliance\t14\nbudget\t4\nsessions\t0\n",
+  "stderr": "",
+  "execution_time_ms": 53
+}

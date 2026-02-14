@@ -351,3 +351,87 @@ export async function getDashboardOverview(orgId: number) {
     sessions: sessionStats,
   };
 }
+
+/* ═══════════════════════════════════════════════════════════
+   HR MANAGER INVITATIONS
+   ═══════════════════════════════════════════════════════════ */
+
+import { hrInvitations } from "../drizzle/schema";
+
+export async function createInvitation(data: {
+  organizationId: number;
+  email: string;
+  invitedName?: string;
+  role?: string;
+  token: string;
+  invitedBy: number;
+  expiresAt: Date;
+  message?: string;
+}) {
+  const db = await getDb();
+  if (!db) return null;
+  const [result] = await db.insert(hrInvitations).values(data as any);
+  return { id: result.insertId, token: data.token };
+}
+
+export async function getInvitationByToken(token: string) {
+  const db = await getDb();
+  if (!db) return null;
+  const [row] = await db.select().from(hrInvitations).where(eq(hrInvitations.token, token)).limit(1);
+  return row ?? null;
+}
+
+export async function getInvitationsByOrg(orgId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(hrInvitations)
+    .where(eq(hrInvitations.organizationId, orgId))
+    .orderBy(desc(hrInvitations.createdAt));
+}
+
+export async function acceptInvitation(token: string, userId: number) {
+  const db = await getDb();
+  if (!db) return null;
+  
+  // Get the invitation
+  const invitation = await getInvitationByToken(token);
+  if (!invitation) return { error: "Invitation not found" };
+  if (invitation.status !== "pending") return { error: `Invitation already ${invitation.status}` };
+  if (new Date(invitation.expiresAt) < new Date()) {
+    // Mark as expired
+    await db.update(hrInvitations).set({ status: "expired" } as any).where(eq(hrInvitations.token, token));
+    return { error: "Invitation has expired" };
+  }
+
+  // Mark invitation as accepted
+  await db.update(hrInvitations).set({
+    status: "accepted",
+    acceptedAt: new Date(),
+    acceptedByUserId: userId,
+  } as any).where(eq(hrInvitations.token, token));
+
+  // Create organization manager link
+  await db.insert(organizationManagers).values({
+    organizationId: invitation.organizationId,
+    userId,
+    role: invitation.role || "training_manager",
+    isActive: true,
+  } as any);
+
+  return { success: true, organizationId: invitation.organizationId };
+}
+
+export async function revokeInvitation(invitationId: number, orgId: number) {
+  const db = await getDb();
+  if (!db) return null;
+  await db.update(hrInvitations).set({ status: "revoked" } as any)
+    .where(and(eq(hrInvitations.id, invitationId), eq(hrInvitations.organizationId, orgId)));
+  return { success: true };
+}
+
+export async function getOrgManagers(orgId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(organizationManagers)
+    .where(and(eq(organizationManagers.organizationId, orgId), eq(organizationManagers.isActive, true)));
+}

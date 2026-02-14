@@ -604,4 +604,14 @@
 - [x] Connect HRCompliance to real tRPC queries (risk derived from status)
 - [x] Integrate Calendly for coaching session booking (shared CalendlyWidget + Client Portal booking button)
 - [x] Write vitest tests for Client Portal (30 tests, 350/350 total passing)
-- [ ] Push all changes to GitHub and deliver
+- [x] Push all changes to GitHub (feat/pwa + main synced)
+
+## Demo Data + Invitations + Email Notifications
+- [x] Populate demo data: Treasury Board of Canada (1 org, 12 participants, 3 cohorts, 5 billing, 4 budget, 14 compliance, 8 sessions)
+- [x] Build HR manager invitation system (schema, tRPC procedures, 6 endpoints)
+- [x] Build invitation acceptance flow (AcceptInvitation page, auto-assign role + organization)
+- [x] Integrate coaching session reminders (24h + 1h notifications via notification_log table)
+- [x] Wire invitation notifications to notifyOwner + notification_log
+- [x] Add session confirmation/cancellation notification helpers
+- [x] Write vitest tests for invitation system and notification procedures (49 new tests, 399/399 total)
+- [ ] Push all changes to GitHub

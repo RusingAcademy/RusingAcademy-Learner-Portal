@@ -1,7 +1,7 @@
 import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
-import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
+import { publicProcedure, protectedProcedure, adminProcedure, router } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { invokeLLM } from "./_core/llm";
 import { z } from "zod";
@@ -12,6 +12,7 @@ import { certificateRouter, readingLabRouter, listeningLabRouter, grammarDrillsR
 import { mockSleRouter, coachRouter, studyGroupRouter, bookmarkRouter, dictationRouter, searchRouter, onboardingRouter, dailyReviewRouter } from "./routers-sprint41";
 import * as adminDb from "./db-admin";
 import { clientPortalRouter } from "./routers-client-portal";
+import * as notifService from "./notifications";
 import { gamificationProfiles, users } from "../drizzle/schema";
 import { desc, eq, sql } from "drizzle-orm";
 
@@ -302,6 +303,25 @@ export const appRouter = router({
       .mutation(async ({ ctx, input }) => {
         await db.markNotificationRead(input.notificationId, ctx.user.id);
         return { success: true };
+      }),
+    // Coaching session reminder notifications (notification_log table)
+    sessionReminders: protectedProcedure
+      .query(async ({ ctx }) => {
+        return notifService.getUserNotifications(ctx.user.id, 20);
+      }),
+    unreadCount: protectedProcedure
+      .query(async ({ ctx }) => {
+        return { count: await notifService.getUnreadCount(ctx.user.id) };
+      }),
+    markSessionReminderRead: protectedProcedure
+      .input(z.object({ notificationId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        return notifService.markNotificationRead(input.notificationId, ctx.user.id);
+      }),
+    // Admin: trigger session reminder processing
+    processReminders: adminProcedure
+      .mutation(async () => {
+        return notifService.processSessionReminders();
       }),
   }),
 

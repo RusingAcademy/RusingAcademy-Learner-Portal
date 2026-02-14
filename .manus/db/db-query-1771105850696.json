@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS hr_invitations (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  organizationId INT NOT NULL,\n  email VARCHAR(320) NOT NULL,\n  invitedName VARCHAR(200),\n  role ENUM('primary_contact','training_manager','observer') NOT NULL DEFAULT 'training_manager',\n  token VARCHAR(128) NOT NULL UNIQUE,\n  status ENUM('pending','accepted','expired','revoked') NOT NULL DEFAULT 'pending',\n  invitedBy INT NOT NULL,\n  expiresAt TIMESTAMP NOT NULL,\n  acceptedAt TIMESTAMP NULL,\n  acceptedByUserId INT,\n  message TEXT,\n  createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user cYPAHDVF1MZtM6S.caf383761fdf --database Rc5qDPWJcsCQwb6WK47Ybr --execute CREATE TABLE IF NOT EXISTS hr_invitations (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  organizationId INT NOT NULL,\n  email VARCHAR(320) NOT NULL,\n  invitedName VARCHAR(200),\n  role ENUM('primary_contact','training_manager','observer') NOT NULL DEFAULT 'training_manager',\n  token VARCHAR(128) NOT NULL UNIQUE,\n  status ENUM('pending','accepted','expired','revoked') NOT NULL DEFAULT 'pending',\n  invitedBy INT NOT NULL,\n  expiresAt TIMESTAMP NOT NULL,\n  acceptedAt TIMESTAMP NULL,\n  acceptedByUserId INT,\n  message TEXT,\n  createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 177
+}

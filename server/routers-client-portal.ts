@@ -6,10 +6,12 @@
  * HR managers can only see data for their assigned organization.
  */
 
-import { protectedProcedure, router } from "./_core/trpc";
+import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import * as cpDb from "./db-client-portal";
+import crypto from "crypto";
+import { sendInvitationNotification } from "./notifications";
 
 /* ─────────────── Middleware: resolve org for HR manager ─────────────── */
 
@@ -291,5 +293,97 @@ export const clientPortalRouter = router({
     .query(async ({ ctx, input }) => {
       const orgId = resolveOrgId(ctx, input?.organizationId);
       return cpDb.getSessionStats(orgId);
+    }),
+
+  /* ─────────────── Invitations ─────────────── */
+  sendInvitation: hrManagerProcedure
+    .input(z.object({
+      email: z.string().email(),
+      invitedName: z.string().optional(),
+      role: z.enum(["primary_contact", "training_manager", "observer"]).optional(),
+      message: z.string().optional(),
+      organizationId: z.number().optional(),
+      origin: z.string().optional(),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const orgId = resolveOrgId(ctx, input.organizationId);
+      const token = crypto.randomBytes(48).toString("hex");
+      const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+      const result = await cpDb.createInvitation({
+        organizationId: orgId,
+        email: input.email,
+        invitedName: input.invitedName,
+        role: input.role,
+        token,
+        invitedBy: ctx.user.id,
+        expiresAt,
+        message: input.message,
+      });
+
+      // Send invitation notification
+      const org = await cpDb.getOrganization(orgId);
+      try {
+        await sendInvitationNotification({
+          email: input.email,
+          invitedName: input.invitedName,
+          organizationName: org?.name ?? "Organization",
+          inviterName: ctx.user.name ?? "Team Member",
+          inviteUrl: `${input.origin ?? ""}/invite/${token}`,
+          role: input.role ?? "training_manager",
+          message: input.message,
+        });
+      } catch (e) {
+        console.warn("[Invitation] Notification failed:", e);
+      }
+
+      return result;
+    }),
+
+  getInvitations: hrManagerProcedure
+    .input(z.object({ organizationId: z.number().optional() }).optional())
+    .query(async ({ ctx, input }) => {
+      const orgId = resolveOrgId(ctx, input?.organizationId);
+      return cpDb.getInvitationsByOrg(orgId);
+    }),
+
+  revokeInvitation: hrManagerProcedure
+    .input(z.object({ invitationId: z.number(), organizationId: z.number().optional() }))
+    .mutation(async ({ ctx, input }) => {
+      const orgId = resolveOrgId(ctx, input.organizationId);
+      return cpDb.revokeInvitation(input.invitationId, orgId);
+    }),
+
+  getOrgManagers: hrManagerProcedure
+    .input(z.object({ organizationId: z.number().optional() }).optional())
+    .query(async ({ ctx, input }) => {
+      const orgId = resolveOrgId(ctx, input?.organizationId);
+      return cpDb.getOrgManagers(orgId);
+    }),
+
+  acceptInvitation: protectedProcedure
+    .input(z.object({ token: z.string().min(1) }))
+    .mutation(async ({ ctx, input }) => {
+      const result = await cpDb.acceptInvitation(input.token, ctx.user.id);
+      if (!result) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to process invitation" });
+      if ("error" in result) throw new TRPCError({ code: "BAD_REQUEST", message: result.error });
+      return result;
+    }),
+
+  validateInvitation: protectedProcedure
+    .input(z.object({ token: z.string().min(1) }))
+    .query(async ({ input }) => {
+      const invitation = await cpDb.getInvitationByToken(input.token);
+      if (!invitation) return { valid: false, reason: "Invitation not found" };
+      if (invitation.status !== "pending") return { valid: false, reason: `Invitation already ${invitation.status}` };
+      if (new Date(invitation.expiresAt) < new Date()) return { valid: false, reason: "Invitation has expired" };
+      const org = await cpDb.getOrganization(invitation.organizationId);
+      return {
+        valid: true,
+        email: invitation.email,
+        invitedName: invitation.invitedName,
+        role: invitation.role,
+        organizationName: org?.name ?? "Unknown",
+        organizationNameFr: org?.nameFr,
+      };
     }),
 });

@@ -1,0 +1,42 @@
+{
+  "query": "SELECT 'client_organizations' AS tbl, COUNT(*) AS cnt FROM client_organizations UNION ALL SELECT 'participants', COUNT(*) FROM participants UNION ALL SELECT 'training_cohorts', COUNT(*) FROM training_cohorts UNION ALL SELECT 'cohort_participants', COUNT(*) FROM cohort_participants UNION ALL SELECT 'billing_records', COUNT(*) FROM billing_records UNION ALL SELECT 'budget_allocations', COUNT(*) FROM budget_allocations UNION ALL SELECT 'compliance_records', COUNT(*) FROM compliance_records UNION ALL SELECT 'coaching_sessions', COUNT(*) FROM coaching_sessions;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user cYPAHDVF1MZtM6S.caf383761fdf --database Rc5qDPWJcsCQwb6WK47Ybr --execute SELECT 'client_organizations' AS tbl, COUNT(*) AS cnt FROM client_organizations UNION ALL SELECT 'participants', COUNT(*) FROM participants UNION ALL SELECT 'training_cohorts', COUNT(*) FROM training_cohorts UNION ALL SELECT 'cohort_participants', COUNT(*) FROM cohort_participants UNION ALL SELECT 'billing_records', COUNT(*) FROM billing_records UNION ALL SELECT 'budget_allocations', COUNT(*) FROM budget_allocations UNION ALL SELECT 'compliance_records', COUNT(*) FROM compliance_records UNION ALL SELECT 'coaching_sessions', COUNT(*) FROM coaching_sessions;",
+  "rows": [
+    {
+      "tbl": "cohort_participants",
+      "cnt": "13"
+    },
+    {
+      "tbl": "training_cohorts",
+      "cnt": "3"
+    },
+    {
+      "tbl": "client_organizations",
+      "cnt": "1"
+    },
+    {
+      "tbl": "participants",
+      "cnt": "12"
+    },
+    {
+      "tbl": "billing_records",
+      "cnt": "5"
+    },
+    {
+      "tbl": "coaching_sessions",
+      "cnt": "0"
+    },
+    {
+      "tbl": "compliance_records",
+      "cnt": "14"
+    },
+    {
+      "tbl": "budget_allocations",
+      "cnt": "4"
+    }
+  ],
+  "messages": [],
+  "stdout": "tbl\tcnt\ncohort_participants\t13\ntraining_cohorts\t3\nclient_organizations\t1\nparticipants\t12\nbilling_records\t5\ncoaching_sessions\t0\ncompliance_records\t14\nbudget_allocations\t4\n",
+  "stderr": "",
+  "execution_time_ms": 55
+}
