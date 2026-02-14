@@ -11,6 +11,7 @@ import { aiVocabularyRouter, dailyGoalsRouter, discussionsRouter, writingRouter,
 import { certificateRouter, readingLabRouter, listeningLabRouter, grammarDrillsRouter, peerReviewRouter } from "./routers-sprint31";
 import { mockSleRouter, coachRouter, studyGroupRouter, bookmarkRouter, dictationRouter, searchRouter, onboardingRouter, dailyReviewRouter } from "./routers-sprint41";
 import * as adminDb from "./db-admin";
+import { clientPortalRouter } from "./routers-client-portal";
 import { gamificationProfiles, users } from "../drizzle/schema";
 import { desc, eq, sql } from "drizzle-orm";
 
@@ -98,6 +99,7 @@ async function updateChallengeProgress(userId: number, challengeType: string, in
 
 export const appRouter = router({
   system: systemRouter,
+  clientPortal: clientPortalRouter,
 
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),

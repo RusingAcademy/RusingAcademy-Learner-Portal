@@ -16,7 +16,7 @@ export const users = mysqlTable("users", {
   name: text("name"),
   email: varchar("email", { length: 320 }),
   loginMethod: varchar("loginMethod", { length: 64 }),
-  role: mysqlEnum("role", ["user", "admin"]).default("user").notNull(),
+  role: mysqlEnum("role", ["user", "admin", "hr_manager", "coach"]).default("user").notNull(),
   preferredLanguage: mysqlEnum("preferredLanguage", ["en", "fr"]).default("en").notNull(),
   avatarUrl: text("avatarUrl"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -679,3 +679,182 @@ export const contentCalendar = mysqlTable("content_calendar", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 export type ContentCalendarEntry = typeof contentCalendar.$inferSelect;
+
+
+/* ═══════════════════════════════════════════════════════════
+   CLIENT PORTAL (formerly HR Portal)
+   Tables for government departments & organizations
+   ═══════════════════════════════════════════════════════════ */
+
+/* ───────────────────── CLIENT ORGANIZATIONS ───────────────────── */
+export const clientOrganizations = mysqlTable("client_organizations", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 300 }).notNull(),
+  nameFr: varchar("nameFr", { length: 300 }),
+  orgType: mysqlEnum("orgType", ["federal_department", "provincial_ministry", "crown_corporation", "agency", "other"]).default("federal_department").notNull(),
+  sector: varchar("sector", { length: 200 }),
+  contactName: varchar("contactName", { length: 200 }),
+  contactEmail: varchar("contactEmail", { length: 320 }),
+  contactPhone: varchar("contactPhone", { length: 50 }),
+  address: text("address"),
+  city: varchar("city", { length: 100 }),
+  province: varchar("province", { length: 100 }),
+  postalCode: varchar("postalCode", { length: 10 }),
+  contractStartDate: varchar("contractStartDate", { length: 10 }),
+  contractEndDate: varchar("contractEndDate", { length: 10 }),
+  status: mysqlEnum("status", ["active", "pending", "suspended", "expired"]).default("pending").notNull(),
+  maxParticipants: int("maxParticipants").default(50).notNull(),
+  logoUrl: text("logoUrl"),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type ClientOrganization = typeof clientOrganizations.$inferSelect;
+
+/* ───────────────────── ORGANIZATION MANAGERS (HR Managers) ───────────────────── */
+export const organizationManagers = mysqlTable("organization_managers", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  organizationId: int("organizationId").notNull(),
+  role: mysqlEnum("role", ["primary_contact", "training_manager", "observer"]).default("training_manager").notNull(),
+  isActive: boolean("isActive").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type OrganizationManager = typeof organizationManagers.$inferSelect;
+
+/* ───────────────────── PARTICIPANTS ───────────────────── */
+export const participants = mysqlTable("participants", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId"),
+  organizationId: int("organizationId").notNull(),
+  firstName: varchar("firstName", { length: 128 }).notNull(),
+  lastName: varchar("lastName", { length: 128 }).notNull(),
+  email: varchar("email", { length: 320 }).notNull(),
+  employeeId: varchar("employeeId", { length: 64 }),
+  department: varchar("department", { length: 200 }),
+  position: varchar("position", { length: 200 }),
+  currentLevel: mysqlEnum("currentLevel", ["A1", "A2", "B1", "B2", "C1"]).default("A1").notNull(),
+  targetLevel: mysqlEnum("targetLevel", ["A1", "A2", "B1", "B2", "C1"]).default("B2").notNull(),
+  program: mysqlEnum("program", ["FSL", "ESL"]).default("FSL").notNull(),
+  status: mysqlEnum("status", ["active", "on_hold", "completed", "withdrawn"]).default("active").notNull(),
+  enrolledAt: timestamp("enrolledAt").defaultNow().notNull(),
+  completedAt: timestamp("completedAt"),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type Participant = typeof participants.$inferSelect;
+
+/* ───────────────────── TRAINING COHORTS ───────────────────── */
+export const trainingCohorts = mysqlTable("training_cohorts", {
+  id: int("id").autoincrement().primaryKey(),
+  organizationId: int("organizationId").notNull(),
+  name: varchar("name", { length: 256 }).notNull(),
+  nameFr: varchar("nameFr", { length: 256 }),
+  program: mysqlEnum("program", ["FSL", "ESL"]).default("FSL").notNull(),
+  cefrLevel: mysqlEnum("cefrLevel", ["A1", "A2", "B1", "B2", "C1"]).default("B1").notNull(),
+  coachId: int("coachId"),
+  startDate: varchar("startDate", { length: 10 }).notNull(),
+  endDate: varchar("endDate", { length: 10 }),
+  schedule: varchar("schedule", { length: 256 }),
+  maxParticipants: int("maxParticipants").default(15).notNull(),
+  currentParticipants: int("currentParticipants").default(0).notNull(),
+  status: mysqlEnum("status", ["planned", "active", "completed", "cancelled"]).default("planned").notNull(),
+  description: text("description"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type TrainingCohort = typeof trainingCohorts.$inferSelect;
+
+/* ───────────────────── COHORT PARTICIPANTS ───────────────────── */
+export const cohortParticipants = mysqlTable("cohort_participants", {
+  id: int("id").autoincrement().primaryKey(),
+  cohortId: int("cohortId").notNull(),
+  participantId: int("participantId").notNull(),
+  status: mysqlEnum("status", ["enrolled", "active", "completed", "withdrawn"]).default("enrolled").notNull(),
+  enrolledAt: timestamp("enrolledAt").defaultNow().notNull(),
+  completedAt: timestamp("completedAt"),
+});
+export type CohortParticipant = typeof cohortParticipants.$inferSelect;
+
+/* ───────────────────── BILLING & BUDGET ───────────────────── */
+export const billingRecords = mysqlTable("billing_records", {
+  id: int("id").autoincrement().primaryKey(),
+  organizationId: int("organizationId").notNull(),
+  invoiceNumber: varchar("invoiceNumber", { length: 64 }).notNull(),
+  description: varchar("description", { length: 500 }).notNull(),
+  descriptionFr: varchar("descriptionFr", { length: 500 }),
+  amount: int("amount").notNull(), // cents CAD
+  currency: varchar("currency", { length: 3 }).default("CAD").notNull(),
+  billingType: mysqlEnum("billingType", ["training_package", "coaching_session", "assessment", "material", "custom"]).default("training_package").notNull(),
+  status: mysqlEnum("status", ["draft", "sent", "paid", "overdue", "cancelled"]).default("draft").notNull(),
+  issuedDate: varchar("issuedDate", { length: 10 }).notNull(),
+  dueDate: varchar("dueDate", { length: 10 }),
+  paidDate: varchar("paidDate", { length: 10 }),
+  cohortId: int("cohortId"),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type BillingRecord = typeof billingRecords.$inferSelect;
+
+/* ───────────────────── BUDGET ALLOCATIONS ───────────────────── */
+export const budgetAllocations = mysqlTable("budget_allocations", {
+  id: int("id").autoincrement().primaryKey(),
+  organizationId: int("organizationId").notNull(),
+  fiscalYear: varchar("fiscalYear", { length: 9 }).notNull(), // e.g., "2025-2026"
+  totalBudget: int("totalBudget").notNull(), // cents CAD
+  allocatedAmount: int("allocatedAmount").default(0).notNull(),
+  spentAmount: int("spentAmount").default(0).notNull(),
+  category: mysqlEnum("category", ["training", "coaching", "assessment", "materials", "other"]).default("training").notNull(),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type BudgetAllocation = typeof budgetAllocations.$inferSelect;
+
+/* ───────────────────── COMPLIANCE RECORDS ───────────────────── */
+export const complianceRecords = mysqlTable("compliance_records", {
+  id: int("id").autoincrement().primaryKey(),
+  organizationId: int("organizationId").notNull(),
+  participantId: int("participantId").notNull(),
+  assessmentType: mysqlEnum("assessmentType", ["sle_reading", "sle_writing", "sle_oral", "internal_assessment", "placement_test"]).notNull(),
+  currentResult: varchar("currentResult", { length: 10 }),
+  targetResult: varchar("targetResult", { length: 10 }),
+  assessmentDate: varchar("assessmentDate", { length: 10 }),
+  nextAssessmentDate: varchar("nextAssessmentDate", { length: 10 }),
+  status: mysqlEnum("status", ["pending", "in_progress", "achieved", "not_achieved", "expired"]).default("pending").notNull(),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type ComplianceRecord = typeof complianceRecords.$inferSelect;
+
+/* ───────────────────── COACHING SESSIONS (Calendly-integrated) ───────────────────── */
+export const coachingSessions = mysqlTable("coaching_sessions", {
+  id: int("id").autoincrement().primaryKey(),
+  participantId: int("participantId"),
+  userId: int("userId"),
+  coachId: int("coachId"),
+  organizationId: int("organizationId"),
+  cohortId: int("cohortId"),
+  calendlyEventUri: varchar("calendlyEventUri", { length: 512 }),
+  calendlyInviteeUri: varchar("calendlyInviteeUri", { length: 512 }),
+  sessionType: mysqlEnum("sessionType", ["individual", "group", "assessment", "consultation"]).default("individual").notNull(),
+  title: varchar("title", { length: 256 }).notNull(),
+  description: text("description"),
+  scheduledAt: timestamp("scheduledAt"),
+  durationMinutes: int("durationMinutes").default(60).notNull(),
+  status: mysqlEnum("status", ["scheduled", "confirmed", "in_progress", "completed", "cancelled", "no_show"]).default("scheduled").notNull(),
+  meetingUrl: text("meetingUrl"),
+  coachNotes: text("coachNotes"),
+  participantFeedback: text("participantFeedback"),
+  rating: int("rating"),
+  cancelledAt: timestamp("cancelledAt"),
+  cancelReason: text("cancelReason"),
+  completedAt: timestamp("completedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type CoachingSession = typeof coachingSessions.$inferSelect;

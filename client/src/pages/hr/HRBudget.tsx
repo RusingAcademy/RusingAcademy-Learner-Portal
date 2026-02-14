@@ -1,39 +1,66 @@
 /**
  * HRBudget — Billing & Budget for Client Portal
- * Shows the client department's training contract budget, spending, and invoicing.
- * Features: Contract budget allocation, spending breakdown, forecasting
+ * Connected to real tRPC queries via clientPortal router.
+ * Shows the client department's training contract billing and budget.
  */
 import HRLayout from "@/components/HRLayout";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { trpc } from "@/lib/trpc";
 
 const ACCENT = "#2563eb";
 
-interface BudgetLine {
-  id: number;
-  category: string;
-  allocated: number;
-  spent: number;
-  committed: number;
-  remaining: number;
+function formatCurrency(cents: number) {
+  return `$${(cents / 100).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
-const budgetLines: BudgetLine[] = [
-  { id: 1, category: "Coaching Sessions (FSL)", allocated: 20000, spent: 12400, committed: 3200, remaining: 4400 },
-  { id: 2, category: "Coaching Sessions (ESL)", allocated: 10000, spent: 6000, committed: 1800, remaining: 2200 },
-  { id: 3, category: "SLE Prep Programs", allocated: 8000, spent: 4800, committed: 1200, remaining: 2000 },
-  { id: 4, category: "Platform Licenses", allocated: 6000, spent: 5400, committed: 600, remaining: 0 },
-  { id: 5, category: "Learning Materials", allocated: 4000, spent: 3600, committed: 0, remaining: 400 },
-  { id: 6, category: "Assessment & Testing", allocated: 2000, spent: 2000, committed: 0, remaining: 0 },
-];
-
-function formatCurrency(n: number) { return `$${n.toLocaleString()}`; }
+function LoadingSkeleton() {
+  return (
+    <div className="animate-pulse space-y-6 max-w-7xl mx-auto">
+      <div className="h-12 bg-gray-100 rounded-xl w-1/3" />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {[1, 2, 3, 4].map(i => <div key={i} className="h-28 bg-gray-100 rounded-xl" />)}
+      </div>
+      <div className="h-48 bg-gray-100 rounded-xl" />
+    </div>
+  );
+}
 
 export default function HRBudget() {
   const { lang } = useLanguage();
-  const totalAllocated = budgetLines.reduce((s, b) => s + b.allocated, 0);
-  const totalSpent = budgetLines.reduce((s, b) => s + b.spent, 0);
-  const totalCommitted = budgetLines.reduce((s, b) => s + b.committed, 0);
-  const totalRemaining = budgetLines.reduce((s, b) => s + b.remaining, 0);
+
+  const { data: billingStats, isLoading: loadingStats, error } = trpc.clientPortal.getBillingStats.useQuery(undefined, {
+    retry: 1,
+    staleTime: 60_000,
+  });
+
+  const { data: billingRecords, isLoading: loadingRecords } = trpc.clientPortal.getBillingRecords.useQuery(undefined, {
+    retry: 1,
+    staleTime: 60_000,
+  });
+
+  if (error && (error.message.includes("FORBIDDEN") || error.message.includes("hr_manager"))) {
+    return (
+      <HRLayout>
+        <div className="max-w-2xl mx-auto text-center py-16">
+          <span className="material-icons text-6xl text-gray-300 mb-4">lock</span>
+          <h2 className="text-xl font-bold text-gray-900 mb-2">
+            {lang === "fr" ? "Accès restreint" : "Restricted Access"}
+          </h2>
+          <p className="text-sm text-gray-500">
+            {lang === "fr"
+              ? "Contactez votre administrateur RusingÂcademy pour obtenir l'accès."
+              : "Contact your RusingÂcademy administrator for access."}
+          </p>
+        </div>
+      </HRLayout>
+    );
+  }
+
+  if (loadingStats || loadingRecords) return <HRLayout><LoadingSkeleton /></HRLayout>;
+
+  const stats = billingStats ?? { totalInvoiced: 0, totalPaid: 0, totalOverdue: 0, pendingCount: 0 };
+  const records = billingRecords ?? [];
+  const outstanding = stats.totalInvoiced - stats.totalPaid;
 
   return (
     <HRLayout>
@@ -42,16 +69,18 @@ export default function HRBudget() {
           <h1 className="text-2xl font-bold text-gray-900" style={{ fontFamily: "'Playfair Display', serif" }}>
             {lang === "fr" ? "Facturation et budget" : "Billing & Budget"}
           </h1>
-          <p className="text-sm text-gray-500">{lang === "fr" ? "Contrat de formation — Exercice financier 2025-2026" : "Training Contract — Fiscal Year 2025-2026"}</p>
+          <p className="text-sm text-gray-500">
+            {lang === "fr" ? "Contrat de formation — Aperçu financier" : "Training Contract — Financial Overview"}
+          </p>
         </div>
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           {[
-            { icon: "account_balance", label: lang === "fr" ? "Budget total" : "Total Budget", value: formatCurrency(totalAllocated), color: ACCENT },
-            { icon: "payments", label: lang === "fr" ? "Dépensé" : "Spent", value: formatCurrency(totalSpent), color: "#dc2626" },
-            { icon: "schedule", label: lang === "fr" ? "Engagé" : "Committed", value: formatCurrency(totalCommitted), color: "#d97706" },
-            { icon: "savings", label: lang === "fr" ? "Disponible" : "Available", value: formatCurrency(totalRemaining), color: "#059669" },
+            { icon: "receipt_long", label: lang === "fr" ? "Total facturé" : "Total Invoiced", value: formatCurrency(stats.totalInvoiced), color: ACCENT },
+            { icon: "payments", label: lang === "fr" ? "Total payé" : "Total Paid", value: formatCurrency(stats.totalPaid), color: "#059669" },
+            { icon: "warning", label: lang === "fr" ? "En souffrance" : "Overdue", value: formatCurrency(stats.totalOverdue), color: "#dc2626" },
+            { icon: "pending", label: lang === "fr" ? "Factures en attente" : "Pending Invoices", value: String(stats.pendingCount), color: "#d97706" },
           ].map(card => (
             <div key={card.label} className="bg-white rounded-xl border border-gray-100 p-5 hover:shadow-md transition-shadow">
               <div className="w-10 h-10 rounded-lg flex items-center justify-center mb-3" style={{ backgroundColor: `${card.color}10` }}>
@@ -59,74 +88,97 @@ export default function HRBudget() {
               </div>
               <p className="text-xs text-gray-500 mb-1">{card.label}</p>
               <p className="text-2xl font-bold text-gray-900">{card.value}</p>
-              <p className="text-[10px] text-gray-400 mt-1">{Math.round((card.label.includes("Dépensé") || card.label.includes("Spent") ? totalSpent / totalAllocated : totalRemaining / totalAllocated) * 100)}% {lang === "fr" ? "du total" : "of total"}</p>
             </div>
           ))}
         </div>
 
-        {/* Budget Utilization Bar */}
-        <div className="bg-white rounded-xl border border-gray-100 p-5 mb-6">
-          <h2 className="text-base font-semibold text-gray-900 mb-3">{lang === "fr" ? "Utilisation du budget" : "Budget Utilization"}</h2>
-          <div className="h-6 bg-gray-100 rounded-full overflow-hidden flex">
-            <div className="h-full bg-[#dc2626] transition-all" style={{ width: `${(totalSpent / totalAllocated) * 100}%` }} title={`Spent: ${formatCurrency(totalSpent)}`} />
-            <div className="h-full bg-[#d97706] transition-all" style={{ width: `${(totalCommitted / totalAllocated) * 100}%` }} title={`Committed: ${formatCurrency(totalCommitted)}`} />
-            <div className="h-full bg-[#059669] transition-all" style={{ width: `${(totalRemaining / totalAllocated) * 100}%` }} title={`Available: ${formatCurrency(totalRemaining)}`} />
+        {/* Payment Progress Bar */}
+        {stats.totalInvoiced > 0 && (
+          <div className="bg-white rounded-xl border border-gray-100 p-5 mb-6">
+            <h2 className="text-base font-semibold text-gray-900 mb-3">
+              {lang === "fr" ? "Progression des paiements" : "Payment Progress"}
+            </h2>
+            <div className="h-6 bg-gray-100 rounded-full overflow-hidden flex">
+              <div className="h-full bg-[#059669] transition-all" style={{ width: `${(stats.totalPaid / stats.totalInvoiced) * 100}%` }} />
+              <div className="h-full bg-[#dc2626] transition-all" style={{ width: `${(stats.totalOverdue / stats.totalInvoiced) * 100}%` }} />
+            </div>
+            <div className="flex gap-6 mt-2 text-xs">
+              <span className="flex items-center gap-1">
+                <span className="w-3 h-3 rounded-sm bg-[#059669]" />
+                {lang === "fr" ? "Payé" : "Paid"} ({Math.round((stats.totalPaid / stats.totalInvoiced) * 100)}%)
+              </span>
+              <span className="flex items-center gap-1">
+                <span className="w-3 h-3 rounded-sm bg-[#dc2626]" />
+                {lang === "fr" ? "En souffrance" : "Overdue"} ({Math.round((stats.totalOverdue / stats.totalInvoiced) * 100)}%)
+              </span>
+              <span className="flex items-center gap-1">
+                <span className="w-3 h-3 rounded-sm bg-gray-200" />
+                {lang === "fr" ? "Solde" : "Outstanding"} ({formatCurrency(outstanding)})
+              </span>
+            </div>
           </div>
-          <div className="flex gap-6 mt-2 text-xs">
-            <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-sm bg-[#dc2626]" />{lang === "fr" ? "Dépensé" : "Spent"} ({Math.round((totalSpent / totalAllocated) * 100)}%)</span>
-            <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-sm bg-[#d97706]" />{lang === "fr" ? "Engagé" : "Committed"} ({Math.round((totalCommitted / totalAllocated) * 100)}%)</span>
-            <span className="flex items-center gap-1"><span className="w-3 h-3 rounded-sm bg-[#059669]" />{lang === "fr" ? "Disponible" : "Available"} ({Math.round((totalRemaining / totalAllocated) * 100)}%)</span>
-          </div>
-        </div>
+        )}
 
-        {/* Budget Detail Table */}
+        {/* Billing Records Table */}
         <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="bg-gray-50 border-b border-gray-100">
-                  <th className="text-left py-3 px-4 text-xs text-gray-500 font-medium">{lang === "fr" ? "Catégorie" : "Category"}</th>
-                  <th className="text-right py-3 px-4 text-xs text-gray-500 font-medium">{lang === "fr" ? "Alloué" : "Allocated"}</th>
-                  <th className="text-right py-3 px-4 text-xs text-gray-500 font-medium">{lang === "fr" ? "Dépensé" : "Spent"}</th>
-                  <th className="text-right py-3 px-4 text-xs text-gray-500 font-medium">{lang === "fr" ? "Engagé" : "Committed"}</th>
-                  <th className="text-right py-3 px-4 text-xs text-gray-500 font-medium">{lang === "fr" ? "Restant" : "Remaining"}</th>
-                  <th className="text-center py-3 px-4 text-xs text-gray-500 font-medium">{lang === "fr" ? "Utilisation" : "Utilization"}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {budgetLines.map(line => {
-                  const utilPct = Math.round(((line.spent + line.committed) / line.allocated) * 100);
-                  return (
-                    <tr key={line.id} className="border-b border-gray-50 last:border-0 hover:bg-gray-50">
-                      <td className="py-3 px-4 text-sm font-medium text-gray-900">{line.category}</td>
-                      <td className="py-3 px-4 text-right text-sm text-gray-700">{formatCurrency(line.allocated)}</td>
-                      <td className="py-3 px-4 text-right text-sm text-red-600 font-medium">{formatCurrency(line.spent)}</td>
-                      <td className="py-3 px-4 text-right text-sm text-amber-600">{formatCurrency(line.committed)}</td>
-                      <td className="py-3 px-4 text-right text-sm text-green-600 font-medium">{formatCurrency(line.remaining)}</td>
-                      <td className="py-3 px-4">
-                        <div className="flex items-center gap-2 justify-center">
-                          <div className="w-16 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                            <div className="h-full rounded-full" style={{ width: `${utilPct}%`, backgroundColor: utilPct >= 90 ? "#dc2626" : utilPct >= 70 ? "#d97706" : ACCENT }} />
-                          </div>
-                          <span className="text-xs text-gray-600 w-8">{utilPct}%</span>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-              <tfoot>
-                <tr className="bg-gray-50 border-t border-gray-200 font-semibold">
-                  <td className="py-3 px-4 text-sm text-gray-900">{lang === "fr" ? "Total" : "Total"}</td>
-                  <td className="py-3 px-4 text-right text-sm text-gray-900">{formatCurrency(totalAllocated)}</td>
-                  <td className="py-3 px-4 text-right text-sm text-red-600">{formatCurrency(totalSpent)}</td>
-                  <td className="py-3 px-4 text-right text-sm text-amber-600">{formatCurrency(totalCommitted)}</td>
-                  <td className="py-3 px-4 text-right text-sm text-green-600">{formatCurrency(totalRemaining)}</td>
-                  <td className="py-3 px-4 text-center text-sm text-gray-900">{Math.round(((totalSpent + totalCommitted) / totalAllocated) * 100)}%</td>
-                </tr>
-              </tfoot>
-            </table>
+          <div className="p-4 border-b border-gray-100">
+            <h2 className="text-base font-semibold text-gray-900">
+              {lang === "fr" ? "Historique de facturation" : "Billing History"}
+            </h2>
           </div>
+          {records.length === 0 ? (
+            <div className="text-center py-12">
+              <span className="material-icons text-5xl text-gray-300 mb-3">receipt_long</span>
+              <p className="text-sm text-gray-500">
+                {lang === "fr" ? "Aucune facture pour le moment." : "No billing records yet."}
+              </p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-gray-50 border-b border-gray-100">
+                    <th className="text-left py-3 px-4 text-xs text-gray-500 font-medium">{lang === "fr" ? "Nº Facture" : "Invoice #"}</th>
+                    <th className="text-left py-3 px-4 text-xs text-gray-500 font-medium">{lang === "fr" ? "Description" : "Description"}</th>
+                    <th className="text-right py-3 px-4 text-xs text-gray-500 font-medium">{lang === "fr" ? "Montant" : "Amount"}</th>
+                    <th className="text-center py-3 px-4 text-xs text-gray-500 font-medium">{lang === "fr" ? "Statut" : "Status"}</th>
+                    <th className="text-center py-3 px-4 text-xs text-gray-500 font-medium">{lang === "fr" ? "Échéance" : "Due Date"}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {records.map((rec: any) => {
+                    const statusStyles: Record<string, string> = {
+                      paid: "bg-green-50 text-green-700 border-green-200",
+                      sent: "bg-blue-50 text-blue-700 border-blue-200",
+                      overdue: "bg-red-50 text-red-600 border-red-200",
+                      draft: "bg-gray-50 text-gray-600 border-gray-200",
+                    };
+                    const statusLabels: Record<string, { en: string; fr: string }> = {
+                      paid: { en: "Paid", fr: "Payé" },
+                      sent: { en: "Sent", fr: "Envoyé" },
+                      overdue: { en: "Overdue", fr: "En souffrance" },
+                      draft: { en: "Draft", fr: "Brouillon" },
+                    };
+                    return (
+                      <tr key={rec.id} className="border-b border-gray-50 last:border-0 hover:bg-gray-50">
+                        <td className="py-3 px-4 text-sm font-medium text-gray-900">{rec.invoiceNumber ?? `INV-${rec.id}`}</td>
+                        <td className="py-3 px-4 text-sm text-gray-600">{rec.description ?? "—"}</td>
+                        <td className="py-3 px-4 text-right text-sm font-medium text-gray-900">{formatCurrency(rec.amount ?? 0)}</td>
+                        <td className="py-3 px-4 text-center">
+                          <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${statusStyles[rec.status] ?? statusStyles.draft}`}>
+                            {lang === "fr" ? (statusLabels[rec.status]?.fr ?? rec.status) : (statusLabels[rec.status]?.en ?? rec.status)}
+                          </span>
+                        </td>
+                        <td className="py-3 px-4 text-center text-sm text-gray-500">
+                          {rec.dueDate ? new Date(rec.dueDate).toLocaleDateString(lang === "fr" ? "fr-CA" : "en-CA") : "—"}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </div>
     </HRLayout>

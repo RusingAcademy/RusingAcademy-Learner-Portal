@@ -589,4 +589,19 @@
   - [x] Update HRSidebar: rename labels to reflect client-facing terminology (Client Portal)
   - [x] Update HRLayout: adjust branding/header for client portal
 - [x] Protect Dashboard/Coach/HR/Admin routes with redirectOnUnauthenticated: true (AuthGuard component)
-- [ ] Push all changes to GitHub feat/pwa and merge PR
+- [x] Push all changes to GitHub feat/pwa and merge PR #1 (squash merged)
+
+## Client Portal Real Data + Roles + Calendly
+- [x] Design DB schema: organizations, participants, cohorts, budgets, compliance records
+- [x] Extend user role enum with hr_manager and coach roles
+- [x] Push DB migrations (via direct SQL due to central repo table conflicts)
+- [x] Build tRPC procedures for Client Portal (CRUD for organizations, participants, cohorts, budgets, compliance)
+- [x] Build role-based middleware (hr_manager can only see their organization's data)
+- [x] Connect HRDashboardHome to real tRPC queries
+- [x] Connect HRTeam (Participants) to real tRPC queries
+- [x] Connect HRCohorts to real tRPC queries
+- [x] Connect HRBudget to real tRPC queries (billing stats + billing records)
+- [x] Connect HRCompliance to real tRPC queries (risk derived from status)
+- [x] Integrate Calendly for coaching session booking (shared CalendlyWidget + Client Portal booking button)
+- [x] Write vitest tests for Client Portal (30 tests, 350/350 total passing)
+- [ ] Push all changes to GitHub and deliver
