@@ -4,6 +4,7 @@
  */
 import { useState, useEffect } from "react";
 import CoachSidebar from "./CoachSidebar";
+import SocialLinks from "./SocialLinks";
 
 const LOGO_ICON = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663049070748/mrXRaWLUDJGHdcjc.png";
 
@@ -59,6 +60,7 @@ export default function CoachLayout({ children }: CoachLayoutProps) {
         </div>
 
         <footer className="text-center py-4 border-t border-gray-100 bg-white" role="contentinfo">
+          <SocialLinks size={14} color="#9ca3af" className="flex items-center justify-center gap-4 mb-2" />
           <p className="text-[11px] text-gray-500">
             © 2026 RusingÂcademy — A Division of{" "}
             <span className="font-medium text-[#7c3aed]">Rusinga International Consulting Ltd.</span>

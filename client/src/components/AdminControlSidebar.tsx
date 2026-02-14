@@ -4,6 +4,7 @@
  */
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Link, useLocation } from "wouter";
+import SocialLinks from "./SocialLinks";
 
 const ACCENT = "#dc2626";
 
@@ -104,6 +105,7 @@ export default function AdminControlSidebar() {
           <span className="material-icons text-sm">arrow_back</span>
           {lang === "fr" ? "Retour au portail" : "Back to Portal"}
         </Link>
+        <SocialLinks size={12} color="#d1d5db" className="flex items-center gap-3 mt-3" />
         <p className="text-[9px] text-gray-300 mt-2">v2.0.0 — RusingÂcademy</p>
       </div>
     </aside>

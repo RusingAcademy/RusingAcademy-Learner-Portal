@@ -1,9 +1,13 @@
 /**
  * Login — RusingÂcademy Learning Portal
  * Design: Clean white light theme, accessible, LRDG-inspired
+ * Auth: Connected to Manus OAuth — the "Log In" button redirects to OAuth portal.
+ *       Already-authenticated users are redirected to /dashboard automatically.
  */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
+import { useAuth } from "@/_core/hooks/useAuth";
+import { getLoginUrl } from "@/const";
 
 const LOGO_FULL = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663049070748/zDHqHOSjzqRLzEVj.png";
 const LOGO_ICON = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663049070748/mrXRaWLUDJGHdcjc.png";
@@ -11,16 +15,35 @@ const HERO_STUDENT = "https://files.manuscdn.com/user_upload_by_module/session_f
 
 export default function Login() {
   const [, setLocation] = useLocation();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [stayLoggedIn, setStayLoggedIn] = useState(true);
+  const { loading, isAuthenticated } = useAuth();
   const [language, setLanguage] = useState("English");
+
+  // Redirect authenticated users to dashboard
+  useEffect(() => {
+    if (!loading && isAuthenticated) {
+      setLocation("/dashboard");
+    }
+  }, [loading, isAuthenticated, setLocation]);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    setLocation("/dashboard");
+    // Redirect to Manus OAuth portal
+    window.location.href = getLoginUrl();
   };
+
+  // Show a loading state while checking auth
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="text-center">
+          <img src={LOGO_ICON} alt="RusingÂcademy" className="w-16 h-16 mx-auto mb-4 rounded-2xl shadow-lg animate-pulse" />
+          <p className="text-sm text-gray-500">
+            {language === "English" ? "Checking session..." : "Vérification de la session..."}
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex bg-white">
@@ -121,67 +144,25 @@ export default function Login() {
             {language === "English" ? "Log in to your Learning Portal." : "Connectez-vous à votre portail d'apprentissage."}
           </h1>
 
-          {/* Login Form */}
+          {/* Login Form — redirects to Manus OAuth */}
           <form onSubmit={handleLogin} className="space-y-5">
-            <div>
-              <label className="text-sm text-gray-700 mb-1 block font-medium">
-                {language === "English" ? "Username" : "Nom d'utilisateur"}
-              </label>
-              <input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="w-full rounded-xl px-4 py-3 text-sm outline-none transition-all duration-300 border border-gray-200 bg-white text-gray-900 focus:border-[#008090] focus:ring-2 focus:ring-[#008090]/10"
-              />
-            </div>
-
-            <div>
-              <label className="text-sm text-gray-700 mb-1 block font-medium">
-                {language === "English" ? "Password" : "Mot de passe"} *
-              </label>
-              <div className="relative">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full rounded-xl px-4 py-3 text-sm pr-10 outline-none transition-all duration-300 border border-gray-200 bg-white text-gray-900 focus:border-[#008090] focus:ring-2 focus:ring-[#008090]/10"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2"
-                >
-                  <span className="material-icons text-gray-400 text-[20px]">
-                    {showPassword ? "visibility_off" : "visibility"}
-                  </span>
-                </button>
-              </div>
+            {/* Info notice about OAuth */}
+            <div className="bg-[#f0fafb] border border-[#008090]/15 rounded-xl px-4 py-3 mb-2">
+              <p className="text-xs text-gray-600 leading-relaxed">
+                <span className="material-icons text-[#008090] align-middle mr-1" style={{ fontSize: "14px" }}>info</span>
+                {language === "English"
+                  ? "You will be redirected to our secure authentication portal to sign in."
+                  : "Vous serez redirigé vers notre portail d'authentification sécurisé pour vous connecter."}
+              </p>
             </div>
 
             <button
               type="submit"
-              className="w-full text-white font-semibold py-3.5 rounded-xl transition-all duration-300 hover:shadow-lg bg-[#008090] hover:bg-[#006d7a]"
+              className="w-full text-white font-semibold py-3.5 rounded-xl transition-all duration-300 hover:shadow-lg bg-[#008090] hover:bg-[#006d7a] flex items-center justify-center gap-2"
             >
-              {language === "English" ? "Log In" : "Se connecter"}
+              <span className="material-icons" style={{ fontSize: "20px" }}>login</span>
+              {language === "English" ? "Log In with RusingÂcademy" : "Se connecter avec RusingÂcademy"}
             </button>
-
-            <div className="flex items-center justify-between">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={stayLoggedIn}
-                  onChange={(e) => setStayLoggedIn(e.target.checked)}
-                  className="rounded"
-                  style={{ accentColor: "#008090" }}
-                />
-                <span className="text-sm text-gray-600">
-                  {language === "English" ? "Stay Logged In" : "Rester connecté"}
-                </span>
-              </label>
-              <button type="button" className="text-sm text-[#008090] hover:underline">
-                {language === "English" ? "Reset Password" : "Réinitialiser"}
-              </button>
-            </div>
 
             <div className="text-center">
               <button type="button" className="text-sm text-[#008090] hover:underline">
