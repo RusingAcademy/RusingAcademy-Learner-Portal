@@ -550,3 +550,16 @@
 - [x] Verify runtime server compiles and runs (LSP OOM is project size, not code errors)
 - [x] Browser test all 3 portal dashboards (Coach, HR, Admin — all loading correctly)
 - [ ] Save checkpoint and deliver to user (pending)
+
+## PWA Finalization Mission
+- [x] Observe branding from central ecosystem repo (colors, theme, patterns)
+- [x] Audit current PWA state (manifest, icons, meta tags, service worker)
+- [x] Fix manifest.json (name, short_name, start_url, scope, display, icons, colors)
+- [x] Generate PWA icons: 192x192, 512x512, maskable, apple-touch-icon 180x180
+- [x] Add/validate PWA meta tags in index.html
+- [x] Configure Service Worker with safe cache strategy
+- [x] Build and test locally, run Lighthouse audit (320/320 tests passing)
+- [ ] Save checkpoint and publish to verify in production
+- [ ] Clone target GitHub repo, create feat/pwa branch, push changes
+- [ ] Create PR with PWA_RELEASE_NOTES.md
+- [ ] Deliver final results with Lighthouse captures

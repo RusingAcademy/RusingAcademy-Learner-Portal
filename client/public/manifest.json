@@ -1,26 +1,55 @@
 {
-  "name": "RusingÂcademy Learning Portal",
-  "short_name": "RusingÂcademy",
-  "description": "Bilingual language training portal for Canadian public servants — SLE preparation, FSL/ESL programs, and AI-powered coaching.",
-  "start_url": "/dashboard",
+  "name": "RusingAcademy | Bilingual Excellence for Canadian Public Servants",
+  "short_name": "RusingAcademy",
+  "description": "Professional bilingual training ecosystem for Canadian public servants. SLE exam prep, expert coaching, and structured learning paths to achieve your language goals.",
+  "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#008090",
+  "background_color": "#FFFFFF",
+  "theme_color": "#0D7377",
   "orientation": "any",
-  "categories": ["education", "productivity"],
+  "scope": "/",
   "lang": "en",
+  "dir": "ltr",
+  "categories": ["education", "productivity"],
   "icons": [
     {
-      "src": "/icon-192.png",
+      "src": "/icons/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "/icon-512.png",
+      "src": "/icons/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
-  ]
+  ],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "url": "/dashboard",
+      "description": "Access your learning dashboard"
+    },
+    {
+      "name": "SLE Practice",
+      "short_name": "SLE",
+      "url": "/sle-practice",
+      "description": "Practice for your SLE exam"
+    }
+  ],
+  "prefer_related_applications": false
 }

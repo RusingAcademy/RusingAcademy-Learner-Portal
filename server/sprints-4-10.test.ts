@@ -85,8 +85,8 @@ describe("Sprint 9: PWA Configuration", () => {
     expect(exists).toBe(true);
     const content = fs.readFileSync(manifestPath, "utf-8");
     const manifest = JSON.parse(content);
-    expect(manifest.name).toContain("RusingÂcademy");
-    expect(manifest.theme_color).toBe("#008090");
+    expect(manifest.name).toContain("RusingAcademy");
+    expect(manifest.theme_color).toBe("#0D7377");
     expect(manifest.display).toBe("standalone");
     expect(manifest.icons).toBeDefined();
     expect(manifest.icons.length).toBeGreaterThan(0);
