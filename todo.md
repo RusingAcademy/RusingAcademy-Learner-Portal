@@ -559,7 +559,10 @@
 - [x] Add/validate PWA meta tags in index.html
 - [x] Configure Service Worker with safe cache strategy
 - [x] Build and test locally, run Lighthouse audit (320/320 tests passing)
-- [ ] Save checkpoint and publish to verify in production
-- [ ] Clone target GitHub repo, create feat/pwa branch, push changes
-- [ ] Create PR with PWA_RELEASE_NOTES.md
-- [ ] Deliver final results with Lighthouse captures
+- [x] Save checkpoint and publish to verify in production (checkpoint 8cafb9c8)
+- [x] Clone target GitHub repo, create feat/pwa branch, push changes
+- [x] Create PR #1 with PWA_RELEASE_NOTES.md
+- [x] Deliver final results with documentation and PR verification
+
+## Login Page Hero Photo
+- [x] Add happy student photo to Login page hero section (RINET2.jpg uploaded to CDN)

@@ -7,6 +7,7 @@ import { useLocation } from "wouter";
 
 const LOGO_FULL = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663049070748/zDHqHOSjzqRLzEVj.png";
 const LOGO_ICON = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663049070748/mrXRaWLUDJGHdcjc.png";
+const HERO_STUDENT = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663049070748/HgwxBoyVaSLVHBYE.jpg";
 
 export default function Login() {
   const [, setLocation] = useLocation();
@@ -23,31 +24,55 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex bg-white">
-      {/* Left Side — Light teal hero */}
-      <div className="hidden lg:flex lg:w-1/2 items-center justify-center p-12 relative overflow-hidden" style={{
+      {/* Left Side — Hero with student photo */}
+      <div className="hidden lg:flex lg:w-1/2 flex-col relative overflow-hidden" style={{
         background: "linear-gradient(160deg, #f0fafb 0%, #e0f4f5 40%, #d0eef0 100%)",
       }}>
         {/* Decorative circles */}
-        <div className="absolute top-20 right-20 w-64 h-64 rounded-full opacity-20" style={{
+        <div className="absolute top-20 right-20 w-64 h-64 rounded-full opacity-20 pointer-events-none" style={{
           background: "radial-gradient(circle, #008090, transparent)",
         }} />
-        <div className="absolute bottom-20 left-10 w-80 h-80 rounded-full opacity-10" style={{
+        <div className="absolute bottom-20 left-10 w-80 h-80 rounded-full opacity-10 pointer-events-none" style={{
           background: "radial-gradient(circle, #f5a623, transparent)",
         }} />
 
-        <div className="relative z-10 text-center max-w-md">
-          <img src={LOGO_ICON} alt="RusingÂcademy" className="w-20 h-20 mx-auto mb-8 rounded-2xl shadow-lg" />
-          <h2 className="text-4xl font-bold text-gray-900 mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
+        {/* Top content: Logo + text */}
+        <div className="relative z-10 text-center px-12 pt-12 pb-6 flex-shrink-0">
+          <img src={LOGO_ICON} alt="RusingÂcademy" className="w-16 h-16 mx-auto mb-4 rounded-2xl shadow-lg" />
+          <h2 className="text-3xl font-bold text-gray-900 mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
             RusingÂcademy
           </h2>
-          <p className="text-lg text-[#008090] font-medium mb-2">Learning Portal</p>
-          <p className="text-gray-600 text-sm leading-relaxed">
-            Master your second official language with Canada's premier bilingual training platform. 
-            Expert coaching meets innovative technology.
+          <p className="text-base text-[#008090] font-medium mb-1">Learning Portal</p>
+          <p className="text-gray-600 text-sm leading-relaxed max-w-sm mx-auto">
+            Master your second official language with Canada's premier bilingual training platform.
           </p>
+        </div>
 
+        {/* Student photo — centered and prominent */}
+        <div className="relative z-10 flex-1 flex items-center justify-center px-10 pb-4">
+          <div className="relative w-full max-w-md">
+            <div className="rounded-2xl overflow-hidden shadow-xl border-4 border-white/80">
+              <img
+                src={HERO_STUDENT}
+                alt="Happy student learning online with RusingÂcademy"
+                className="w-full h-auto object-cover"
+                loading="eager"
+              />
+            </div>
+            {/* Floating badge */}
+            <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-white rounded-full px-4 py-1.5 shadow-lg border border-gray-100 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+              <span className="text-xs font-semibold text-gray-700">
+                {language === "English" ? "Live Learning Sessions" : "Sessions en direct"}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Feature pills + Stats */}
+        <div className="relative z-10 px-12 pb-10 flex-shrink-0">
           {/* Feature pills */}
-          <div className="flex flex-wrap justify-center gap-2 mt-8">
+          <div className="flex flex-wrap justify-center gap-2 mb-5">
             {["ESL Program", "FSL Program", "CEFR A1→C1+", "Gamification", "SLE Prep"].map((f) => (
               <span key={f} className="text-xs px-3 py-1.5 rounded-full text-gray-700 font-medium bg-white/80 border border-gray-200 shadow-sm">
                 {f}
@@ -56,14 +81,14 @@ export default function Login() {
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-3 gap-4 mt-10">
+          <div className="grid grid-cols-3 gap-3">
             {[
               { value: "12", label: "Paths" },
               { value: "192", label: "Lessons" },
               { value: "1,344", label: "Activities" },
             ].map((s) => (
-              <div key={s.label} className="text-center bg-white/60 rounded-xl py-3 border border-gray-100">
-                <div className="text-2xl font-bold text-[#008090]">{s.value}</div>
+              <div key={s.label} className="text-center bg-white/60 rounded-xl py-2.5 border border-gray-100">
+                <div className="text-xl font-bold text-[#008090]">{s.value}</div>
                 <div className="text-[10px] text-gray-500 uppercase tracking-wider">{s.label}</div>
               </div>
             ))}
