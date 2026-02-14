@@ -1,562 +1,260 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "./styles/animations.css";
-@import "./styles/tokens.css";
-@import "./styles/light-luxury-tokens.css";
-@import "./styles/accessibility.css";
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  /* === RADIUS (from tokens) === */
-  --radius-sm: var(--radius-sm);
-  --radius-md: var(--radius-md);
-  --radius-lg: var(--radius-lg);
-  --radius-xl: var(--radius-xl);
-
-  /* === DESIGN SYSTEM COLORS (Néo-Institutionnel) === */
-
-  /* Foundation (Deep Forest Teal) */
-  --color-foundation: var(--brand-foundation);
-  --color-foundation-2: var(--brand-foundation-2);
-  --color-foundation-soft: var(--brand-foundation-soft);
-
-  /* CTA (Electric Copper) */
-  --color-cta: var(--brand-cta);
-  --color-cta-2: var(--brand-cta-2);
-  --color-cta-soft: var(--brand-cta-soft);
-
-  /* Obsidian (Premium Dark) */
-  --color-obsidian: var(--brand-obsidian);
-  --color-obsidian-2: var(--brand-obsidian-2);
-
-  /* Neutrals */
-  --color-porcelain: var(--bg);
-  --color-surface: var(--surface);
-  --color-sand: var(--sand);
-  --color-text: var(--text);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
-
-  /* Brand Accents */
-  --color-lingueefy: var(--lingueefy-accent);
-  --color-lingueefy-soft: var(--lingueefy-accent-soft);
-  --color-barholex-gold: var(--barholex-gold);
-  --color-barholex-gold-soft: var(--barholex-gold-soft);
-
-  /* Dynamic Brand Accent (changes per page) */
-  --color-brand-accent: var(--brand-accent);
-  --color-brand-accent-2: var(--brand-accent-2);
-  --color-brand-accent-soft: var(--brand-accent-soft);
-
-  /* === LEGACY MAPPINGS (for existing components) === */
-  --color-background: var(--bg);
-  --color-foreground: var(--text);
-  --color-card: var(--surface);
-  --color-card-foreground: var(--text);
-  --color-popover: var(--surface);
-  --color-popover-foreground: var(--text);
-  --color-primary: var(--brand-foundation);
-  --color-primary-foreground: #FFFFFF;
-  --color-secondary: var(--sand);
-  --color-secondary-foreground: var(--text);
-  --color-muted-foreground: #374151;      /* FORCED dark gray for contrast */
-  --color-accent: var(--brand-cta);
-  --color-accent-foreground: #FFFFFF;
-  --color-destructive: var(--danger);
-  --color-destructive-foreground: #FFFFFF;
-  --color-border: var(--sand);
-  --color-input: var(--sand);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
   --color-ring: var(--ring);
-
-  /* Charts */
-  --color-chart-1: var(--brand-foundation);
-  --color-chart-2: var(--brand-cta);
-
-  /* Sidebar */
-  --color-sidebar: oklch(0.97 0.005 250);
-  --color-sidebar-foreground: oklch(0.25 0.02 250);
-  --color-sidebar-primary: var(--brand-foundation);
-  --color-sidebar-primary-foreground: #FFFFFF;
-  --color-sidebar-accent: oklch(0.93 0.01 250);
-  --color-sidebar-accent-foreground: oklch(0.25 0.02 250);
-  --color-sidebar-border: oklch(0.90 0.005 250);
-  --color-sidebar-ring: var(--ring);
-  --sidebar-width: 16rem;
-  --sidebar-width-mobile: 18rem;
-  --sidebar-width-icon: 3rem;
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  /* RusingAcademy brand colors */
+  --color-ra-teal: oklch(0.55 0.12 195);
+  --color-ra-gold: oklch(0.75 0.15 75);
+  --color-ra-cream: oklch(0.96 0.01 90);
+  --color-ra-navy: oklch(0.15 0.02 260);
+  --color-ra-warm-white: oklch(0.99 0.005 90);
 }
 
-
-/* === ACCESSIBILITY UTILITIES === */
-
-/* Focus visible ring for keyboard navigation */
-@layer utilities {
-  .focus-ring {
-    @apply outline-none ring-2 ring-offset-2 ring-slate-500 dark:ring-slate-400;
-  }
-  
-  /* High contrast text utilities */
-  .text-high-contrast {
-    @apply text-slate-900 dark:text-white;
-  }
-  
-  .text-medium-contrast {
-    @apply text-slate-700 dark:text-slate-200;
-  }
-  
-  .text-low-contrast {
-    @apply text-slate-500 dark:text-slate-400;
-  }
-  
-  /* Accessible card backgrounds */
-  .bg-card-accessible {
-    @apply bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700;
-  }
-  
-  /* Skip link for screen readers */
-  .skip-link {
-    @apply sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-white focus:text-slate-900 focus:rounded-md focus:shadow-lg;
-  }
+:root {
+  --radius: 0.75rem;
+  /* ═══ LIGHT THEME — White dominant, LRDG-inspired ═══ */
+  --primary: oklch(0.55 0.12 195);
+  --primary-foreground: oklch(0.99 0 0);
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0.02 260);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0.02 260);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0.02 260);
+  --secondary: oklch(0.97 0.003 260);
+  --secondary-foreground: oklch(0.3 0.02 260);
+  --muted: oklch(0.97 0.003 260);
+  --muted-foreground: oklch(0.45 0.02 260);
+  --accent: oklch(0.75 0.15 75);
+  --accent-foreground: oklch(0.145 0.02 260);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(0.92 0.004 260);
+  --input: oklch(0.92 0.004 260);
+  --ring: oklch(0.55 0.12 195);
+  --chart-1: oklch(0.55 0.12 195);
+  --chart-2: oklch(0.75 0.15 75);
+  --chart-3: oklch(0.65 0.12 195);
+  --chart-4: oklch(0.45 0.12 195);
+  --chart-5: oklch(0.85 0.12 75);
+  /* Sidebar — light white/gray to match LRDG */
+  --sidebar: oklch(0.985 0.002 260);
+  --sidebar-foreground: oklch(0.25 0.02 260);
+  --sidebar-primary: oklch(0.55 0.12 195);
+  --sidebar-primary-foreground: oklch(0.99 0 0);
+  --sidebar-accent: oklch(0.96 0.01 195);
+  --sidebar-accent-foreground: oklch(0.2 0.02 260);
+  --sidebar-border: oklch(0.93 0.004 260);
+  --sidebar-ring: oklch(0.55 0.12 195);
 }
 
-/* Reduced motion preference */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-
-/* High contrast mode support */
-@media (prefers-contrast: high) {
-  :root {
-    --color-border: #000000;
-    --color-text: #000000;
-    --color-muted-foreground: #1f2937;
-  }
-  
-  .dark {
-    --color-border: #ffffff;
-    --color-text: #ffffff;
-    --color-muted-foreground: #e5e7eb;
-  }
-}
-
-/* Focus visible styles for all interactive elements */
 @layer base {
-  button:focus-visible,
-  a:focus-visible,
-  input:focus-visible,
-  select:focus-visible,
-  textarea:focus-visible,
-  [role="button"]:focus-visible,
-  [tabindex]:focus-visible {
-    @apply outline-none ring-2 ring-slate-500 dark:ring-slate-400 ring-offset-2 ring-offset-white dark:ring-offset-slate-900;
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  h1, h2, h3 {
+    font-family: 'Merriweather', Georgia, serif;
+  }
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  [type="button"]:not(:disabled),
+  [type="submit"]:not(:disabled),
+  [type="reset"]:not(:disabled),
+  a[href],
+  select:not(:disabled),
+  input[type="checkbox"]:not(:disabled),
+  input[type="radio"]:not(:disabled) {
+    @apply cursor-pointer;
   }
 }
 
-/* Ensure minimum touch target size for mobile accessibility */
-@layer utilities {
-  .touch-target {
-    min-width: 44px;
-    min-height: 44px;
+@layer components {
+  .container {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
-}
+  .flex {
+    min-height: 0;
+    min-width: 0;
+  }
+  @media (min-width: 640px) {
+    .container {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+  @media (min-width: 1024px) {
+    .container {
+      padding-left: 2rem;
+      padding-right: 2rem;
+      max-width: 1280px;
+    }
+  }
 
-
-/* ============================================
-   GLOBAL BEAUTIFICATION UTILITIES
-   ============================================
-   Version: 1.0.0
-   Purpose: Ensure consistent margins, readability,
-   and professional aesthetics across all pages
-   ============================================ */
-
-/* === CONSISTENT PAGE MARGINS === */
-@layer utilities {
-  /* Standard page container with consistent margins */
-  .page-container {
-    @apply w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  /* ═══ Light Glass Cards ═══ */
+  .glass {
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    border: 1px solid rgba(0, 0, 0, 0.06);
   }
-  
-  /* Narrow container for text-heavy content */
-  .page-container-narrow {
-    @apply w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8;
-  }
-  
-  /* Wide container for full-width sections */
-  .page-container-wide {
-    @apply w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8;
-  }
-  
-  /* Section padding - consistent vertical rhythm */
-  .section-padding {
-    @apply py-16 md:py-20 lg:py-24;
-  }
-  
-  .section-padding-sm {
-    @apply py-10 md:py-12 lg:py-16;
-  }
-  
-  .section-padding-lg {
-    @apply py-20 md:py-28 lg:py-32;
-  }
-}
-
-/* === HIGH CONTRAST TEXT ENFORCEMENT === */
-@layer utilities {
-  /* Force readable text on light backgrounds */
-  .text-readable {
-    color: #0a0a0a !important;
-  }
-  
-  .text-readable-muted {
-    color: #374151 !important;
-  }
-  
-  /* Force readable text on dark backgrounds */
-  .text-readable-inverse {
-    color: #ffffff !important;
-  }
-  
-  .text-readable-inverse-muted {
-    color: rgba(255, 255, 255, 0.85) !important;
-  }
-  
-  /* Paragraph text - optimized for reading */
-  .text-paragraph {
-    @apply text-base leading-relaxed;
-    color: #1f2937;
-  }
-  
-  /* Heading text - high contrast */
-  .text-heading {
-    @apply font-bold tracking-tight;
-    color: #0a0a0a;
-  }
-}
-
-/* === GLASSMORPHISM EFFECTS === */
-@layer utilities {
-  /* Subtle glass effect for cards */
   .glass-card {
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-  }
-  
-  /* Glass effect on dark backgrounds */
-  .glass-card-dark {
-    background: rgba(17, 24, 39, 0.75);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
-  }
-  
-  /* Glass button effect */
-  .glass-button {
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    transition: all 0.2s ease;
-  }
-  
-  .glass-button:hover {
-    background: rgba(255, 255, 255, 0.3);
-    border-color: rgba(255, 255, 255, 0.4);
-  }
-}
-
-/* === PROFESSIONAL CARD STYLES === */
-@layer utilities {
-  /* Elevated card with subtle shadow */
-  .card-elevated {
-    @apply bg-white rounded-xl;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 
-                0 2px 4px -2px rgba(0, 0, 0, 0.05);
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
     transition: box-shadow 0.2s ease, transform 0.2s ease;
   }
-  
-  .card-elevated:hover {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 
-                0 4px 6px -4px rgba(0, 0, 0, 0.08);
-    transform: translateY(-2px);
+  .glass-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06), 0 2px 4px rgba(0, 0, 0, 0.03);
   }
-  
-  /* Bordered card - clean and professional */
-  .card-bordered {
-    @apply bg-white rounded-xl border border-gray-200;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  .glass-gold {
+    background: linear-gradient(135deg, rgba(245, 166, 35, 0.04), rgba(255, 255, 255, 1));
+    border: 1px solid rgba(245, 166, 35, 0.15);
+    box-shadow: 0 2px 8px rgba(245, 166, 35, 0.06);
   }
-  
-  .card-bordered:hover {
-    border-color: var(--brand-foundation, #0F3D3E);
-    box-shadow: 0 4px 12px rgba(15, 61, 62, 0.08);
+  .glass-teal {
+    background: linear-gradient(135deg, rgba(0, 128, 144, 0.03), rgba(255, 255, 255, 1));
+    border: 1px solid rgba(0, 128, 144, 0.12);
+  }
+
+  /* ═══ RusingAcademy Light Card ═══ */
+  .ra-glass {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    transition: box-shadow 0.2s ease, transform 0.15s ease;
+  }
+  .ra-glass:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  }
+
+  /* Premium Gradients (kept subtle for light theme) */
+  .gradient-gold {
+    background: linear-gradient(135deg, #f5a623 0%, #d4943c 50%, #f5a623 100%);
+  }
+  .gradient-teal {
+    background: linear-gradient(135deg, #008090 0%, #006d7a 50%, #008090 100%);
+  }
+  .gradient-premium {
+    background: linear-gradient(135deg, #008090 0%, #006d7a 40%, #f5a623 100%);
+  }
+
+  /* XP Progress Bar Animation */
+  .xp-bar {
+    background: linear-gradient(90deg, #008090, #00a0b0, #f5a623);
+    background-size: 200% 100%;
+    animation: xpShimmer 3s ease infinite;
+  }
+  @keyframes xpShimmer {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* Streak Fire Animation */
+  .streak-fire {
+    animation: fireGlow 2s ease-in-out infinite;
+  }
+  @keyframes fireGlow {
+    0%, 100% { filter: drop-shadow(0 0 4px rgba(245, 166, 35, 0.3)); }
+    50% { filter: drop-shadow(0 0 10px rgba(245, 166, 35, 0.6)); }
+  }
+
+  /* Badge Unlock Animation */
+  .badge-unlock {
+    animation: badgePop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  @keyframes badgePop {
+    0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+    60% { transform: scale(1.2) rotate(10deg); }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  }
+
+  /* Level Up Celebration */
+  .level-up {
+    animation: levelPulse 1.5s ease-out;
+  }
+  @keyframes levelPulse {
+    0% { box-shadow: 0 0 0 0 rgba(0, 128, 144, 0.4); }
+    50% { box-shadow: 0 0 0 16px rgba(0, 128, 144, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(0, 128, 144, 0); }
+  }
+
+  /* Sidebar active link — light theme */
+  .sidebar-link-active {
+    background: rgba(0, 128, 144, 0.08);
+    border-left: 3px solid #008090;
+    color: #008090;
   }
 }
 
-/* === SECTION BACKGROUNDS === */
-@layer utilities {
-  /* Alternating section backgrounds for visual rhythm */
-  .section-light {
-    @apply bg-white;
-  }
-  
-  .section-cream {
-    background-color: #FEFEF8;
-  }
-  
-  .section-sand {
-    background-color: #F5F1D6;
-  }
-  
-  .section-teal {
-    background-color: #0F3D3E;
-    color: #ffffff;
-  }
-  
-  .section-teal .text-muted,
-  .section-teal .text-muted-foreground {
-    color: rgba(255, 255, 255, 0.8) !important;
-  }
-  
-  .section-dark {
-    background-color: #111827;
-    color: #ffffff;
-  }
-  
-  .section-dark .text-muted,
-  .section-dark .text-muted-foreground {
-    color: rgba(255, 255, 255, 0.75) !important;
-  }
+/* ── Celebration Animations ── */
+@keyframes celebrationPulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(0, 128, 144, 0.15); }
+  50% { transform: scale(1.06); box-shadow: 0 0 32px rgba(0, 128, 144, 0.25); }
 }
 
-/* === TYPOGRAPHY ENHANCEMENTS === */
-@layer base {
-  /* Ensure all headings have proper contrast */
-  h1, h2, h3, h4, h5, h6 {
-    color: var(--text, #0a0a0a);
-    font-family: var(--font-display, 'Merriweather', Georgia, serif);
-  }
-  
-  /* Dark section heading override */
-  .section-teal h1, .section-teal h2, .section-teal h3,
-  .section-teal h4, .section-teal h5, .section-teal h6,
-  .section-dark h1, .section-dark h2, .section-dark h3,
-  .section-dark h4, .section-dark h5, .section-dark h6 {
-    color: #ffffff;
-  }
-  
-  /* Paragraph text optimization */
-  p {
-    color: var(--text-paragraph, #1f2937);
-    line-height: 1.7;
-  }
-  
-  /* Dark section paragraph override */
-  .section-teal p, .section-dark p {
-    color: rgba(255, 255, 255, 0.9);
-  }
+@keyframes celebrationSlideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* === BUTTON CONSISTENCY === */
-@layer components {
-  /* Primary CTA button - always high contrast */
-  .btn-primary {
-    @apply inline-flex items-center justify-center px-6 py-3 font-semibold text-white rounded-full;
-    background-color: var(--brand-cta, #C65A1E);
-    transition: all 0.2s ease;
-  }
-  
-  .btn-primary:hover {
-    background-color: var(--brand-cta-2, #E06B2D);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(198, 90, 30, 0.3);
-  }
-  
-  /* Secondary button - outline style */
-  .btn-secondary {
-    @apply inline-flex items-center justify-center px-6 py-3 font-semibold rounded-full border-2;
-    color: var(--brand-foundation, #0F3D3E);
-    border-color: var(--brand-foundation, #0F3D3E);
-    background: transparent;
-    transition: all 0.2s ease;
-  }
-  
-  .btn-secondary:hover {
-    background-color: var(--brand-foundation, #0F3D3E);
-    color: #ffffff;
-  }
+@keyframes celebrationBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
 }
 
-/* === LINK STYLES === */
-@layer base {
-  /* Ensure links are always visible */
-  a:not([class]) {
-    color: var(--brand-foundation, #0F3D3E);
-    text-decoration: underline;
-    text-underline-offset: 2px;
-    transition: color 0.15s ease;
-  }
-  
-  a:not([class]):hover {
-    color: var(--brand-foundation-2, #145A5B);
-  }
-  
-  /* Links on dark backgrounds */
-  .section-teal a:not([class]),
-  .section-dark a:not([class]) {
-    color: #ffffff;
-  }
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 }
 
-/* === FORM ELEMENTS === */
-@layer components {
-  /* Input fields with proper contrast */
-  .input-field {
-    @apply w-full px-4 py-3 rounded-lg border border-gray-300 bg-white;
-    color: #0a0a0a;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  }
-  
-  .input-field:focus {
-    @apply outline-none;
-    border-color: var(--brand-foundation, #0F3D3E);
-    box-shadow: 0 0 0 3px rgba(15, 61, 62, 0.15);
-  }
-  
-  .input-field::placeholder {
-    color: #9CA3AF;
-  }
-}
-
-/* === MICRO-ANIMATIONS === */
-@layer utilities {
-  /* Subtle hover lift effect */
-  .hover-lift {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
-  
-  .hover-lift:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
-  }
-  
-  /* Subtle scale effect */
-  .hover-scale {
-    transition: transform 0.2s ease;
-  }
-  
-  .hover-scale:hover {
-    transform: scale(1.02);
-  }
-  
-  /* Fade in animation */
-  .animate-fade-in {
-    animation: fadeIn 0.5s ease forwards;
-  }
-  
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-}
-
-/* === RESPONSIVE TYPOGRAPHY === */
-@layer utilities {
-  /* Responsive heading sizes */
-  .heading-xl {
-    @apply text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold;
-  }
-  
-  .heading-lg {
-    @apply text-2xl sm:text-3xl md:text-4xl font-bold;
-  }
-  
-  .heading-md {
-    @apply text-xl sm:text-2xl md:text-3xl font-bold;
-  }
-  
-  .heading-sm {
-    @apply text-lg sm:text-xl md:text-2xl font-semibold;
-  }
-}
-
-/* === ENSURE CONTRAST ON GRADIENT BACKGROUNDS === */
-@layer utilities {
-  /* Text shadow for readability on images/gradients */
-  .text-shadow {
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  }
-  
-  .text-shadow-lg {
-    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-  }
-}
-
-/* === COACH CARD SPECIFIC FIXES === */
-.coach-card {
-  @apply bg-white rounded-xl overflow-hidden;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
-}
-
-.coach-card .coach-name {
-  color: #0a0a0a !important;
-  font-weight: 600;
-}
-
-.coach-card .coach-headline {
-  color: #374151 !important;
-}
-
-/* Force headline text color on coach cards - high specificity to override dark mode */
-p.coach-headline-dark,
-.coach-headline-dark,
-[class*="dark:bg-slate"] .coach-headline-dark,
-[class*="dark:bg-slate"] p.coach-headline-dark {
-  color: #334155 !important;
-}
-
-/* Force Message button text color - high specificity */
-button.btn-message-teal,
-.btn-message-teal,
-[class*="dark:bg-slate"] .btn-message-teal,
-[class*="dark:bg-slate"] button.btn-message-teal {
-  color: #0f766e !important;
-}
-
-.coach-card .coach-stats {
-  color: #1f2937 !important;
-}
-
-/* === FOOTER CONTRAST FIX === */
-footer {
-  color: rgba(255, 255, 255, 0.9);
-}
-
-footer a {
-  color: rgba(255, 255, 255, 0.85);
-  transition: color 0.15s ease;
-}
-
-footer a:hover {
-  color: #ffffff;
-}
-
-footer .text-muted-foreground {
-  color: rgba(255, 255, 255, 0.7) !important;
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }

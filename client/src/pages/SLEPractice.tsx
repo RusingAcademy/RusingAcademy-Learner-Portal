@@ -1,471 +1,479 @@
-import { useState, useRef, useEffect } from "react";
+/**
+ * SLE Practice — RusingÂcademy Learning Portal
+ * SLE exam simulation modes: Reading Comprehension, Written Expression, Oral Interaction
+ * Design: Clean white light theme, accessible
+ */
+import DashboardLayout from "@/components/DashboardLayout";
 import { useLanguage } from "@/contexts/LanguageContext";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { trpc } from "@/lib/trpc";
-import {
-  Play,
-  Pause,
-  Volume2,
-  Mic,
-  RotateCcw,
-  CheckCircle2,
-  ChevronRight,
-  Award,
-  Target,
-  Headphones,
-  MessageSquare,
-  Loader2,
-  ArrowLeft,
-  Star,
-  Zap,
-} from "lucide-react";
-import { Link } from "wouter";
-import { motion, AnimatePresence } from "framer-motion";
-import { useAppLayout } from "@/contexts/AppLayoutContext";
+import { useState, useEffect, useCallback } from "react";
 
-type SLELevel = "A" | "B" | "C";
-type ExerciseType = "listening" | "repetition" | "comprehension";
+type ExamType = "reading" | "written" | "oral";
+type ExamLevel = "A" | "B" | "C";
 
-interface AudioPhrase {
-  id: string;
-  text: string;
-  textFr?: string;
-  audioUrl: string;
-  level: SLELevel;
-  category: string;
-  duration?: number;
+interface SimulationState {
+  active: boolean;
+  examType: ExamType;
+  level: ExamLevel;
+  currentQ: number;
+  answers: (number | string)[];
+  timeLeft: number;
+  submitted: boolean;
+}
+
+// --- Reading Comprehension Questions ---
+const readingQuestions: Record<ExamLevel, { passage: string; questions: { q: string; options: string[]; correct: number }[] }[]> = {
+  A: [{
+    passage: "The Government of Canada is committed to providing services in both official languages. All federal employees are encouraged to use the official language of their choice in the workplace. Language training is available to help employees improve their second-language skills.",
+    questions: [
+      { q: "What is the Government of Canada committed to?", options: ["Providing services in English only", "Providing services in both official languages", "Reducing language training", "Hiring only bilingual employees"], correct: 1 },
+      { q: "What are federal employees encouraged to do?", options: ["Speak only English", "Use the official language of their choice", "Avoid using French", "Take mandatory language tests"], correct: 1 },
+      { q: "What is available to help employees?", options: ["Financial bonuses", "Language training", "Extra vacation days", "Remote work options"], correct: 1 },
+    ],
+  }],
+  B: [{
+    passage: "The Second Language Evaluation (SLE) is a standardized test used by the Government of Canada to assess the second-language proficiency of federal public servants. The evaluation consists of three components: Reading Comprehension, Written Expression, and Oral Interaction. Each component is assessed independently, and candidates receive a level designation of A, B, or C, with C being the highest level of proficiency. Many positions in the federal public service require bilingual proficiency, making the SLE an important milestone in a public servant's career.",
+    questions: [
+      { q: "How many components does the SLE consist of?", options: ["Two", "Three", "Four", "Five"], correct: 1 },
+      { q: "What is the highest level of proficiency?", options: ["A", "B", "C", "D"], correct: 2 },
+      { q: "Why is the SLE considered important?", options: ["It is optional for all positions", "Many positions require bilingual proficiency", "It replaces performance evaluations", "It determines salary levels"], correct: 1 },
+      { q: "Which of the following is NOT a component of the SLE?", options: ["Reading Comprehension", "Written Expression", "Oral Interaction", "Listening Comprehension"], correct: 3 },
+    ],
+  }],
+  C: [{
+    passage: "The Treasury Board of Canada's Policy on Official Languages establishes the framework for the implementation of the Official Languages Act within federal institutions. The policy aims to ensure that Canadians can communicate with and receive services from federal institutions in the official language of their choice. Furthermore, the policy promotes the use of both English and French as languages of work in regions designated as bilingual for language-of-work purposes. Federal institutions are required to take positive measures to support the development of English and French linguistic minority communities and to foster the full recognition and use of both official languages in Canadian society. The Directive on Official Languages for People Management complements this policy by establishing specific requirements for staffing, language training, and the maintenance of language skills.",
+    questions: [
+      { q: "What does the Treasury Board's Policy on Official Languages establish?", options: ["A new language test format", "The framework for implementing the Official Languages Act", "Mandatory bilingualism for all Canadians", "A salary scale based on language proficiency"], correct: 1 },
+      { q: "What are federal institutions required to support?", options: ["Only English-speaking communities", "The development of linguistic minority communities", "Private language schools", "International language exchanges"], correct: 1 },
+      { q: "What does the Directive on Official Languages for People Management address?", options: ["Budget allocation for translation services", "Staffing, language training, and maintenance of language skills", "Public communications strategy", "International diplomatic protocols"], correct: 1 },
+      { q: "In which regions is the use of both languages as languages of work promoted?", options: ["All regions of Canada", "Regions designated as bilingual for language-of-work purposes", "Only Ottawa", "Only Quebec and New Brunswick"], correct: 1 },
+      { q: "What is the primary aim of the policy?", options: ["To eliminate French in the workplace", "To ensure Canadians can communicate with federal institutions in their chosen official language", "To reduce the number of bilingual positions", "To outsource translation services"], correct: 1 },
+    ],
+  }],
+};
+
+// --- Written Expression Questions ---
+const writtenQuestions: Record<ExamLevel, { sentence: string; options: string[]; correct: number }[]> = {
+  A: [
+    { sentence: "The meeting _____ at 2:00 PM tomorrow.", options: ["start", "starts", "starting", "started"], correct: 1 },
+    { sentence: "She _____ working on the report since this morning.", options: ["is", "was", "has been", "have been"], correct: 2 },
+    { sentence: "The documents need to be _____ before Friday.", options: ["submit", "submitted", "submitting", "submits"], correct: 1 },
+    { sentence: "We should _____ the client about the delay.", options: ["inform", "informs", "informed", "informing"], correct: 0 },
+    { sentence: "The new policy _____ into effect next month.", options: ["go", "goes", "going", "gone"], correct: 1 },
+  ],
+  B: [
+    { sentence: "If the budget _____ approved, we can proceed with the project.", options: ["is", "was", "were", "be"], correct: 0 },
+    { sentence: "The committee _____ that the proposal be revised before the next meeting.", options: ["recommends", "recommend", "recommending", "recommended"], correct: 0 },
+    { sentence: "Neither the manager _____ the team lead was available for comment.", options: ["or", "nor", "and", "but"], correct: 1 },
+    { sentence: "The report, _____ was submitted last week, contains several errors.", options: ["that", "which", "who", "whom"], correct: 1 },
+    { sentence: "Had the deadline been extended, we _____ completed the analysis.", options: ["would have", "will have", "would", "could"], correct: 0 },
+    { sentence: "The minister emphasized the importance of _____ both official languages.", options: ["to promote", "promoting", "promote", "promoted"], correct: 1 },
+  ],
+  C: [
+    { sentence: "The Deputy Minister's directive, _____ implications are far-reaching, requires immediate implementation.", options: ["who's", "whose", "which", "that"], correct: 1 },
+    { sentence: "Not only _____ the policy address current concerns, but it also anticipates future challenges.", options: ["does", "did", "has", "is"], correct: 0 },
+    { sentence: "The stakeholders insisted that the consultation process _____ transparent and inclusive.", options: ["is", "be", "was", "were"], correct: 1 },
+    { sentence: "_____ the complexity of the issue, a phased approach to implementation is recommended.", options: ["Given", "Giving", "Gave", "Give"], correct: 0 },
+    { sentence: "The audit revealed discrepancies _____ could not be attributed to clerical error alone.", options: ["who", "which", "what", "whom"], correct: 1 },
+    { sentence: "It is imperative that all departments _____ their compliance reports by the stipulated deadline.", options: ["submit", "submits", "submitted", "submitting"], correct: 0 },
+    { sentence: "The proposed amendments, _____ controversial, were ultimately adopted by consensus.", options: ["although", "despite", "however", "albeit"], correct: 3 },
+  ],
+};
+
+// --- Oral Interaction Prompts ---
+const oralPrompts: Record<ExamLevel, { scenario: string; prompts: string[] }[]> = {
+  A: [{
+    scenario: "You are calling a colleague to schedule a meeting about a new project.",
+    prompts: [
+      "Introduce yourself and state the purpose of your call.",
+      "Suggest a date and time for the meeting.",
+      "Ask if the colleague has any questions about the project.",
+      "Thank the colleague and confirm the meeting details.",
+    ],
+  }],
+  B: [{
+    scenario: "You are presenting a proposal to your team for improving workplace efficiency.",
+    prompts: [
+      "Describe the current challenge your team is facing.",
+      "Present your proposed solution with at least two specific recommendations.",
+      "Address potential concerns or objections from team members.",
+      "Summarize the expected benefits and propose next steps.",
+    ],
+  }],
+  C: [{
+    scenario: "You are participating in a policy consultation meeting where you must defend a position on bilingual service delivery.",
+    prompts: [
+      "Present the current state of bilingual service delivery in your department.",
+      "Analyze the strengths and weaknesses of the existing approach.",
+      "Propose a comprehensive strategy for improvement, addressing resource allocation and training.",
+      "Respond to a hypothetical counter-argument that bilingual services are too costly.",
+      "Conclude with a compelling summary of why investment in bilingual services is essential.",
+    ],
+  }],
+};
+
+const EXAM_TIMES: Record<ExamType, Record<ExamLevel, number>> = {
+  reading: { A: 600, B: 900, C: 1200 },
+  written: { A: 600, B: 900, C: 1200 },
+  oral: { A: 300, B: 480, C: 600 },
+};
+
+function formatTime(seconds: number): string {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${m}:${s.toString().padStart(2, "0")}`;
+}
+
+function ExamCard({ type, icon, title, desc, color, onStart }: {
+  type: ExamType; icon: string; title: string; desc: string; color: string;
+  onStart: (type: ExamType) => void;
+}) {
+  return (
+    <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-all group">
+      <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-4" style={{ background: `${color}10` }}>
+        <span className="material-icons" style={{ color, fontSize: "28px" }}>{icon}</span>
+      </div>
+      <h3 className="text-lg font-bold text-gray-900 mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>{title}</h3>
+      <p className="text-sm text-gray-500 mb-4 leading-relaxed">{desc}</p>
+      <button onClick={() => onStart(type)}
+        className="w-full py-2.5 rounded-xl text-sm font-semibold text-white transition-all hover:brightness-105"
+        style={{ background: color }}
+        aria-label={`Start ${title} simulation`}>
+        Start Simulation
+      </button>
+    </div>
+  );
+}
+
+function ReadingSimulation({ level, state, onAnswer, onSubmit }: {
+  level: ExamLevel; state: SimulationState;
+  onAnswer: (qIdx: number, aIdx: number) => void; onSubmit: () => void;
+}) {
+  const data = readingQuestions[level][0];
+  if (!data) return null;
+
+  return (
+    <div className="space-y-5">
+      <div className="bg-gray-50 border border-gray-200 rounded-xl p-5">
+        <h3 className="text-sm font-bold text-gray-900 mb-2 flex items-center gap-2">
+          <span className="material-icons text-[#008090]" style={{ fontSize: "18px" }}>article</span>
+          Reading Passage
+        </h3>
+        <p className="text-sm text-gray-700 leading-relaxed">{data.passage}</p>
+      </div>
+
+      {data.questions.map((q, qIdx) => (
+        <div key={qIdx} className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
+          <p className="text-sm font-semibold text-gray-900 mb-3">
+            {qIdx + 1}. {q.q}
+          </p>
+          <div className="space-y-2">
+            {q.options.map((opt, oIdx) => {
+              const selected = state.answers[qIdx] === oIdx;
+              const isCorrect = state.submitted && oIdx === q.correct;
+              const isWrong = state.submitted && selected && oIdx !== q.correct;
+              return (
+                <button key={oIdx} onClick={() => !state.submitted && onAnswer(qIdx, oIdx)}
+                  disabled={state.submitted}
+                  className={`w-full text-left px-4 py-2.5 rounded-lg text-sm border transition-all ${
+                    isCorrect ? "border-[#10b981] bg-[#10b981]/5 text-[#10b981] font-semibold"
+                    : isWrong ? "border-[#e74c3c] bg-[#e74c3c]/5 text-[#e74c3c]"
+                    : selected ? "border-[#008090] bg-[#008090]/5 text-[#008090] font-medium"
+                    : "border-gray-200 hover:border-[#008090] hover:bg-gray-50 text-gray-700"
+                  }`}
+                  role="radio" aria-checked={selected} aria-label={opt}>
+                  <span className="inline-flex items-center gap-2">
+                    <span className={`w-5 h-5 rounded-full border-2 flex items-center justify-center text-[10px] ${
+                      selected ? "border-[#008090] bg-[#008090] text-white" : "border-gray-300"
+                    }`}>
+                      {String.fromCharCode(65 + oIdx)}
+                    </span>
+                    {opt}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+
+      {!state.submitted && (
+        <button onClick={onSubmit}
+          className="w-full py-3 rounded-xl text-sm font-semibold text-white bg-[#008090] hover:brightness-105 transition-all"
+          disabled={state.answers.filter((a) => a !== -1).length < data.questions.length}>
+          Submit Answers
+        </button>
+      )}
+    </div>
+  );
+}
+
+function WrittenSimulation({ level, state, onAnswer, onSubmit }: {
+  level: ExamLevel; state: SimulationState;
+  onAnswer: (qIdx: number, aIdx: number) => void; onSubmit: () => void;
+}) {
+  const questions = writtenQuestions[level];
+  return (
+    <div className="space-y-4">
+      <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
+        <p className="text-sm text-gray-600">
+          <span className="font-semibold text-gray-900">Instructions:</span> Choose the correct word or phrase to complete each sentence.
+        </p>
+      </div>
+
+      {questions.map((q, qIdx) => (
+        <div key={qIdx} className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
+          <p className="text-sm font-semibold text-gray-900 mb-3">{qIdx + 1}. {q.sentence}</p>
+          <div className="flex flex-wrap gap-2">
+            {q.options.map((opt, oIdx) => {
+              const selected = state.answers[qIdx] === oIdx;
+              const isCorrect = state.submitted && oIdx === q.correct;
+              const isWrong = state.submitted && selected && oIdx !== q.correct;
+              return (
+                <button key={oIdx} onClick={() => !state.submitted && onAnswer(qIdx, oIdx)}
+                  disabled={state.submitted}
+                  className={`px-4 py-2 rounded-lg text-sm border transition-all ${
+                    isCorrect ? "border-[#10b981] bg-[#10b981]/10 text-[#10b981] font-bold"
+                    : isWrong ? "border-[#e74c3c] bg-[#e74c3c]/10 text-[#e74c3c]"
+                    : selected ? "border-[#008090] bg-[#008090]/10 text-[#008090] font-semibold"
+                    : "border-gray-200 hover:border-[#008090] text-gray-700"
+                  }`}>
+                  {opt}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+
+      {!state.submitted && (
+        <button onClick={onSubmit}
+          className="w-full py-3 rounded-xl text-sm font-semibold text-white bg-[#008090] hover:brightness-105 transition-all">
+          Submit Answers
+        </button>
+      )}
+    </div>
+  );
+}
+
+function OralSimulation({ level, state }: { level: ExamLevel; state: SimulationState }) {
+  const data = oralPrompts[level][0];
+  if (!data) return null;
+
+  return (
+    <div className="space-y-5">
+      <div className="bg-[#008090]/5 border border-[#008090]/15 rounded-xl p-5">
+        <h3 className="text-sm font-bold text-gray-900 mb-2 flex items-center gap-2">
+          <span className="material-icons text-[#008090]" style={{ fontSize: "18px" }}>record_voice_over</span>
+          Scenario
+        </h3>
+        <p className="text-sm text-gray-700 leading-relaxed">{data.scenario}</p>
+      </div>
+
+      <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
+        <h4 className="text-sm font-bold text-gray-900 mb-3">Speaking Prompts</h4>
+        <p className="text-xs text-gray-400 mb-3">Practice responding to each prompt aloud. Time yourself and aim for clear, structured responses.</p>
+        <ol className="space-y-3">
+          {data.prompts.map((prompt, idx) => (
+            <li key={idx} className="flex items-start gap-3">
+              <span className="w-6 h-6 rounded-full bg-[#008090]/10 text-[#008090] flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">
+                {idx + 1}
+              </span>
+              <p className="text-sm text-gray-700">{prompt}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+
+      <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
+        <p className="text-xs text-gray-500 flex items-center gap-2">
+          <span className="material-icons text-[#f5a623]" style={{ fontSize: "16px" }}>tips_and_updates</span>
+          <strong>Tip:</strong> Record yourself using your phone and listen back. Focus on clarity, grammar, and vocabulary appropriate to the level.
+        </p>
+      </div>
+    </div>
+  );
 }
 
 export default function SLEPractice() {
-  const { isInsideAppLayout } = useAppLayout();
-  const { language } = useLanguage();
-  const isEn = language === "en";
-  
-  const [selectedLevel, setSelectedLevel] = useState<SLELevel>("A");
-  const [activeExercise, setActiveExercise] = useState<ExerciseType>("listening");
-  const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [showTranslation, setShowTranslation] = useState(false);
-  const [completedPhrases, setCompletedPhrases] = useState<Set<string>>(new Set());
-  const [sessionScore, setSessionScore] = useState(0);
-  
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  
-  // Fetch audio by level
-  const { data: audioData, isLoading } = trpc.audio.getSLEPracticeAudio.useQuery({
-    level: selectedLevel,
-  });
-  
-  const phrases = audioData?.audio || [];
-  const currentPhrase = phrases[currentPhraseIndex];
-  
-  // Level descriptions
-  const levelInfo: Record<SLELevel, { title: string; titleFr: string; description: string; descriptionFr: string; color: string }> = {
-    A: {
-      title: "Level A - Basic",
-      titleFr: "Niveau A - Base",
-      description: "Simple phrases for everyday workplace communication",
-      descriptionFr: "Phrases simples pour la communication quotidienne au travail",
-      color: "bg-green-500",
-    },
-    B: {
-      title: "Level B - Intermediate",
-      titleFr: "Niveau B - Intermédiaire",
-      description: "Professional discussions and meeting participation",
-      descriptionFr: "Discussions professionnelles et participation aux réunions",
-      color: "bg-yellow-500",
-    },
-    C: {
-      title: "Level C - Advanced",
-      titleFr: "Niveau C - Avancé",
-      description: "Complex negotiations and strategic communication",
-      descriptionFr: "Négociations complexes et communication stratégique",
-      color: "bg-red-500",
-    },
+  const { t } = useLanguage();
+  const [selectedLevel, setSelectedLevel] = useState<ExamLevel>("B");
+  const [simulation, setSimulation] = useState<SimulationState | null>(null);
+
+  const startSimulation = useCallback((type: ExamType) => {
+    const totalQ = type === "reading" ? readingQuestions[selectedLevel][0]?.questions.length ?? 0
+      : type === "written" ? writtenQuestions[selectedLevel].length : 0;
+    setSimulation({
+      active: true, examType: type, level: selectedLevel,
+      currentQ: 0, answers: new Array(totalQ).fill(-1),
+      timeLeft: EXAM_TIMES[type][selectedLevel], submitted: false,
+    });
+  }, [selectedLevel]);
+
+  // Timer
+  useEffect(() => {
+    if (!simulation?.active || simulation.submitted) return;
+    const interval = setInterval(() => {
+      setSimulation((prev) => {
+        if (!prev || prev.timeLeft <= 0) return prev;
+        if (prev.timeLeft === 1) return { ...prev, timeLeft: 0, submitted: true };
+        return { ...prev, timeLeft: prev.timeLeft - 1 };
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [simulation?.active, simulation?.submitted]);
+
+  const handleAnswer = (qIdx: number, aIdx: number) => {
+    setSimulation((prev) => {
+      if (!prev) return prev;
+      const newAnswers = [...prev.answers];
+      newAnswers[qIdx] = aIdx;
+      return { ...prev, answers: newAnswers };
+    });
   };
-  
-  const playAudio = () => {
-    if (!currentPhrase) return;
-    
-    if (isPlaying) {
-      audioRef.current?.pause();
-      setIsPlaying(false);
-    } else {
-      if (audioRef.current) {
-        audioRef.current.pause();
-      }
-      const audio = new Audio(currentPhrase.audioUrl);
-      audioRef.current = audio;
-      audio.play();
-      audio.onended = () => setIsPlaying(false);
-      setIsPlaying(true);
+
+  const handleSubmit = () => {
+    setSimulation((prev) => prev ? { ...prev, submitted: true } : prev);
+  };
+
+  const getScore = (): { correct: number; total: number; percentage: number } => {
+    if (!simulation) return { correct: 0, total: 0, percentage: 0 };
+    let correct = 0;
+    let total = 0;
+    if (simulation.examType === "reading") {
+      const qs = readingQuestions[simulation.level][0]?.questions ?? [];
+      total = qs.length;
+      qs.forEach((q, i) => { if (simulation.answers[i] === q.correct) correct++; });
+    } else if (simulation.examType === "written") {
+      const qs = writtenQuestions[simulation.level];
+      total = qs.length;
+      qs.forEach((q, i) => { if (simulation.answers[i] === q.correct) correct++; });
     }
+    return { correct, total, percentage: total > 0 ? Math.round((correct / total) * 100) : 0 };
   };
-  
-  const markComplete = () => {
-    if (currentPhrase) {
-      setCompletedPhrases((prev) => new Set([...prev, currentPhrase.id]));
-      setSessionScore((prev) => prev + 10);
-    }
-  };
-  
-  const nextPhrase = () => {
-    if (currentPhraseIndex < phrases.length - 1) {
-      setCurrentPhraseIndex((prev) => prev + 1);
-      setShowTranslation(false);
-      setIsPlaying(false);
-      audioRef.current?.pause();
-    }
-  };
-  
-  const prevPhrase = () => {
-    if (currentPhraseIndex > 0) {
-      setCurrentPhraseIndex((prev) => prev - 1);
-      setShowTranslation(false);
-      setIsPlaying(false);
-      audioRef.current?.pause();
-    }
-  };
-  
-  const resetSession = () => {
-    setCurrentPhraseIndex(0);
-    setCompletedPhrases(new Set());
-    setSessionScore(0);
-    setShowTranslation(false);
-    setIsPlaying(false);
-    audioRef.current?.pause();
-  };
-  
-  const progress = phrases.length > 0 ? (completedPhrases.size / phrases.length) * 100 : 0;
-  
+
+  const resetSimulation = () => setSimulation(null);
+
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-[#F8FAFA] to-white dark:from-gray-900 dark:to-gray-800">
-      {!isInsideAppLayout && <Header />}
-      
-      <main className="flex-1 container py-8">
-        {/* Back Link */}
-        <Link href="/rusingacademy" className="inline-flex items-center text-[#0F3D3E] hover:underline mb-6">
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          {isEn ? "Back to RusingÂcademy" : "Retour à RusingÂcademy"}
-        </Link>
-        
-        {/* Hero Section */}
-        <div className="bg-gradient-to-r from-[#0F3D3E] to-[#145A5B] rounded-3xl p-8 mb-8 text-white">
-          <div className="flex items-center gap-4 mb-4">
-            <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center">
-              <Target className="h-8 w-8" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold">
-                {isEn ? "SLE Practice Lab" : "Laboratoire de pratique ELS"}
-              </h1>
-              <p className="text-white/80">
-                {isEn 
-                  ? "Master your French oral skills with structured audio exercises"
-                  : "Maîtrisez vos compétences orales en français avec des exercices audio structurés"}
-              </p>
-            </div>
+    <DashboardLayout>
+      <div className="max-w-[900px] space-y-5">
+        {/* Header */}
+        <div className="bg-white border border-gray-200 rounded-xl p-6 md:p-8 shadow-sm">
+          <div className="flex items-center gap-3 mb-2">
+            <span className="material-icons text-[#008090]" style={{ fontSize: "28px" }}>school</span>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900" style={{ fontFamily: "'Playfair Display', serif" }}>
+              {t("sle.title")}
+            </h1>
           </div>
-          
-          {/* Session Stats */}
-          <div className="grid grid-cols-3 gap-4 mt-6">
-            <div className="bg-white/10 rounded-xl p-4 text-center">
-              <div className="text-2xl font-bold">{completedPhrases.size}</div>
-              <div className="text-sm text-white/70">{isEn ? "Completed" : "Terminées"}</div>
-            </div>
-            <div className="bg-white/10 rounded-xl p-4 text-center">
-              <div className="text-2xl font-bold">{sessionScore}</div>
-              <div className="text-sm text-white/70">{isEn ? "Points" : "Points"}</div>
-            </div>
-            <div className="bg-white/10 rounded-xl p-4 text-center">
-              <div className="text-2xl font-bold">{Math.round(progress)}%</div>
-              <div className="text-sm text-white/70">{isEn ? "Progress" : "Progrès"}</div>
-            </div>
+          <p className="text-gray-500 text-sm">{t("sle.subtitle")}</p>
+
+          {/* Level Selector */}
+          <div className="flex items-center gap-3 mt-4">
+            <span className="text-xs text-gray-400 font-medium">Target Level:</span>
+            {(["A", "B", "C"] as ExamLevel[]).map((lvl) => (
+              <button key={lvl} onClick={() => { setSelectedLevel(lvl); resetSimulation(); }}
+                className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all border ${
+                  selectedLevel === lvl
+                    ? "bg-[#008090] text-white border-[#008090]"
+                    : "bg-white text-gray-500 border-gray-200 hover:border-[#008090] hover:text-[#008090]"
+                }`}
+                aria-pressed={selectedLevel === lvl}>
+                Level {lvl}
+              </button>
+            ))}
           </div>
         </div>
-        
-        {/* Level Selector */}
-        <div className="grid grid-cols-3 gap-4 mb-8">
-          {(["A", "B", "C"] as SLELevel[]).map((level) => (
-            <button
-              key={level}
-              onClick={() => {
-                setSelectedLevel(level);
-                resetSession();
-              }}
-              className={`p-6 rounded-2xl border-2 transition-all ${
-                selectedLevel === level
-                  ? "border-[#0F3D3E] bg-[#E7F2F2] dark:bg-[#0F3D3E]/20"
-                  : "border-gray-200 hover:border-[#0F3D3E]/50"
-              }`}
-            >
-              <div className="flex items-center gap-3 mb-2">
-                <div className={`w-3 h-3 rounded-full ${levelInfo[level].color}`} />
-                <span className="font-bold text-lg">
-                  {isEn ? levelInfo[level].title : levelInfo[level].titleFr}
-                </span>
-              </div>
-              <p className="text-sm text-muted-foreground text-left">
-                {isEn ? levelInfo[level].description : levelInfo[level].descriptionFr}
-              </p>
-            </button>
-          ))}
-        </div>
-        
-        {/* Exercise Type Tabs */}
-        <Tabs value={activeExercise} onValueChange={(v) => setActiveExercise(v as ExerciseType)} className="mb-8">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="listening" className="flex items-center gap-2">
-              <Headphones className="h-4 w-4" />
-              <span className="hidden sm:inline">{isEn ? "Listening" : "Écoute"}</span>
-            </TabsTrigger>
-            <TabsTrigger value="repetition" className="flex items-center gap-2">
-              <Mic className="h-4 w-4" />
-              <span className="hidden sm:inline">{isEn ? "Repetition" : "Répétition"}</span>
-            </TabsTrigger>
-            <TabsTrigger value="comprehension" className="flex items-center gap-2">
-              <MessageSquare className="h-4 w-4" />
-              <span className="hidden sm:inline">{isEn ? "Comprehension" : "Compréhension"}</span>
-            </TabsTrigger>
-          </TabsList>
-          
-          {/* Listening Exercise */}
-          <TabsContent value="listening" className="mt-6">
-            {isLoading ? (
-              <div className="flex items-center justify-center py-12">
-                <Loader2 className="h-8 w-8 animate-spin text-[#0F3D3E]" />
-              </div>
-            ) : phrases.length === 0 ? (
-              <Card>
-                <CardContent className="py-12 text-center">
-                  <Volume2 className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-muted-foreground">
-                    {isEn ? "No audio available for this level yet." : "Aucun audio disponible pour ce niveau."}
-                  </p>
-                </CardContent>
-              </Card>
-            ) : (
-              <Card className="overflow-hidden">
-                <CardHeader className="bg-gradient-to-r from-[#E7F2F2] to-[#F0F7F7] dark:from-[#0F3D3E]/20 dark:to-[#0F3D3E]/10">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <CardTitle className="flex items-center gap-2">
-                        <Headphones className="h-5 w-5 text-[#0F3D3E]" />
-                        {isEn ? "Listening Exercise" : "Exercice d'écoute"}
-                      </CardTitle>
-                      <CardDescription>
-                        {isEn 
-                          ? `Phrase ${currentPhraseIndex + 1} of ${phrases.length}`
-                          : `Phrase ${currentPhraseIndex + 1} sur ${phrases.length}`}
-                      </CardDescription>
-                    </div>
-                    <Badge variant="outline" className={`${levelInfo[selectedLevel].color} text-white border-0`}>
-                      {isEn ? "Level" : "Niveau"} {selectedLevel}
-                    </Badge>
-                  </div>
-                  <Progress value={(currentPhraseIndex + 1) / phrases.length * 100} className="mt-4" />
-                </CardHeader>
-                
-                <CardContent className="p-8">
-                  {currentPhrase && (
-                    <div className="space-y-6">
-                      {/* Audio Player */}
-                      <div className="flex items-center justify-center">
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={playAudio}
-                          className={`w-24 h-24 rounded-full flex items-center justify-center transition-all ${
-                            isPlaying
-                              ? "bg-[#0F3D3E] text-white"
-                              : "bg-[#E7F2F2] text-[#0F3D3E] hover:bg-[#0F3D3E] hover:text-white"
-                          }`}
-                        >
-                          {isPlaying ? (
-                            <Pause className="h-10 w-10" />
-                          ) : (
-                            <Play className="h-10 w-10 ml-1" />
-                          )}
-                        </motion.button>
-                      </div>
-                      
-                      {/* French Text */}
-                      <div className="text-center">
-                        <p className="text-2xl font-medium text-gray-900 dark:text-white mb-4">
-                          {currentPhrase.textFr}
-                        </p>
-                        
-                        {/* Toggle Translation */}
-                        <AnimatePresence>
-                          {showTranslation && (
-                            <motion.p
-                              initial={{ opacity: 0, height: 0 }}
-                              animate={{ opacity: 1, height: "auto" }}
-                              exit={{ opacity: 0, height: 0 }}
-                              className="text-lg text-muted-foreground"
-                            >
-                              {currentPhrase.text}
-                            </motion.p>
-                          )}
-                        </AnimatePresence>
-                        
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setShowTranslation(!showTranslation)}
-                          className="mt-2"
-                        >
-                          {showTranslation 
-                            ? (isEn ? "Hide Translation" : "Masquer la traduction")
-                            : (isEn ? "Show Translation" : "Afficher la traduction")}
-                        </Button>
-                      </div>
-                      
-                      {/* Category Badge */}
-                      <div className="flex justify-center">
-                        <Badge variant="secondary" className="capitalize">
-                          {currentPhrase.category}
-                        </Badge>
-                      </div>
-                      
-                      {/* Actions */}
-                      <div className="flex items-center justify-between pt-4 border-t">
-                        <Button
-                          variant="outline"
-                          onClick={prevPhrase}
-                          disabled={currentPhraseIndex === 0}
-                        >
-                          <ArrowLeft className="h-4 w-4 mr-2" />
-                          {isEn ? "Previous" : "Précédent"}
-                        </Button>
-                        
-                        <div className="flex items-center gap-2">
-                          {!completedPhrases.has(currentPhrase.id) ? (
-                            <Button onClick={markComplete} className="bg-[#0F3D3E] hover:bg-[#0F3D3E]/90">
-                              <CheckCircle2 className="h-4 w-4 mr-2" />
-                              {isEn ? "Mark Complete" : "Marquer terminé"}
-                            </Button>
-                          ) : (
-                            <Badge className="bg-green-100 text-green-700 border-green-200">
-                              <CheckCircle2 className="h-4 w-4 mr-1" />
-                              {isEn ? "Completed" : "Terminé"}
-                            </Badge>
-                          )}
-                        </div>
-                        
-                        <Button
-                          onClick={nextPhrase}
-                          disabled={currentPhraseIndex === phrases.length - 1}
-                        >
-                          {isEn ? "Next" : "Suivant"}
-                          <ChevronRight className="h-4 w-4 ml-2" />
-                        </Button>
-                      </div>
-                    </div>
+
+        {/* Active Simulation */}
+        {simulation?.active ? (
+          <div className="space-y-4">
+            {/* Timer Bar */}
+            <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <button onClick={resetSimulation}
+                  className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+                  aria-label="Exit simulation">
+                  <span className="material-icons text-gray-400">arrow_back</span>
+                </button>
+                <div>
+                  <span className="text-sm font-bold text-gray-900 capitalize">{simulation.examType} — Level {simulation.level}</span>
+                  {simulation.submitted && (
+                    <span className="ml-2 text-xs text-[#10b981] font-semibold">Submitted</span>
                   )}
-                </CardContent>
-              </Card>
-            )}
-          </TabsContent>
-          
-          {/* Repetition Exercise */}
-          <TabsContent value="repetition" className="mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Mic className="h-5 w-5 text-[#0F3D3E]" />
-                  {isEn ? "Repetition Exercise" : "Exercice de répétition"}
-                </CardTitle>
-                <CardDescription>
-                  {isEn 
-                    ? "Listen to the phrase, then record yourself repeating it"
-                    : "Écoutez la phrase, puis enregistrez-vous en la répétant"}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="py-12 text-center">
-                <div className="w-20 h-20 rounded-full bg-[#E7F2F2] flex items-center justify-center mx-auto mb-4">
-                  <Mic className="h-10 w-10 text-[#0F3D3E]" />
                 </div>
-                <h3 className="text-xl font-semibold mb-2">
-                  {isEn ? "Coming Soon" : "Bientôt disponible"}
-                </h3>
-                <p className="text-muted-foreground max-w-md mx-auto">
-                  {isEn 
-                    ? "Record yourself and compare your pronunciation with the native speaker."
-                    : "Enregistrez-vous et comparez votre prononciation avec le locuteur natif."}
-                </p>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          {/* Comprehension Exercise */}
-          <TabsContent value="comprehension" className="mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <MessageSquare className="h-5 w-5 text-[#0F3D3E]" />
-                  {isEn ? "Comprehension Exercise" : "Exercice de compréhension"}
-                </CardTitle>
-                <CardDescription>
-                  {isEn 
-                    ? "Listen to the audio and answer questions about what you heard"
-                    : "Écoutez l'audio et répondez aux questions sur ce que vous avez entendu"}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="py-12 text-center">
-                <div className="w-20 h-20 rounded-full bg-[#E7F2F2] flex items-center justify-center mx-auto mb-4">
-                  <MessageSquare className="h-10 w-10 text-[#0F3D3E]" />
-                </div>
-                <h3 className="text-xl font-semibold mb-2">
-                  {isEn ? "Coming Soon" : "Bientôt disponible"}
-                </h3>
-                <p className="text-muted-foreground max-w-md mx-auto">
-                  {isEn 
-                    ? "Test your understanding with comprehension questions after each audio."
-                    : "Testez votre compréhension avec des questions après chaque audio."}
-                </p>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-        
-        {/* Session Summary */}
-        {completedPhrases.size > 0 && (
-          <Card className="bg-gradient-to-r from-[#E7F2F2] to-[#F0F7F7] dark:from-[#0F3D3E]/20 dark:to-[#0F3D3E]/10 border-[#0F3D3E]/20">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full bg-[#0F3D3E] text-white flex items-center justify-center">
-                    <Award className="h-6 w-6" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold">
-                      {isEn ? "Session Progress" : "Progrès de la session"}
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      {isEn 
-                        ? `${completedPhrases.size} phrases completed • ${sessionScore} points earned`
-                        : `${completedPhrases.size} phrases terminées • ${sessionScore} points gagnés`}
-                    </p>
-                  </div>
-                </div>
-                <Button variant="outline" onClick={resetSession}>
-                  <RotateCcw className="h-4 w-4 mr-2" />
-                  {isEn ? "Reset Session" : "Réinitialiser"}
-                </Button>
               </div>
-            </CardContent>
-          </Card>
+              <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-bold ${
+                simulation.timeLeft < 60 ? "bg-[#e74c3c]/10 text-[#e74c3c]" : "bg-[#008090]/10 text-[#008090]"
+              }`} role="timer" aria-label={`Time remaining: ${formatTime(simulation.timeLeft)}`}>
+                <span className="material-icons" style={{ fontSize: "16px" }}>timer</span>
+                {formatTime(simulation.timeLeft)}
+              </div>
+            </div>
+
+            {/* Score Card (after submit) */}
+            {simulation.submitted && simulation.examType !== "oral" && (
+              <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm text-center">
+                <div className="text-4xl font-bold mb-2" style={{ color: getScore().percentage >= 70 ? "#10b981" : "#e74c3c" }}>
+                  {getScore().percentage}%
+                </div>
+                <p className="text-sm text-gray-500">{getScore().correct} / {getScore().total} correct</p>
+                <p className="text-xs mt-2 font-semibold" style={{ color: getScore().percentage >= 70 ? "#10b981" : "#e74c3c" }}>
+                  {getScore().percentage >= 70 ? "Congratulations! You passed!" : "Keep practicing — you'll get there!"}
+                </p>
+                <button onClick={resetSimulation}
+                  className="mt-4 px-6 py-2 rounded-xl text-sm font-semibold text-white bg-[#008090] hover:brightness-105 transition-all">
+                  Try Another
+                </button>
+              </div>
+            )}
+
+            {/* Simulation Content */}
+            {simulation.examType === "reading" && (
+              <ReadingSimulation level={simulation.level} state={simulation} onAnswer={handleAnswer} onSubmit={handleSubmit} />
+            )}
+            {simulation.examType === "written" && (
+              <WrittenSimulation level={simulation.level} state={simulation} onAnswer={handleAnswer} onSubmit={handleSubmit} />
+            )}
+            {simulation.examType === "oral" && (
+              <OralSimulation level={simulation.level} state={simulation} />
+            )}
+          </div>
+        ) : (
+          <>
+            {/* Exam Type Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <ExamCard type="reading" icon="menu_book" title={t("sle.readingComprehension")}
+                desc="Read passages and answer comprehension questions. Tests your ability to understand written texts in your second language."
+                color="#008090" onStart={startSimulation} />
+              <ExamCard type="written" icon="edit_note" title={t("sle.writtenExpression")}
+                desc="Complete sentences by choosing the correct grammatical form. Tests your knowledge of grammar, syntax, and vocabulary."
+                color="#8b5cf6" onStart={startSimulation} />
+              <ExamCard type="oral" icon="record_voice_over" title={t("sle.oralInteraction")}
+                desc="Practice responding to workplace scenarios. Guided prompts help you structure clear, professional oral responses."
+                color="#f5a623" onStart={startSimulation} />
+            </div>
+
+            {/* Info Section */}
+            <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
+              <h2 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
+                <span className="material-icons text-[#008090]" style={{ fontSize: "18px" }}>info</span>
+                About the SLE
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                {[
+                  { level: "Level A", desc: "Basic proficiency — simple workplace interactions and routine tasks." },
+                  { level: "Level B", desc: "Intermediate proficiency — most bilingual positions require this level." },
+                  { level: "Level C", desc: "Advanced proficiency — complex analysis, policy work, and leadership roles." },
+                ].map((item) => (
+                  <div key={item.level} className="p-3 rounded-xl bg-gray-50">
+                    <div className="text-sm font-bold text-[#008090]">{item.level}</div>
+                    <p className="text-[11px] text-gray-500 mt-1">{item.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
         )}
-      </main>
-      
-      {!isInsideAppLayout && <Footer />}
-    </div>
+      </div>
+    </DashboardLayout>
   );
 }

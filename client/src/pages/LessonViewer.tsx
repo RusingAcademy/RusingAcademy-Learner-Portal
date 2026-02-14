@@ -1,866 +1,836 @@
-import { useState, useEffect, useCallback } from "react";
-import { useParams, useLocation } from "wouter";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { useLearnLayout } from "@/contexts/LearnLayoutContext";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Separator } from "@/components/ui/separator";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  ChevronLeft,
-  ChevronRight,
-  Play,
-  Pause,
-  Video,
-  FileText,
-  HelpCircle,
-  CheckCircle2,
-  Circle,
-  Lock,
-  BookOpen,
-  Clock,
-  ArrowLeft,
-  Menu,
-  X,
-  Volume2,
-  Maximize,
-  SkipBack,
-  SkipForward,
-  MessageSquare,
-  StickyNote,
-  Mic,
-  Award,
-  Loader2,
-} from "lucide-react";
-import { Link } from "wouter";
-import { trpc } from "@/lib/trpc";
-import { motion, AnimatePresence } from "framer-motion";
+/**
+ * LessonViewer — RusingÂcademy Learning Portal
+ * Interactive 7-slot lesson structure with real course content
+ * Slots: Hook → Video → Strategy → Written → Oral → Quiz → Coaching
+ * Design: Premium glassmorphism, teal/gold, step-by-step progression
+ */
+import { useState, useCallback, useMemo } from "react";
+import { Link, useParams, useLocation } from "wouter";
+import { getProgramById, type Program } from "@/data/courseData";
+import { getLessonContent, type SlotContent } from "@/data/lessonContent";
+import { useGamification } from "@/contexts/GamificationContext";
+import DashboardLayout from "@/components/DashboardLayout";
+import { toast } from "sonner";
+import { AudioPlayer } from "@/components/AudioPlayer";
+import { VoiceRecorder } from "@/components/VoiceRecorder";
 
-// Import interactive components
-import Quiz from "@/components/Quiz";
-import SpeakingExercise from "@/components/SpeakingExercise";
-import LearnerNotes from "@/components/LearnerNotes";
-import { BunnyStreamPlayer } from "@/components/BunnyStreamPlayer";
-import ConfidenceCheck from "@/components/ConfidenceCheck";
-import { ProgressCelebration, CELEBRATIONS } from "@/components/ProgressCelebration";
-import XpToast from "@/components/XpToast";
-import AudioLibrary from "@/components/AudioLibrary";
-import ActivityViewer from "@/components/ActivityViewer";
-import { Library } from "lucide-react";
-import { useGamificationActions } from "@/hooks/useGamificationActions";
-
-// Lesson type icons
-const lessonTypeIcons: Record<string, typeof Video> = {
-  video: Video,
-  text: FileText,
-  quiz: HelpCircle,
-  audio: Volume2,
-  pdf: FileText,
-  assignment: FileText,
-  download: FileText,
-  live_session: Video,
-  speaking: Mic,
-};
-
-// Sample quiz questions (in production, these would come from the database)
-const getSampleQuizQuestions = (lessonTitle: string) => [
-  {
-    id: 1,
-    type: "multiple_choice" as const,
-    question: `Based on the lesson "${lessonTitle}", which statement is correct?`,
-    questionFr: `Selon la leçon "${lessonTitle}", quelle affirmation est correcte ?`,
-    options: [
-      "Option A - First choice",
-      "Option B - Second choice",
-      "Option C - Third choice",
-      "Option D - Fourth choice",
-    ],
-    optionsFr: [
-      "Option A - Premier choix",
-      "Option B - Deuxième choix",
-      "Option C - Troisième choix",
-      "Option D - Quatrième choix",
-    ],
-    correctAnswer: 0,
-    explanation: "This is the correct answer because it aligns with the lesson content.",
-    explanationFr: "C'est la bonne réponse car elle correspond au contenu de la leçon.",
-    points: 10,
-  },
-  {
-    id: 2,
-    type: "true_false" as const,
-    question: "The concepts covered in this lesson are fundamental to SLE preparation.",
-    questionFr: "Les concepts abordés dans cette leçon sont fondamentaux pour la préparation à l'ELS.",
-    correctAnswer: "true",
-    explanation: "Yes, these concepts form the foundation of SLE preparation.",
-    explanationFr: "Oui, ces concepts constituent la base de la préparation à l'ELS.",
-    points: 5,
-  },
-  {
-    id: 3,
-    type: "multiple_choice" as const,
-    question: "What is the primary goal of this lesson?",
-    questionFr: "Quel est l'objectif principal de cette leçon ?",
-    options: [
-      "To introduce basic vocabulary",
-      "To practice oral expression",
-      "To improve reading comprehension",
-      "To master written communication",
-    ],
-    optionsFr: [
-      "Introduire le vocabulaire de base",
-      "Pratiquer l'expression orale",
-      "Améliorer la compréhension écrite",
-      "Maîtriser la communication écrite",
-    ],
-    correctAnswer: 1,
-    explanation: "The primary focus is on oral expression skills.",
-    explanationFr: "L'accent principal est mis sur les compétences d'expression orale.",
-    points: 10,
-  },
+const SLOT_CONFIG = [
+  { key: "hook", icon: "bolt", label: "Hook / Accroche", labelFr: "Accroche", color: "#e74c3c", description: "Warm-up scenario to activate prior knowledge" },
+  { key: "video", icon: "play_circle", label: "Video Lesson / Scène", labelFr: "Leçon Vidéo", color: "#3498db", description: "Core instructional content with examples" },
+  { key: "strategy", icon: "psychology", label: "Grammar / Strategy", labelFr: "Grammaire & Stratégie", color: "#8b5cf6", description: "Pattern → Proof → Practice methodology" },
+  { key: "written", icon: "edit_note", label: "Written Practice", labelFr: "Pratique Écrite", color: "#059669", description: "Guided writing exercises and scenarios" },
+  { key: "oral", icon: "mic", label: "Oral Practice", labelFr: "Pratique Orale + Phonétique", color: "#f59e0b", description: "Speaking activities and pronunciation drills" },
+  { key: "quiz", icon: "quiz", label: "Formative Quiz", labelFr: "Quiz Formatif", color: "#008090", description: "8 questions to check understanding" },
+  { key: "coaching", icon: "support_agent", label: "Coaching Corner", labelFr: "Conseil du Coach", color: "#f5a623", description: "Reflection and self-assessment" },
 ];
 
-export default function LessonViewer() {
-  const { slug: routeSlug, lessonId } = useParams<{ slug: string; lessonId: string }>();
-  const { language } = useLanguage();
-  const isEn = language === "en";
-  const [, setLocation] = useLocation();
+const SLOT_KEY_MAP: Record<string, string> = {
+  hook: "hook",
+  video: "video",
+  strategy: "strategy",
+  written: "written",
+  oral: "oral",
+  quiz: "quiz",
+  coaching: "coaching",
+};
 
-  // Detect if we're inside the immersive LearnLayout shell
-  const { isInsideLearnLayout, courseSlug: learnSlug, navigateToLesson: learnNavigate } = useLearnLayout();
-  // Use the slug from LearnLayout context if inside it, otherwise from route params
-  const slug = isInsideLearnLayout ? learnSlug : routeSlug;
+/** Render markdown-like content into styled HTML */
+function RichContent({ content, slotKey }: { content: string; slotKey: string }) {
+  const lines = content.split('\n');
+  const elements: React.ReactElement[] = [];
+  let inTable = false;
+  let tableRows: string[][] = [];
+  let tableHeaders: string[] = [];
+  let inBlockquote = false;
+  let blockquoteLines: string[] = [];
+  let inCodeBlock = false;
+  let codeLines: string[] = [];
 
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [activeTab, setActiveTab] = useState("content");
-  const [showQuiz, setShowQuiz] = useState(false);
-  const [showSpeaking, setShowSpeaking] = useState(false);
-  const [showConfidenceCheck, setShowConfidenceCheck] = useState(false);
-  const [showCelebration, setShowCelebration] = useState(false);
-  const [celebrationData, setCelebrationData] = useState<any>(null);
-  const [xpToast, setXpToast] = useState<{ amount: number; reason: string } | null>(null);
-  const [lessonCompleted, setLessonCompleted] = useState(false);
-
-  // Gamification actions
-  const { awardXP, unlockBadge, maintainStreakAction } = useGamificationActions();
-
-  // Fetch course data
-  const { data: course, isLoading: courseLoading } = trpc.courses.getBySlug.useQuery(
-    { slug: slug || "" },
-    { enabled: !!slug }
-  );
-
-  // Fetch lesson data
-  const { data: lessonData, isLoading: lessonLoading, refetch: refetchLesson } = trpc.courses.getLesson.useQuery(
-    { lessonId: parseInt(lessonId || "0") },
-    { enabled: !!lessonId }
-  );
-
-  // Fetch quiz questions if this is a quiz lesson
-  const { data: quizQuestionsData } = trpc.lessons.getQuizQuestions.useQuery(
-    { lessonId: parseInt(lessonId || "0") },
-    { enabled: !!lessonId && lessonData?.lesson?.contentType === "quiz" }
-  );
-
-  // Mark lesson complete mutation
-  const markCompleteMutation = trpc.courses.updateProgress.useMutation();
-
-  // Get enrollment status
-  const { data: enrollment, refetch: refetchEnrollment } = trpc.courses.getEnrollment.useQuery(
-    { courseId: course?.id || 0 },
-    { enabled: !!course?.id }
-  );
-
-  const lesson = lessonData?.lesson;
-  const progress = lessonData?.progress;
-
-  // Find current lesson index and navigation
-  const allLessons = course?.modules?.flatMap(m => m.lessons) || [];
-  const currentIndex = allLessons.findIndex(l => l.id === parseInt(lessonId || "0"));
-  const prevLesson = currentIndex > 0 ? allLessons[currentIndex - 1] : null;
-  const nextLesson = currentIndex < allLessons.length - 1 ? allLessons[currentIndex + 1] : null;
-
-  // Calculate overall progress
-  const completedLessons = enrollment?.lessonsCompleted || 0;
-  const totalLessons = enrollment?.totalLessons || allLessons.length;
-  const progressPercent = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
-
-  // Check if lesson is already completed
-  useEffect(() => {
-    if (progress?.status === "completed") {
-      setLessonCompleted(true);
-    }
-  }, [progress]);
-
-  const handleMarkComplete = useCallback(async (showCelebrationAfter = true) => {
-    if (!lesson || lessonCompleted) return;
-    
-    try {
-      await markCompleteMutation.mutateAsync({ 
-        lessonId: lesson.id, 
-        progressPercent: 100, 
-        completed: true 
-      });
-      
-      setLessonCompleted(true);
-      
-      // Show XP toast (local + gamification system)
-      setXpToast({ amount: 25, reason: isEn ? "Lesson completed!" : "Leçon terminée !" });
-      awardXP(25, isEn ? "Lesson completed!" : "Leçon terminée !");
-      
-      // Update streak
-      maintainStreakAction(1);
-      
-      // Check if this completes a module or course
-      const currentModule = course?.modules?.find(m => 
-        m.lessons?.some(l => l.id === lesson.id)
+  const flushBlockquote = () => {
+    if (blockquoteLines.length > 0) {
+      elements.push(
+        <blockquote key={`bq-${elements.length}`} className="border-l-4 pl-4 py-2 my-3 text-sm italic text-gray-600 rounded-r-lg" style={{
+          borderColor: "#008090",
+          background: "rgba(0,128,144,0.04)",
+        }}>
+          {blockquoteLines.map((l, i) => <p key={i} className="mb-1" dangerouslySetInnerHTML={{ __html: formatInline(l) }} />)}
+        </blockquote>
       );
-      
-      if (showCelebrationAfter) {
-        // Show confidence check first
-        setShowConfidenceCheck(true);
-      }
-      
-      // Refetch data
-      refetchLesson();
-      refetchEnrollment();
-      
-    } catch (error) {
-      console.error("Failed to mark lesson complete:", error);
+      blockquoteLines = [];
     }
-  }, [lesson, lessonCompleted, course, isEn, markCompleteMutation, refetchLesson, refetchEnrollment]);
-
-  const handleQuizComplete = useCallback((result: any) => {
-    setShowQuiz(false);
-    
-    if (result.passed) {
-      // Award XP based on score
-      const xpEarned = Math.round(result.percentage / 2);
-      setXpToast({ amount: xpEarned, reason: isEn ? "Quiz passed!" : "Quiz réussi !" });
-      awardXP(xpEarned, isEn ? "Quiz passed!" : "Quiz réussi !");
-      
-      // Check for quiz master badge (perfect score)
-      if (result.percentage === 100) {
-        unlockBadge({
-          code: "quiz-master",
-          name: isEn ? "Quiz Master" : "Maître du Quiz",
-          description: isEn ? "Achieved a perfect score on a quiz" : "Score parfait sur un quiz",
-          points: 50,
-          rarity: "rare",
-        });
-      }
-      
-      // Mark lesson complete
-      handleMarkComplete(true);
-    } else {
-      // Encourage retry
-      setXpToast({ amount: 5, reason: isEn ? "Good effort! Try again." : "Bon effort ! Réessayez." });
-    }
-  }, [isEn, handleMarkComplete, awardXP, unlockBadge]);
-
-  const handleSpeakingComplete = useCallback((data: any) => {
-    setShowSpeaking(false);
-    
-    // Award XP for completing speaking exercise
-    setXpToast({ amount: 30, reason: isEn ? "Speaking exercise completed!" : "Exercice oral terminé !" });
-    awardXP(30, isEn ? "Speaking exercise completed!" : "Exercice oral terminé !");
-    
-    // Mark lesson complete
-    handleMarkComplete(true);
-  }, [isEn, handleMarkComplete, awardXP]);
-
-  const handleConfidenceCheckComplete = useCallback((data: any) => {
-    setShowConfidenceCheck(false);
-    
-    // Show celebration
-    if (lesson) {
-      setCelebrationData(CELEBRATIONS.lessonComplete(lesson.title, 25));
-      setShowCelebration(true);
-    }
-  }, [lesson]);
-
-  // Build the correct lesson URL based on whether we're inside LearnLayout or standalone
-  const buildLessonUrl = useCallback((targetLessonId: number) => {
-    return isInsideLearnLayout
-      ? `/learn/${slug}/lessons/${targetLessonId}`
-      : `/courses/${slug}/lessons/${targetLessonId}`;
-  }, [isInsideLearnLayout, slug]);
-
-  const handleCelebrationComplete = useCallback(() => {
-    setShowCelebration(false);
-    setCelebrationData(null);
-    
-    // Navigate to next lesson if available
-    if (nextLesson) {
-      setTimeout(() => {
-        if (isInsideLearnLayout) {
-          learnNavigate(nextLesson.id);
-        } else {
-          setLocation(buildLessonUrl(nextLesson.id));
-        }
-      }, 300);
-    }
-  }, [nextLesson, isInsideLearnLayout, learnNavigate, setLocation, buildLessonUrl]);
-
-  const navigateToLesson = (targetLessonId: number) => {
-    if (isInsideLearnLayout) {
-      learnNavigate(targetLessonId);
-    } else {
-      setLocation(buildLessonUrl(targetLessonId));
-    }
-    // Reset states
-    setShowQuiz(false);
-    setShowSpeaking(false);
-    setShowConfidenceCheck(false);
-    setLessonCompleted(false);
-    setActiveTab("content");
+    inBlockquote = false;
   };
 
-  // Loading state
-  if (courseLoading || lessonLoading) {
-    return (
-      <div className={`${isInsideLearnLayout ? 'h-full' : 'min-h-screen'} bg-background flex items-center justify-center`}>
-        <div className="text-center">
-          <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
-          <p className="text-muted-foreground">{isEn ? "Loading lesson..." : "Chargement de la leçon..."}</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Not found state
-  if (!course || !lesson) {
-    const backUrl = isInsideLearnLayout ? `/learn/${slug}` : `/courses/${slug}`;
-    return (
-      <div className={`${isInsideLearnLayout ? 'h-full' : 'min-h-screen'} bg-background`}>
-        {!isInsideLearnLayout && <Header />}
-        <div className="max-w-4xl mx-auto px-4 py-16 text-center">
-          <BookOpen className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-          <h1 className="text-2xl font-bold mb-2">{isEn ? "Lesson not found" : "Leçon introuvable"}</h1>
-          <p className="text-muted-foreground mb-6">
-            {isEn ? "This lesson doesn't exist or you don't have access." : "Cette leçon n'existe pas ou vous n'y avez pas accès."}
-          </p>
-          <Button asChild>
-            <Link href={backUrl}>
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              {isEn ? "Back to Course" : "Retour au cours"}
-            </Link>
-          </Button>
-        </div>
-        {!isInsideLearnLayout && <Footer />}
-      </div>
-    );
-  }
-
-  const LessonIcon = lessonTypeIcons[lesson.contentType || "video"] || Video;
-  const isQuizLesson = lesson.contentType === "quiz";
-  const isSpeakingLesson = lesson.contentType === "audio";
-
-  return (
-    <div className="min-h-screen bg-background flex flex-col">
-      {/* XP Toast */}
-      <AnimatePresence>
-        {xpToast && (
-          <XpToast
-            amount={xpToast.amount}
-            reason={xpToast.reason}
-            onClose={() => setXpToast(null)}
-          />
-        )}
-      </AnimatePresence>
-
-      {/* Celebration Modal */}
-      <AnimatePresence>
-        {showCelebration && celebrationData && (
-          <ProgressCelebration
-            celebration={celebrationData}
-            language={language}
-            onComplete={handleCelebrationComplete}
-          />
-        )}
-      </AnimatePresence>
-
-      {/* Confidence Check Modal */}
-      <AnimatePresence>
-        {showConfidenceCheck && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="w-full max-w-md"
-            >
-              <ConfidenceCheck
-                lessonId={lesson.id}
-                courseId={course?.id || 0}
-                lessonTitle={lesson.title}
-                onComplete={handleConfidenceCheckComplete}
-                onSkip={() => {
-                  setShowConfidenceCheck(false);
-                  handleCelebrationComplete();
-                }}
-              />
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Top Navigation Bar — hidden when inside LearnLayout (LearnLayout provides its own) */}
-      {!isInsideLearnLayout && (
-      <div className="sticky top-0 z-40 bg-background border-b">
-        <div className="flex items-center justify-between px-4 py-3">
-          <div className="flex items-center gap-4">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              aria-label={sidebarOpen ? "Close sidebar" : "Open sidebar"}
-            >
-              {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </Button>
-            <Link 
-              href={`/courses/${slug}`} 
-              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              <span className="hidden sm:inline truncate max-w-[200px]">{course.title}</span>
-            </Link>
-          </div>
-
-          <div className="flex items-center gap-4">
-            {/* Progress indicator */}
-            <div className="hidden md:flex items-center gap-2">
-              <Progress value={progressPercent} className="w-32 h-2" aria-label="Course progress" />
-              <span className="text-sm text-muted-foreground">{progressPercent}%</span>
-            </div>
-
-            {/* Navigation buttons */}
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={!prevLesson}
-                onClick={() => prevLesson && navigateToLesson(prevLesson.id)}
-                aria-label={isEn ? "Previous lesson" : "Leçon précédente"}
-              >
-                <ChevronLeft className="h-4 w-4" />
-                <span className="hidden sm:inline ml-1">{isEn ? "Previous" : "Précédent"}</span>
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={!nextLesson}
-                onClick={() => nextLesson && navigateToLesson(nextLesson.id)}
-                aria-label={isEn ? "Next lesson" : "Leçon suivante"}
-              >
-                <span className="hidden sm:inline mr-1">{isEn ? "Next" : "Suivant"}</span>
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-          </div>
-        </div>
-      </div>
-      </div>
-      )}
-
-      <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar - Course Outline — hidden when inside LearnLayout */}
-        <AnimatePresence>
-          {!isInsideLearnLayout && sidebarOpen && (
-            <motion.aside
-              initial={{ width: 0, opacity: 0 }}
-              animate={{ width: 320, opacity: 1 }}
-              exit={{ width: 0, opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="border-r bg-muted/30 overflow-hidden flex-shrink-0"
-              role="navigation"
-              aria-label="Course navigation"
-            >
-              <ScrollArea className="h-[calc(100vh-57px)]">
-                <div className="p-4">
-                  <h2 className="font-semibold mb-4">{isEn ? "Course Content" : "Contenu du cours"}</h2>
-                  
-                  {course.modules?.map((module, moduleIndex) => (
-                    <div key={module.id} className="mb-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Badge variant="outline" className="text-xs">
-                          {isEn ? `Module ${moduleIndex + 1}` : `Module ${moduleIndex + 1}`}
-                        </Badge>
-                        <span className="text-sm font-medium truncate">{module.title}</span>
-                      </div>
-                      
-                      <div className="space-y-1 pl-2">
-                        {module.lessons?.map((l) => {
-                          const isActive = l.id === lesson.id;
-                          const isCompleted = false; // TODO: Check from progress
-                          const isLocked = !enrollment && !l.isPreview;
-                          const Icon = lessonTypeIcons[l.contentType || "video"] || Video;
-                          
-                          return (
-                            <button
-                              key={l.id}
-                              onClick={() => !isLocked && navigateToLesson(l.id)}
-                              disabled={isLocked}
-                              aria-current={isActive ? "page" : undefined}
-                              className={`w-full flex items-center gap-2 p-2 rounded-lg text-left text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${
-                                isActive
-                                  ? "bg-primary text-primary-foreground"
-                                  : isLocked
-                                  ? "text-muted-foreground cursor-not-allowed"
-                                  : "hover:bg-muted"
-                              }`}
-                            >
-                              {isCompleted ? (
-                                <CheckCircle2 className="h-4 w-4 text-green-500 flex-shrink-0" aria-hidden="true" />
-                              ) : isLocked ? (
-                                <Lock className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
-                              ) : (
-                                <Icon className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
-                              )}
-                              <span className="truncate flex-1">{l.title}</span>
-                              {l.videoDurationSeconds && (
-                                <span className="text-xs opacity-70">
-                                  {Math.round(l.videoDurationSeconds / 60)}m
-                                </span>
-                              )}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
+  const flushTable = () => {
+    if (tableRows.length > 0) {
+      elements.push(
+        <div key={`tbl-${elements.length}`} className="overflow-x-auto my-4 rounded-xl" style={{ border: "1px solid rgba(0,128,144,0.1)" }}>
+          <table className="w-full text-sm">
+            {tableHeaders.length > 0 && (
+              <thead>
+                <tr style={{ background: "rgba(0,128,144,0.06)" }}>
+                  {tableHeaders.map((h, i) => (
+                    <th key={i} className="px-3 py-2 text-left font-semibold text-gray-900 text-xs">{h.trim()}</th>
                   ))}
-                </div>
-              </ScrollArea>
-            </motion.aside>
-          )}
-        </AnimatePresence>
+                </tr>
+              </thead>
+            )}
+            <tbody>
+              {tableRows.map((row, ri) => (
+                <tr key={ri} style={{ borderBottom: "1px solid rgba(0,128,144,0.06)" }}>
+                  {row.map((cell, ci) => (
+                    <td key={ci} className="px-3 py-2 text-gray-700" dangerouslySetInnerHTML={{ __html: formatInline(cell.trim()) }} />
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
+      tableRows = [];
+      tableHeaders = [];
+    }
+    inTable = false;
+  };
 
-        {/* Main Content Area */}
-        <main className="flex-1 overflow-y-auto" role="main">
-          <div className="max-w-4xl mx-auto p-6">
-            {/* Lesson Header */}
-            <div className="mb-6">
-              <div className="flex items-center gap-2 mb-2 flex-wrap">
-                <Badge variant="outline">
-                  <LessonIcon className="h-3 w-3 mr-1" aria-hidden="true" />
-                  {lesson.contentType === "video" ? (isEn ? "Video" : "Vidéo") :
-                   lesson.contentType === "text" ? (isEn ? "Article" : "Article") :
-                   lesson.contentType === "quiz" ? (isEn ? "Quiz" : "Quiz") :
-                   
-                   lesson.contentType}
-                </Badge>
-                {lesson.videoDurationSeconds && (
-                  <span className="text-sm text-muted-foreground flex items-center gap-1">
-                    <Clock className="h-3 w-3" aria-hidden="true" />
-                    {Math.round(lesson.videoDurationSeconds / 60)} min
+  function formatInline(text: string): string {
+    return text
+      .replace(/\*\*(.+?)\*\*/g, '<strong class="font-semibold text-gray-900">$1</strong>')
+      .replace(/\*(.+?)\*/g, '<em class="text-gray-600">$1</em>')
+      .replace(/`(.+?)`/g, '<code class="px-1 py-0.5 rounded bg-gray-100 text-[#008090] text-xs font-mono">$1</code>');
+  }
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const trimmed = line.trim();
+
+    // Skip empty lines
+    if (!trimmed) {
+      if (inBlockquote) flushBlockquote();
+      if (inTable) flushTable();
+      continue;
+    }
+
+    // Code blocks
+    if (trimmed.startsWith('```')) {
+      if (inCodeBlock) {
+        elements.push(
+          <pre key={`code-${elements.length}`} className="bg-gray-50 rounded-xl p-4 my-3 text-xs font-mono overflow-x-auto" style={{ border: "1px solid rgba(0,128,144,0.08)" }}>
+            <code>{codeLines.join('\n')}</code>
+          </pre>
+        );
+        codeLines = [];
+        inCodeBlock = false;
+      } else {
+        inCodeBlock = true;
+      }
+      continue;
+    }
+    if (inCodeBlock) { codeLines.push(line); continue; }
+
+    // Tables
+    if (trimmed.includes('|') && trimmed.startsWith('|')) {
+      const cells = trimmed.split('|').filter(c => c.trim());
+      if (trimmed.match(/^\|[\s:-]+\|/)) continue; // separator row
+      if (!inTable) {
+        inTable = true;
+        tableHeaders = cells;
+      } else {
+        tableRows.push(cells);
+      }
+      continue;
+    } else if (inTable) {
+      flushTable();
+    }
+
+    // Blockquotes
+    if (trimmed.startsWith('>')) {
+      inBlockquote = true;
+      blockquoteLines.push(trimmed.replace(/^>\s*/, ''));
+      continue;
+    } else if (inBlockquote) {
+      flushBlockquote();
+    }
+
+    // Headers
+    if (trimmed.startsWith('### ')) {
+      elements.push(
+        <h4 key={`h4-${elements.length}`} className="text-base font-bold text-gray-900 mt-5 mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
+          {trimmed.replace('### ', '')}
+        </h4>
+      );
+      continue;
+    }
+    if (trimmed.startsWith('## ')) {
+      elements.push(
+        <h3 key={`h3-${elements.length}`} className="text-lg font-bold text-gray-900 mt-6 mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
+          {trimmed.replace('## ', '')}
+        </h3>
+      );
+      continue;
+    }
+
+    // Horizontal rule
+    if (trimmed === '---') {
+      elements.push(<hr key={`hr-${elements.length}`} className="my-4" style={{ borderColor: "rgba(0,128,144,0.08)" }} />);
+      continue;
+    }
+
+    // Checklist items
+    if (trimmed.startsWith('- [ ]') || trimmed.startsWith('- [x]')) {
+      const checked = trimmed.startsWith('- [x]');
+      const text = trimmed.replace(/^- \[.\]\s*/, '');
+      elements.push(
+        <label key={`check-${elements.length}`} className="flex items-start gap-2 py-1 text-sm text-gray-700 cursor-pointer">
+          <input type="checkbox" defaultChecked={checked} className="mt-1 accent-[#008090]" />
+          <span dangerouslySetInnerHTML={{ __html: formatInline(text) }} />
+        </label>
+      );
+      continue;
+    }
+
+    // List items
+    if (trimmed.match(/^\d+\.\s/)) {
+      const text = trimmed.replace(/^\d+\.\s+/, '');
+      elements.push(
+        <div key={`li-${elements.length}`} className="flex gap-2 py-1 text-sm text-gray-700">
+          <span className="text-[#008090] font-bold flex-shrink-0">{trimmed.match(/^\d+/)![0]}.</span>
+          <span dangerouslySetInnerHTML={{ __html: formatInline(text) }} />
+        </div>
+      );
+      continue;
+    }
+    if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
+      const text = trimmed.replace(/^[-*]\s+/, '');
+      elements.push(
+        <div key={`ul-${elements.length}`} className="flex gap-2 py-0.5 text-sm text-gray-700 pl-2">
+          <span className="text-[#008090] mt-1.5 flex-shrink-0">•</span>
+          <span dangerouslySetInnerHTML={{ __html: formatInline(text) }} />
+        </div>
+      );
+      continue;
+    }
+
+    // Regular paragraph
+    elements.push(
+      <p key={`p-${elements.length}`} className="text-sm text-gray-700 leading-relaxed my-2" dangerouslySetInnerHTML={{ __html: formatInline(trimmed) }} />
+    );
+  }
+
+  // Flush remaining
+  if (inBlockquote) flushBlockquote();
+  if (inTable) flushTable();
+
+  return <div className="space-y-1">{elements}</div>;
+}
+
+/** Quiz component with real questions from lesson content */
+function FormativeQuiz({ lessonId, realQuiz, onComplete }: { 
+  lessonId: string; 
+  realQuiz?: { title: string; questions: any[] } | null;
+  onComplete: (score: number) => void;
+}) {
+  const [currentQ, setCurrentQ] = useState(0);
+  const [answers, setAnswers] = useState<(string | number)[]>([]);
+  const [showResult, setShowResult] = useState(false);
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [fillAnswer, setFillAnswer] = useState("");
+
+  // Use real quiz data if available, otherwise fallback
+  const questions = useMemo(() => {
+    if (realQuiz?.questions?.length) {
+      return realQuiz.questions.map((q: any) => ({
+        q: q.question,
+        type: q.type || "multiple-choice",
+        opts: q.options || [],
+        answer: q.answer,
+        feedback: q.feedback || "",
+      }));
+    }
+    // Fallback generic questions
+    return [
+      { q: "Which greeting is most appropriate in a formal Canadian workplace?", type: "multiple-choice", opts: ["Hey, what's up?", "Good morning, how are you?", "Yo!", "Sup?"], answer: "Good morning, how are you?", feedback: "In a professional setting, 'Good morning, how are you?' is the most appropriate greeting." },
+      { q: "When introducing yourself professionally, you should include:", type: "multiple-choice", opts: ["Your nickname", "Your name and role", "Your salary", "Your age"], answer: "Your name and role", feedback: "A professional introduction includes your name and your role in the organization." },
+      { q: "The correct way to ask for clarification is:", type: "multiple-choice", opts: ["What?!", "Could you please repeat that?", "Huh?", "I don't care"], answer: "Could you please repeat that?", feedback: "Using polite language like 'Could you please repeat that?' shows professionalism." },
+      { q: "In a professional email, the appropriate closing is:", type: "multiple-choice", opts: ["Later!", "XOXO", "Best regards,", "Bye bye"], answer: "Best regards,", feedback: "'Best regards' is a standard professional email closing." },
+      { q: "Active listening involves:", type: "multiple-choice", opts: ["Checking your phone", "Making eye contact and nodding", "Interrupting frequently", "Looking away"], answer: "Making eye contact and nodding", feedback: "Active listening means showing engagement through eye contact and appropriate responses." },
+    ];
+  }, [realQuiz]);
+
+  const handleMultipleChoice = (idx: number) => {
+    setSelectedAnswer(idx);
+    setShowFeedback(true);
+    
+    setTimeout(() => {
+      const newAnswers = [...answers, questions[currentQ].opts[idx]];
+      setAnswers(newAnswers);
+      setSelectedAnswer(null);
+      setShowFeedback(false);
+      if (currentQ < questions.length - 1) {
+        setCurrentQ(currentQ + 1);
+      } else {
+        const score = newAnswers.reduce((s, a, i) => s + (String(a).toLowerCase().trim() === String(questions[i].answer).toLowerCase().trim() ? 1 : 0), 0);
+        setShowResult(true);
+        onComplete(Math.round((score / questions.length) * 100));
+      }
+    }, 2500);
+  };
+
+  const handleFillBlank = () => {
+    if (!fillAnswer.trim()) return;
+    setShowFeedback(true);
+    
+    setTimeout(() => {
+      const newAnswers = [...answers, fillAnswer.trim()];
+      setAnswers(newAnswers);
+      setFillAnswer("");
+      setShowFeedback(false);
+      if (currentQ < questions.length - 1) {
+        setCurrentQ(currentQ + 1);
+      } else {
+        const score = newAnswers.reduce((s: number, a, i) => s + (String(a).toLowerCase().trim() === String(questions[i].answer).toLowerCase().trim() ? 1 : 0), 0);
+        setShowResult(true);
+        onComplete(Math.round((score / questions.length) * 100));
+      }
+    }, 2500);
+  };
+
+  if (showResult) {
+    const score = answers.reduce((s: number, a, i) => s + (String(a).toLowerCase().trim() === String(questions[i].answer).toLowerCase().trim() ? 1 : 0), 0);
+    const pct = Math.round((score / questions.length) * 100);
+    const passed = pct >= 60;
+    return (
+      <div className="text-center py-8">
+        <div className="w-24 h-24 rounded-full mx-auto flex items-center justify-center mb-4" style={{
+          background: passed ? "linear-gradient(135deg, #f5a623, #ffd700)" : "rgba(231,76,60,0.1)",
+          boxShadow: passed ? "0 8px 32px rgba(245,166,35,0.3)" : "none",
+        }}>
+          <span className="material-icons text-4xl" style={{ color: passed ? "white" : "#e74c3c" }}>
+            {passed ? "emoji_events" : "refresh"}
+          </span>
+        </div>
+        <h3 className="text-2xl font-bold text-gray-900" style={{ fontFamily: "'Playfair Display', serif" }}>
+          {passed ? (pct >= 90 ? "Excellent !" : "Bien joué !") : "Continuez à pratiquer !"}
+        </h3>
+        <p className="text-4xl font-bold mt-3" style={{ color: passed ? "#f5a623" : "#e74c3c" }}>{pct}%</p>
+        <p className="text-sm text-gray-500 mt-1">{score}/{questions.length} bonnes réponses</p>
+        {passed && <p className="text-sm text-[#008090] mt-3 font-medium">+50 XP earned!</p>}
+        
+        {/* Show answer review */}
+        <div className="mt-6 text-left max-w-lg mx-auto space-y-3">
+          <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400">Review</h4>
+          {questions.map((q, i) => {
+            const isCorrect = String(answers[i]).toLowerCase().trim() === String(q.answer).toLowerCase().trim();
+            return (
+              <div key={i} className="p-3 rounded-xl text-sm" style={{
+                background: isCorrect ? "rgba(0,128,144,0.05)" : "rgba(231,76,60,0.05)",
+                border: `1px solid ${isCorrect ? "rgba(0,128,144,0.15)" : "rgba(231,76,60,0.15)"}`,
+              }}>
+                <div className="flex items-start gap-2">
+                  <span className="material-icons flex-shrink-0 mt-0.5" style={{ fontSize: "16px", color: isCorrect ? "#008090" : "#e74c3c" }}>
+                    {isCorrect ? "check_circle" : "cancel"}
                   </span>
-                )}
-                {lessonCompleted && (
-                  <Badge className="bg-green-500 text-white">
-                    <CheckCircle2 className="h-3 w-3 mr-1" aria-hidden="true" />
-                    {isEn ? "Completed" : "Terminé"}
-                  </Badge>
-                )}
-              </div>
-              <h1 className="text-2xl font-bold">{lesson.title}</h1>
-              {lesson.description && (
-                <p className="text-muted-foreground mt-2">{lesson.description}</p>
-              )}
-            </div>
-
-            {/* Tabs for Content, Notes, Discussion */}
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
-              <TabsList className="grid w-full grid-cols-4">
-                <TabsTrigger value="content" className="flex items-center gap-2">
-                  <BookOpen className="h-4 w-4" aria-hidden="true" />
-                  <span className="hidden sm:inline">{isEn ? "Content" : "Contenu"}</span>
-                </TabsTrigger>
-                <TabsTrigger value="audio" className="flex items-center gap-2">
-                  <Volume2 className="h-4 w-4" aria-hidden="true" />
-                  <span className="hidden sm:inline">{isEn ? "Audio" : "Audio"}</span>
-                </TabsTrigger>
-                <TabsTrigger value="notes" className="flex items-center gap-2">
-                  <StickyNote className="h-4 w-4" aria-hidden="true" />
-                  <span className="hidden sm:inline">{isEn ? "Notes" : "Notes"}</span>
-                </TabsTrigger>
-                <TabsTrigger value="discussion" className="flex items-center gap-2">
-                  <MessageSquare className="h-4 w-4" aria-hidden="true" />
-                  <span className="hidden sm:inline">{isEn ? "Discussion" : "Discussion"}</span>
-                </TabsTrigger>
-              </TabsList>
-
-              {/* Content Tab */}
-              <TabsContent value="content" className="mt-4">
-                {/* 7-Slot Activity Viewer — PRIMARY content renderer */}
-                <div className="mb-4">
-                  <ActivityViewer
-                    lessonId={lesson.id}
-                    isEnrolled={!!enrollment}
-                    language={language}
-                  />
-                </div>
-
-                {/* Legacy lesson content — only shown for quiz/speaking/video lessons without activities */}
-                {(isQuizLesson || isSpeakingLesson || (lesson.contentType === "video" && lesson.videoUrl)) && (
-                <Card>
-                  <CardContent className="p-0">
-                    {/* Quiz Content */}
-                    {isQuizLesson && !showQuiz && (
-                      <div className="p-8 text-center">
-                        <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                          <HelpCircle className="h-10 w-10 text-primary" />
-                        </div>
-                        <h3 className="text-xl font-semibold mb-2">
-                          {isEn ? "Ready for the Quiz?" : "Prêt pour le quiz ?"}
-                        </h3>
-                        <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-                          {isEn 
-                            ? "Test your knowledge with this interactive quiz. You need 70% to pass." 
-                            : "Testez vos connaissances avec ce quiz interactif. Vous avez besoin de 70% pour réussir."}
-                        </p>
-                        <Button size="lg" onClick={() => setShowQuiz(true)}>
-                          <Play className="h-4 w-4 mr-2" aria-hidden="true" />
-                          {isEn ? "Start Quiz" : "Commencer le quiz"}
-                        </Button>
-                      </div>
-                    )}
-
-                    {isQuizLesson && showQuiz && (
-                      <div className="p-4">
-                        <Quiz
-                          title={lesson.title}
-                          titleFr={lesson.title}
-                          questions={quizQuestionsData && quizQuestionsData.length > 0 
-                            ? quizQuestionsData.map((q: any) => ({
-                                id: q.id,
-                                type: q.questionType === 'true_false' ? 'true_false' : 'multiple_choice',
-                                question: q.questionText,
-                                questionFr: q.questionTextFr || q.questionText,
-                                options: q.options ? (typeof q.options === 'string' ? JSON.parse(q.options) : q.options) : [],
-                                optionsFr: q.options ? (typeof q.options === 'string' ? JSON.parse(q.options) : q.options) : [],
-                                correctAnswer: q.correctAnswer,
-                                explanation: q.explanation || '',
-                                explanationFr: q.explanationFr || q.explanation || '',
-                                points: q.points || 10,
-                              }))
-                            : getSampleQuizQuestions(lesson.title)
-                          }
-                          passingScore={70}
-                          language={language}
-                          onComplete={handleQuizComplete}
-                          onExit={() => setShowQuiz(false)}
-                        />
-                      </div>
-                    )}
-
-                    {/* Speaking Exercise Content */}
-                    {isSpeakingLesson && !showSpeaking && (
-                      <div className="p-8 text-center">
-                        <div className="w-20 h-20 rounded-full bg-[#E7F2F2] dark:bg-[#E7F2F2]/30 flex items-center justify-center mx-auto mb-4">
-                          <Mic className="h-10 w-10 text-[#0F3D3E] dark:text-[#0F3D3E]" />
-                        </div>
-                        <h3 className="text-xl font-semibold mb-2">
-                          {isEn ? "Speaking Exercise" : "Exercice d'expression orale"}
-                        </h3>
-                        <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-                          {isEn 
-                            ? "Practice your French speaking skills. Record yourself and listen back." 
-                            : "Pratiquez vos compétences orales en français. Enregistrez-vous et réécoutez."}
-                        </p>
-                        <Button size="lg" onClick={() => setShowSpeaking(true)} className="bg-[#E7F2F2] hover:bg-[#E7F2F2]">
-                          <Mic className="h-4 w-4 mr-2" aria-hidden="true" />
-                          {isEn ? "Start Speaking" : "Commencer l'exercice"}
-                        </Button>
-                      </div>
-                    )}
-
-                    {isSpeakingLesson && showSpeaking && (
-                      <div className="p-4">
-                        <SpeakingExercise
-                          prompt={isEn 
-                            ? "Practice the key phrases from this lesson. Speak clearly and at a natural pace."
-                            : "Pratiquez les phrases clés de cette leçon. Parlez clairement et à un rythme naturel."}
-                          promptFr="Pratiquez les phrases clés de cette leçon. Parlez clairement et à un rythme naturel."
-                          targetPhrase="Je voudrais vous présenter notre nouveau projet."
-                          tips={[
-                            "Speak at a natural pace",
-                            "Focus on clear pronunciation",
-                            "Don't worry about mistakes",
-                          ]}
-                          tipsFr={[
-                            "Parlez à un rythme naturel",
-                            "Concentrez-vous sur une prononciation claire",
-                            "Ne vous inquiétez pas des erreurs",
-                          ]}
-                          language={language}
-                          onComplete={handleSpeakingComplete}
-                          onSkip={() => setShowSpeaking(false)}
-                        />
-                      </div>
-                    )}
-
-                    {/* Video Content */}
-                    {lesson.contentType === "video" && lesson.videoUrl && (
-                      <div className="aspect-video bg-black relative">
-                        {lesson.videoProvider === "bunny" ? (
-                          <BunnyStreamPlayer
-                            videoId={lesson.videoUrl}
-                            title={lesson.title}
-                          />
-                        ) : lesson.videoProvider === "youtube" ? (
-                          <iframe
-                            src={`https://www.youtube.com/embed/${extractYouTubeId(lesson.videoUrl)}?rel=0`}
-                            className="w-full h-full"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
-                            title={lesson.title}
-                          />
-                        ) : lesson.videoProvider === "vimeo" ? (
-                          <iframe
-                            src={`https://player.vimeo.com/video/${extractVimeoId(lesson.videoUrl)}`}
-                            className="w-full h-full"
-                            allow="autoplay; fullscreen; picture-in-picture"
-                            allowFullScreen
-                            title={lesson.title}
-                          />
-                        ) : (
-                          <video
-                            src={lesson.videoUrl}
-                            controls
-                            className="w-full h-full"
-                            poster={lesson.videoThumbnailUrl || undefined}
-                          >
-                            <track kind="captions" />
-                          </video>
-                        )}
-                      </div>
-                    )}
-
-                    {/* Text Content */}
-                    {lesson.contentType === "text" && lesson.textContent && (
-                      <div className="p-6 prose prose-lg dark:prose-invert max-w-none">
-                        <div dangerouslySetInnerHTML={{ __html: lesson.textContent }} />
-                      </div>
-                    )}
-
-                    {/* Placeholder for other content types */}
-                    {!["video", "text", "quiz", "audio"].includes(lesson.contentType || "") && (
-                      <div className="p-8 text-center">
-                        <FileText className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                        <p className="text-muted-foreground">
-                          {isEn ? "Content coming soon..." : "Contenu à venir..."}
-                        </p>
-                      </div>
-                    )}
-
-                    {/* Legacy activities section removed — ActivityViewer is now the primary content renderer above */}
-                  </CardContent>
-                </Card>
-                )}
-
-                {/* Action Buttons — hidden when inside LearnLayout (LearnLayout has its own bottom bar) */}
-                {!isInsideLearnLayout && (
-                <div className="flex items-center justify-between mt-6">
-                  <Button variant="outline" asChild>
-                    <Link href={`/courses/${slug}`}>
-                      <ArrowLeft className="h-4 w-4 mr-2" aria-hidden="true" />
-                      {isEn ? "Back to Course" : "Retour au cours"}
-                    </Link>
-                  </Button>
-
-                  <div className="flex items-center gap-3">
-                    {!lessonCompleted && !isQuizLesson && !isSpeakingLesson && (
-                      <Button
-                        onClick={() => handleMarkComplete(true)}
-                        disabled={markCompleteMutation.isPending}
-                      >
-                        {markCompleteMutation.isPending ? (
-                          <Loader2 className="h-4 w-4 mr-2 animate-spin" aria-hidden="true" />
-                        ) : (
-                          <CheckCircle2 className="h-4 w-4 mr-2" aria-hidden="true" />
-                        )}
-                        {markCompleteMutation.isPending
-                          ? (isEn ? "Saving..." : "Enregistrement...")
-                          : (isEn ? "Mark Complete" : "Marquer comme terminé")}
-                      </Button>
-                    )}
-
-                    {lessonCompleted && nextLesson && (
-                      <Button onClick={() => navigateToLesson(nextLesson.id)}>
-                        {isEn ? "Next Lesson" : "Leçon suivante"}
-                        <ChevronRight className="h-4 w-4 ml-2" aria-hidden="true" />
-                      </Button>
-                    )}
+                  <div>
+                    <p className="font-medium text-gray-900 text-xs">{q.q}</p>
+                    {!isCorrect && <p className="text-xs text-[#008090] mt-1">Réponse correcte : <strong>{q.answer}</strong></p>}
+                    {q.feedback && <p className="text-xs text-gray-500 mt-1 italic">{q.feedback}</p>}
                   </div>
                 </div>
-                )}
-              </TabsContent>
+              </div>
+            );
+          })}
+        </div>
 
-              {/* Notes Tab */}
-              <TabsContent value="notes" className="mt-4">
-                <LearnerNotes
-                  lessonId={lesson.id}
-                  lessonTitle={lesson.title}
-                  language={language}
-                />
-              </TabsContent>
-
-              {/* Audio Library Tab */}
-              <TabsContent value="audio" className="mt-4">
-                <AudioLibrary language={isEn ? "en" : "fr"} />
-              </TabsContent>
-
-              {/* Discussion Tab */}
-              <TabsContent value="discussion" className="mt-4">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <MessageSquare className="h-5 w-5" aria-hidden="true" />
-                      {isEn ? "Discussion" : "Discussion"}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-center py-8">
-                      <MessageSquare className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                      <h3 className="font-medium mb-2">
-                        {isEn ? "Join the Conversation" : "Rejoignez la conversation"}
-                      </h3>
-                      <p className="text-muted-foreground text-sm mb-4 max-w-md mx-auto">
-                        {isEn 
-                          ? "Share your thoughts, ask questions, and connect with other learners."
-                          : "Partagez vos réflexions, posez des questions et connectez-vous avec d'autres apprenants."}
-                      </p>
-                      <Button variant="outline">
-                        {isEn ? "Coming Soon" : "Bientôt disponible"}
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
-          </div>
-        </main>
+        {!passed && (
+          <button onClick={() => { setCurrentQ(0); setAnswers([]); setShowResult(false); }}
+            className="mt-6 px-8 py-3 rounded-xl text-sm font-semibold text-white" style={{ background: "#008090" }}>
+            <span className="material-icons align-middle mr-1" style={{ fontSize: "16px" }}>replay</span>
+            Réessayer
+          </button>
+        )}
       </div>
+    );
+  }
+
+  const currentQuestion = questions[currentQ];
+  const isCorrectAnswer = selectedAnswer !== null && currentQuestion.opts[selectedAnswer] === currentQuestion.answer;
+  const isFillCorrect = showFeedback && fillAnswer.toLowerCase().trim() === String(currentQuestion.answer).toLowerCase().trim();
+
+  return (
+    <div className="space-y-6">
+      {/* Progress */}
+      <div className="flex items-center gap-1.5">
+        {questions.map((_, i) => (
+          <div key={i} className="flex-1 h-2 rounded-full transition-all duration-500" style={{
+            background: i < currentQ ? "#008090" : i === currentQ ? "rgba(0,128,144,0.3)" : "rgba(0,128,144,0.08)",
+          }} />
+        ))}
+      </div>
+      <div className="flex justify-between items-center">
+        <p className="text-xs text-gray-400 font-medium">Question {currentQ + 1} / {questions.length}</p>
+        <span className="text-[10px] px-2 py-0.5 rounded-full font-bold" style={{
+          background: currentQuestion.type === "fill-in-the-blank" ? "rgba(245,166,35,0.15)" : "rgba(0,128,144,0.1)",
+          color: currentQuestion.type === "fill-in-the-blank" ? "#f5a623" : "#008090",
+        }}>
+          {currentQuestion.type === "fill-in-the-blank" ? "Fill in the blank" : "Multiple choice"}
+        </span>
+      </div>
+
+      <h4 className="text-lg font-semibold text-gray-900 leading-relaxed">{currentQuestion.q}</h4>
+
+      {currentQuestion.type === "fill-in-the-blank" ? (
+        <div className="space-y-4">
+          <div className="flex gap-3">
+            <input
+              type="text"
+              value={fillAnswer}
+              onChange={(e) => setFillAnswer(e.target.value)}
+              disabled={showFeedback}
+              placeholder="Tapez votre réponse..."
+              className="flex-1 px-4 py-3 rounded-xl text-sm border focus:outline-none focus:ring-2"
+              style={{
+                borderColor: showFeedback ? (isFillCorrect ? "#008090" : "#e74c3c") : "rgba(0,128,144,0.2)",
+                background: showFeedback ? (isFillCorrect ? "rgba(0,128,144,0.05)" : "rgba(231,76,60,0.05)") : "white",
+              }}
+              onKeyDown={(e) => { if (e.key === 'Enter' && !showFeedback) handleFillBlank(); }}
+            />
+            {!showFeedback && (
+              <button onClick={handleFillBlank}
+                className="px-6 py-3 rounded-xl text-sm font-semibold text-white"
+                style={{ background: "#008090" }}>
+                Valider
+              </button>
+            )}
+          </div>
+          {showFeedback && (
+            <div className="p-3 rounded-xl text-sm" style={{
+              background: isFillCorrect ? "rgba(0,128,144,0.06)" : "rgba(231,76,60,0.06)",
+              border: `1px solid ${isFillCorrect ? "rgba(0,128,144,0.2)" : "rgba(231,76,60,0.2)"}`,
+            }}>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="material-icons" style={{ fontSize: "18px", color: isFillCorrect ? "#008090" : "#e74c3c" }}>
+                  {isFillCorrect ? "check_circle" : "cancel"}
+                </span>
+                <span className="font-semibold" style={{ color: isFillCorrect ? "#008090" : "#e74c3c" }}>
+                  {isFillCorrect ? "Correct !" : `Incorrect — Réponse : ${currentQuestion.answer}`}
+                </span>
+              </div>
+              {currentQuestion.feedback && <p className="text-xs text-gray-600 italic ml-7">{currentQuestion.feedback}</p>}
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="space-y-2.5">
+          {currentQuestion.opts.map((opt: string, idx: number) => {
+            const isSelected = selectedAnswer === idx;
+            const isCorrect = opt === currentQuestion.answer;
+            let bg = "rgba(255,255,255,0.8)";
+            let border = "1px solid rgba(0,128,144,0.1)";
+            if (showFeedback && isSelected && isCorrect) {
+              bg = "rgba(0,128,144,0.1)"; border = "2px solid #008090";
+            } else if (showFeedback && isSelected && !isCorrect) {
+              bg = "rgba(231,76,60,0.08)"; border = "2px solid #e74c3c";
+            } else if (showFeedback && isCorrect) {
+              bg = "rgba(0,128,144,0.06)"; border = "1px solid rgba(0,128,144,0.3)";
+            }
+            return (
+              <button key={idx} onClick={() => !showFeedback && handleMultipleChoice(idx)}
+                disabled={showFeedback}
+                className="w-full text-left p-4 rounded-xl transition-all duration-300 text-sm flex items-center gap-3"
+                style={{ background: bg, border }}>
+                <span className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold" style={{
+                  background: isSelected ? (isCorrect ? "#008090" : "#e74c3c") : "rgba(0,128,144,0.08)",
+                  color: isSelected ? "white" : "#008090",
+                }}>
+                  {String.fromCharCode(65 + idx)}
+                </span>
+                <span className="flex-1">{opt}</span>
+                {showFeedback && isCorrect && (
+                  <span className="material-icons text-[#008090]" style={{ fontSize: "20px" }}>check_circle</span>
+                )}
+                {showFeedback && isSelected && !isCorrect && (
+                  <span className="material-icons text-[#e74c3c]" style={{ fontSize: "20px" }}>cancel</span>
+                )}
+              </button>
+            );
+          })}
+          {showFeedback && currentQuestion.feedback && (
+            <div className="mt-3 p-3 rounded-xl text-sm" style={{
+              background: "rgba(0,128,144,0.04)",
+              border: "1px solid rgba(0,128,144,0.1)",
+            }}>
+              <span className="material-icons align-middle mr-1 text-[#008090]" style={{ fontSize: "16px" }}>lightbulb</span>
+              <span className="text-gray-600 italic">{currentQuestion.feedback}</span>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
 
-// Helper functions to extract video IDs
-function extractYouTubeId(url: string): string {
-  const match = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
-  return match ? match[1] : url;
+export default function LessonViewer() {
+  const params = useParams<{ programId: string; pathId: string; lessonId: string }>();
+  const [, navigate] = useLocation();
+  const programId = params.programId as Program;
+  const pathId = params.pathId || "";
+  const lessonId = params.lessonId || "";
+  const program = getProgramById(programId);
+  const path = program?.paths.find((p) => p.id === pathId);
+
+  // Find the lesson across all modules
+  let lesson = null;
+  let currentModule = null;
+  if (path) {
+    for (const mod of path.modules) {
+      const found = mod.lessons.find((l) => l.id === lessonId);
+      if (found) { lesson = found; currentModule = mod; break; }
+    }
+  }
+
+  // Get real lesson content from extracted data
+  const realContent = useMemo(() => getLessonContent(lessonId, programId), [lessonId, programId]);
+
+  const { completedLessons, addXP, completeLesson, completeSlot } = useGamification();
+  const moduleIndex = currentModule ? path!.modules.indexOf(currentModule) : 0;
+  const [activeSlot, setActiveSlot] = useState(0);
+  const [completedSlots, setCompletedSlots] = useState<Set<number>>(new Set());
+  const lessonKey = `${programId}-${lessonId}`;
+  const isLessonComplete = completedLessons.has(lessonKey);
+
+  const handleSlotComplete = useCallback((slotIdx: number) => {
+    setCompletedSlots((prev) => {
+      const next = new Set(prev);
+      next.add(slotIdx);
+      return next;
+    });
+    completeSlot(lessonKey, slotIdx, programId, pathId, moduleIndex);
+    toast.success(`${SLOT_CONFIG[slotIdx].label} completed!`, { duration: 2000 });
+    if (slotIdx < SLOT_CONFIG.length - 1) {
+      setTimeout(() => setActiveSlot(slotIdx + 1), 500);
+    }
+  }, [lessonKey, programId, pathId, moduleIndex, completeSlot]);
+
+  const { passQuiz } = useGamification();
+  const handleQuizComplete = useCallback((score: number) => {
+    if (score >= 60) {
+      handleSlotComplete(5);
+      addXP(50);
+      passQuiz(`${programId}-${lessonId}-formative`, score, 8, Math.round(score * 8 / 100), programId, pathId, lessonId, "formative");
+    }
+    toast.success(`Quiz terminé: ${score}% — ${score >= 60 ? "+50 XP" : "Réessayez!"}`, { duration: 3000 });
+  }, [handleSlotComplete, addXP, passQuiz, programId, pathId, lessonId]);
+
+  const handleLessonComplete = useCallback(() => {
+    if (!isLessonComplete && lesson) {
+      completeLesson(lessonKey, programId, pathId, moduleIndex);
+      addXP(lesson.xpReward);
+      toast.success(`Leçon terminée ! +${lesson.xpReward} XP 🎉`, { duration: 4000 });
+    }
+  }, [isLessonComplete, lesson, lessonKey, completeLesson, addXP]);
+
+  const findNextLesson = () => {
+    if (!path || !currentModule) return null;
+    const allLessons = path.modules.flatMap((m) => m.lessons.map((l) => ({ ...l, moduleId: m.id })));
+    const currentIdx = allLessons.findIndex((l) => l.id === lessonId);
+    if (currentIdx >= 0 && currentIdx < allLessons.length - 1) {
+      return allLessons[currentIdx + 1];
+    }
+    return null;
+  };
+
+  if (!program || !path || !lesson || !currentModule) {
+    return (
+      <DashboardLayout>
+        <div className="text-center py-20">
+          <span className="material-icons text-6xl text-gray-300">error_outline</span>
+          <p className="text-gray-500 mt-4">Lesson not found.</p>
+          <Link href="/programs" className="text-[#008090] text-sm mt-2 inline-block hover:underline">← Back to Programs</Link>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  const nextLesson = findNextLesson();
+  const allSlotsComplete = completedSlots.size >= SLOT_CONFIG.length;
+  const currentSlotKey = SLOT_CONFIG[activeSlot].key;
+  const slotRealContent = realContent?.[currentSlotKey];
+  const hasRealContent = !!slotRealContent?.content;
+
+  // Get quiz data from real content
+  const quizData = realContent?.quiz?.quiz || null;
+
+  return (
+    <DashboardLayout>
+      <div className="space-y-5">
+        {/* Breadcrumb */}
+        <div className="flex items-center gap-2 text-xs text-gray-500 flex-wrap">
+          <Link href={`/programs/${programId}`} className="hover:text-[#008090] transition-colors">{program.title}</Link>
+          <span className="text-gray-300">/</span>
+          <Link href={`/programs/${programId}/${pathId}`} className="hover:text-[#008090] transition-colors">Path {path.number}</Link>
+          <span className="text-gray-300">/</span>
+          <span className="text-gray-900 font-medium">Lesson {lesson.id}</span>
+        </div>
+
+        {/* Lesson Header */}
+        <div className="rounded-2xl p-6" style={{
+          background: "linear-gradient(135deg, rgba(0,128,144,0.06), rgba(245,166,35,0.04))",
+          border: "1px solid rgba(0,128,144,0.1)",
+        }}>
+          <div className="flex items-start justify-between flex-wrap gap-4">
+            <div>
+              <div className="flex items-center gap-2 mb-2 flex-wrap">
+                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full" style={{
+                  background: "rgba(0,128,144,0.1)", color: "#008090",
+                }}>
+                  Module {currentModule.id} — Leçon {lesson.id}
+                </span>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{
+                  background: "rgba(245,166,35,0.15)", color: "#f5a623",
+                }}>
+                  +{lesson.xpReward} XP
+                </span>
+                {hasRealContent && (
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{
+                    background: "rgba(0,128,144,0.08)", color: "#008090",
+                  }}>
+                    <span className="material-icons align-middle" style={{ fontSize: "10px" }}>verified</span> Contenu complet
+                  </span>
+                )}
+                {isLessonComplete && (
+                  <span className="text-[10px] font-bold text-[#f5a623] flex items-center gap-0.5">
+                    <span className="material-icons" style={{ fontSize: "12px" }}>check_circle</span>
+                    Terminée
+                  </span>
+                )}
+              </div>
+              <h1 className="text-2xl font-bold text-gray-900" style={{ fontFamily: "'Playfair Display', serif" }}>
+                {lesson.title}
+              </h1>
+              <p className="text-sm text-gray-500 mt-0.5">{lesson.titleFr}</p>
+            </div>
+            <div className="flex items-center gap-2 text-xs text-gray-400">
+              <span className="material-icons" style={{ fontSize: "14px" }}>schedule</span>
+              {lesson.duration}
+            </div>
+          </div>
+
+          {/* Slot Progress */}
+          <div className="mt-4 flex items-center gap-1">
+            {SLOT_CONFIG.map((slot, idx) => (
+              <div key={slot.key} className="flex-1 h-2.5 rounded-full cursor-pointer transition-all duration-300 hover:scale-y-125"
+                onClick={() => setActiveSlot(idx)}
+                title={slot.label}
+                style={{
+                  background: completedSlots.has(idx) ? slot.color : idx === activeSlot ? `${slot.color}40` : "rgba(0,128,144,0.06)",
+                }} />
+            ))}
+          </div>
+          <div className="flex justify-between mt-1.5">
+            <span className="text-[10px] text-gray-400 font-medium">{completedSlots.size}/{SLOT_CONFIG.length} activités complétées</span>
+            <span className="text-[10px] font-semibold" style={{ color: SLOT_CONFIG[activeSlot].color }}>{SLOT_CONFIG[activeSlot].label}</span>
+          </div>
+        </div>
+
+        {/* Main Content Area */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-5">
+          {/* Slot Navigation (Sidebar) */}
+          <div className="lg:col-span-1 space-y-1.5">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">Activités de la leçon</h3>
+            {SLOT_CONFIG.map((slot, idx) => (
+              <button key={slot.key} onClick={() => setActiveSlot(idx)}
+                className="w-full text-left p-3 rounded-xl flex items-center gap-3 transition-all duration-200"
+                style={{
+                  background: idx === activeSlot ? "rgba(255,255,255,0.95)" : "transparent",
+                  border: idx === activeSlot ? `1px solid ${slot.color}30` : "1px solid transparent",
+                  boxShadow: idx === activeSlot ? `0 4px 16px ${slot.color}15` : "none",
+                }}>
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all" style={{
+                  background: completedSlots.has(idx) ? slot.color : `${slot.color}15`,
+                }}>
+                  <span className="material-icons" style={{
+                    fontSize: "16px",
+                    color: completedSlots.has(idx) ? "white" : slot.color,
+                  }}>
+                    {completedSlots.has(idx) ? "check" : slot.icon}
+                  </span>
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs font-semibold text-gray-900 truncate">{slot.label}</p>
+                  <p className="text-[10px] text-gray-400">{slot.labelFr}</p>
+                </div>
+              </button>
+            ))}
+          </div>
+
+          {/* Slot Content */}
+          <div className="lg:col-span-3">
+            <div className="rounded-2xl p-6" style={{
+              background: "rgba(255,255,255,0.85)",
+              backdropFilter: "blur(12px)",
+              border: "1px solid rgba(0,128,144,0.08)",
+              minHeight: "450px",
+            }}>
+              {/* Slot Header */}
+              <div className="flex items-center gap-3 mb-6 pb-4" style={{ borderBottom: "1px solid rgba(0,128,144,0.06)" }}>
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{
+                  background: `${SLOT_CONFIG[activeSlot].color}15`,
+                }}>
+                  <span className="material-icons" style={{ color: SLOT_CONFIG[activeSlot].color }}>
+                    {SLOT_CONFIG[activeSlot].icon}
+                  </span>
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-gray-900" style={{ fontFamily: "'Playfair Display', serif" }}>
+                    {slotRealContent?.title || SLOT_CONFIG[activeSlot].label}
+                  </h2>
+                  <p className="text-xs text-gray-400">{SLOT_CONFIG[activeSlot].description}</p>
+                </div>
+              </div>
+
+              {/* Slot Body */}
+              {activeSlot === 5 ? (
+                <FormativeQuiz lessonId={lessonId} realQuiz={quizData} onComplete={handleQuizComplete} />
+              ) : (
+                <div className="space-y-4">
+                  {hasRealContent ? (
+                    <RichContent content={slotRealContent!.content} slotKey={currentSlotKey} />
+                  ) : (
+                    <div className="space-y-4">
+                      {getDefaultSlotContent(currentSlotKey, lesson.title, lesson.id).map((para, i) => (
+                        <p key={i} className="text-sm text-gray-700 leading-relaxed">{para}</p>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Audio Player for Video and Hook slots — TTS reads the content aloud */}
+                  {(currentSlotKey === "video" || currentSlotKey === "hook" || currentSlotKey === "strategy") && (
+                    <AudioPlayer
+                      text={slotRealContent?.content || getDefaultSlotContent(currentSlotKey, lesson.title, lesson.id).join(". ")}
+                      language={program?.id.startsWith("esl") ? "en-US" : "fr-FR"}
+                      title="Listen to this lesson"
+                    />
+                  )}
+
+                  {/* Voice Recorder for Oral Practice slot */}
+                  {currentSlotKey === "oral" && (
+                    <VoiceRecorder
+                      prompt={slotRealContent?.content?.split("\n")[0] || `Practice speaking about: ${lesson.title}`}
+                      language={program?.id.startsWith("esl") ? "en-US" : "fr-FR"}
+                      maxDuration={120}
+                      showTranscript={true}
+                    />
+                  )}
+
+                  {/* Audio Player for Written Practice — listen to instructions */}
+                  {currentSlotKey === "written" && (
+                    <AudioPlayer
+                      text={slotRealContent?.content || getDefaultSlotContent(currentSlotKey, lesson.title, lesson.id).join(". ")}
+                      language={program?.id.startsWith("esl") ? "en-US" : "fr-FR"}
+                      title="Listen to instructions"
+                      compact={true}
+                    />
+                  )}
+
+                  {/* Slot action button */}
+                  {!completedSlots.has(activeSlot) && (
+                    <button onClick={() => handleSlotComplete(activeSlot)}
+                      className="mt-6 px-6 py-2.5 rounded-xl text-sm font-semibold text-white transition-all duration-300 hover:shadow-lg hover:scale-[1.02]"
+                      style={{ background: SLOT_CONFIG[activeSlot].color }}>
+                      <span className="material-icons align-middle mr-1" style={{ fontSize: "16px" }}>check_circle</span>
+                      Marquer comme terminé & Continuer
+                    </button>
+                  )}
+                  {completedSlots.has(activeSlot) && (
+                    <div className="mt-6 flex items-center gap-2 text-sm font-medium" style={{ color: SLOT_CONFIG[activeSlot].color }}>
+                      <span className="material-icons" style={{ fontSize: "18px" }}>check_circle</span>
+                      Activité terminée !
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Lesson Completion / Navigation */}
+        <div className="rounded-2xl p-5 flex items-center justify-between flex-wrap gap-4" style={{
+          background: allSlotsComplete ? "linear-gradient(135deg, rgba(245,166,35,0.1), rgba(0,128,144,0.05))" : "rgba(255,255,255,0.6)",
+          border: allSlotsComplete ? "1px solid rgba(245,166,35,0.3)" : "1px solid rgba(0,128,144,0.08)",
+        }}>
+          <Link href={`/programs/${programId}/${pathId}`}
+            className="text-sm text-gray-500 hover:text-[#008090] transition-colors flex items-center gap-1">
+            <span className="material-icons" style={{ fontSize: "16px" }}>arrow_back</span>
+            Retour au Path {path.number}
+          </Link>
+
+          <div className="flex items-center gap-3">
+            {allSlotsComplete && !isLessonComplete && (
+              <button onClick={handleLessonComplete}
+                className="px-6 py-2.5 rounded-xl text-sm font-semibold text-white transition-all duration-300 hover:shadow-lg hover:scale-[1.02]"
+                style={{ background: "linear-gradient(135deg, #f5a623, #e8941a)" }}>
+                <span className="material-icons align-middle mr-1" style={{ fontSize: "16px" }}>emoji_events</span>
+                Terminer la leçon (+{lesson.xpReward} XP)
+              </button>
+            )}
+            {nextLesson && (
+              <Link href={`/programs/${programId}/${pathId}/${nextLesson.id}`}
+                className="px-5 py-2.5 rounded-xl text-sm font-semibold text-white flex items-center gap-1 hover:shadow-lg transition-all"
+                style={{ background: "#008090" }}>
+                Leçon suivante
+                <span className="material-icons" style={{ fontSize: "16px" }}>arrow_forward</span>
+              </Link>
+            )}
+          </div>
+        </div>
+      </div>
+    </DashboardLayout>
+  );
 }
 
-function extractVimeoId(url: string): string {
-  const match = url.match(/vimeo\.com\/(?:.*\/)?(\d+)/);
-  return match ? match[1] : url;
+// Fallback content when real content is not available
+function getDefaultSlotContent(slotKey: string, lessonTitle: string, lessonId: string): string[] {
+  const contents: Record<string, string[]> = {
+    hook: [
+      `Imaginez que vous commencez votre première journée dans un nouveau bureau gouvernemental. Votre superviseur vous présente à l'équipe dans la langue cible. Comment répondriez-vous ?`,
+      `Prenez un moment pour réfléchir à ce scénario. Quels mots ou expressions vous viennent à l'esprit ?`,
+      `Dans cette leçon, "${lessonTitle}", nous allons développer les compétences nécessaires pour gérer cette situation avec confiance.`,
+    ],
+    video: [
+      `Regardez la vidéo pédagogique pour la Leçon ${lessonId} : "${lessonTitle}"`,
+      `Les concepts clés abordés dans cette leçon incluent le vocabulaire professionnel, les structures grammaticales et le contexte culturel pertinent pour la fonction publique canadienne.`,
+      `Après le visionnage, prenez note des 3 phrases ou structures les plus importantes que vous avez apprises.`,
+    ],
+    strategy: [
+      `Stratégie métacognitive du jour : **Écoute active et Prédiction**`,
+      `Avant de participer à une conversation, essayez de prédire le vocabulaire et les structures dont vous pourriez avoir besoin. Cette préparation mentale améliore considérablement la performance en temps réel.`,
+      `Conseil pratique : Avant votre prochaine réunion, notez 5 phrases clés dont vous pourriez avoir besoin. Révisez-les juste avant le début de la réunion.`,
+    ],
+    written: [
+      `Complétez les exercices écrits suivants pour renforcer votre apprentissage de cette leçon.`,
+      `Exercice 1 : Rédigez un court courriel professionnel (50-75 mots) en utilisant au moins 3 nouveaux éléments de vocabulaire de cette leçon.`,
+      `Exercice 2 : Complétez les blancs dans le dialogue ci-dessous avec les expressions appropriées.`,
+      `Exercice 3 : Réécrivez les phrases informelles en utilisant un registre professionnel.`,
+    ],
+    oral: [
+      `Pratiquez à voix haute les phrases clés de cette leçon.`,
+      `Activité 1 : Enregistrez-vous en vous présentant dans un contexte professionnel en utilisant les structures de cette leçon.`,
+      `Activité 2 : Jouez le scénario de l'Accroche avec un partenaire ou pratiquez seul(e), en jouant les deux rôles.`,
+      `N'oubliez pas : Concentrez-vous sur la clarté et la confiance, pas sur la perfection !`,
+    ],
+    quiz: [
+      `Testez votre compréhension avec ce quiz formatif.`,
+      `Vous avez besoin de 60% pour réussir. Vous pouvez reprendre le quiz autant de fois que nécessaire.`,
+      `Bonne chance !`,
+    ],
+    coaching: [
+      `Réfléchissez à ce que vous avez appris dans cette leçon :`,
+      `1. Quelle a été la phrase ou la structure la plus utile que vous avez apprise aujourd'hui ?`,
+      `2. Sur une échelle de 1 à 5, à quel point vous sentez-vous confiant(e) pour utiliser ces compétences dans une situation de travail réelle ?`,
+      `3. Quelle est une situation spécifique cette semaine où vous pourriez pratiquer ce que vous avez appris ?`,
+      `Fixez-vous un objectif personnel pour appliquer le contenu de cette leçon avant votre prochaine session.`,
+    ],
+  };
+  return contents[slotKey] || ["Le contenu de cette section sera bientôt disponible."];
 }

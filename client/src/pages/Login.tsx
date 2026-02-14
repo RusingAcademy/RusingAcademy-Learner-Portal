@@ -1,370 +1,189 @@
-import { useState, useRef } from "react";
-import { Link, useSearch } from "wouter";
-import { trpc } from "../lib/trpc";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Eye, EyeOff, Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
-import { GuestRoute, useAuthContext } from "@/contexts/AuthContext";
-
-// Debug mode
-const AUTH_DEBUG = import.meta.env.VITE_AUTH_DEBUG === "true" || import.meta.env.DEV;
-
-// Google Icon Component
-function GoogleIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-      <path
-        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-        fill="#4285F4"
-      />
-      <path
-        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-        fill="#34A853"
-      />
-      <path
-        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-        fill="#FBBC05"
-      />
-      <path
-        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-        fill="#EA4335"
-      />
-    </svg>
-  );
-}
-
-// Microsoft Icon Component
-function MicrosoftIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 23 23" xmlns="http://www.w3.org/2000/svg">
-      <path fill="#f35325" d="M1 1h10v10H1z" />
-      <path fill="#81bc06" d="M12 1h10v10H12z" />
-      <path fill="#05a6f0" d="M1 12h10v10H1z" />
-      <path fill="#ffba08" d="M12 12h10v10H12z" />
-    </svg>
-  );
-}
-
 /**
- * LoginContent - The actual login form
- * 
- * This component is only rendered for guests (not authenticated users)
- * The GuestRoute wrapper handles redirecting authenticated users to dashboard
- * 
- * Authentication flow:
- * 1. User submits email/password OR clicks "Sign in with Google"
- * 2. Server validates credentials and sets HTTP-only session cookie
- * 3. Client receives success response and redirects to dashboard
- * 4. No localStorage is used - session is managed via HTTP-only cookie
+ * Login — RusingÂcademy Learning Portal
+ * Design: Clean white light theme, accessible, LRDG-inspired
  */
-function LoginContent() {
-  const searchString = useSearch();
-  const { refresh } = useAuthContext();
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+import { useState } from "react";
+import { useLocation } from "wouter";
+
+const LOGO_FULL = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663049070748/zDHqHOSjzqRLzEVj.png";
+const LOGO_ICON = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663049070748/mrXRaWLUDJGHdcjc.png";
+
+export default function Login() {
+  const [, setLocation] = useLocation();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [loginSuccess, setLoginSuccess] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const formRef = useRef<HTMLFormElement>(null);
+  const [stayLoggedIn, setStayLoggedIn] = useState(true);
+  const [language, setLanguage] = useState("English");
 
-  // Get redirect URL from query params
-  const searchParams = new URLSearchParams(searchString);
-  const redirectTo = searchParams.get("redirect") || "/dashboard";
-  
-  // Check for OAuth errors in URL
-  const oauthError = searchParams.get("error");
-
-  const loginMutation = trpc.customAuth.login.useMutation({
-    onMutate: () => {
-      if (AUTH_DEBUG) console.log("[Login] Mutation starting...");
-    },
-    onSuccess: (data) => {
-      if (AUTH_DEBUG) console.log("[Login] Success:", data.user?.email);
-      
-      if (data.success) {
-        setLoginSuccess(true);
-        setError(null);
-        
-        // The server has set the HTTP-only cookie
-        // Refresh auth context to pick up the new session
-        refresh();
-        
-        // Hard redirect after a short delay to ensure cookie is set
-        setTimeout(() => {
-          if (AUTH_DEBUG) console.log("[Login] Redirecting to:", redirectTo);
-          window.location.href = redirectTo;
-        }, 500);
-      } else {
-        setError("Login failed. Please try again.");
-        setIsSubmitting(false);
-      }
-    },
-    onError: (err) => {
-      if (AUTH_DEBUG) console.error("[Login] Error:", err.message);
-      setError(err.message);
-      setIsSubmitting(false);
-    },
-  });
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    e.stopPropagation();
-    
-    setError(null);
-    setLoginSuccess(false);
-    setIsSubmitting(true);
-    
-    if (!formData.email || !formData.password) {
-      setError("Please enter both email and password");
-      setIsSubmitting(false);
-      return;
-    }
-    
-    loginMutation.mutate({
-      email: formData.email.trim().toLowerCase(),
-      password: formData.password,
-    });
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleGoogleSignIn = () => {
-    // Redirect to Google OAuth endpoint
-    window.location.href = "/api/auth/google";
-  };
-
-  const handleMicrosoftSignIn = () => {
-    // Redirect to Microsoft OAuth endpoint
-    window.location.href = "/api/auth/microsoft";
-  };
-
-  const isPending = loginMutation.isPending || isSubmitting;
-
-  // Map OAuth errors to user-friendly messages
-  const getOAuthErrorMessage = (error: string): string => {
-    const errorMessages: Record<string, string> = {
-      oauth_not_configured: "Sign-In is not configured. Please contact support.",
-      invalid_state: "Security validation failed. Please try again.",
-      no_code: "Authentication was cancelled. Please try again.",
-      token_exchange_failed: "Failed to authenticate. Please try again.",
-      userinfo_failed: "Failed to get your account information. Please try again.",
-      oauth_failed: "Sign-In failed. Please try again or use email/password.",
-      access_denied: "Access was denied. Please try again.",
-    };
-    return errorMessages[error] || "An error occurred during sign-in. Please try again.";
+    setLocation("/dashboard");
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-4">
-      <Card className="w-full max-w-md bg-slate-800/50 border-slate-700">
-        <CardHeader className="text-center">
-          <div className="mx-auto mb-4">
-            <img
-              loading="lazy" src="https://rusingacademy-cdn.b-cdn.net/images/logos/rusingacademy-official.png"
-              alt="RusingAcademy"
-              className="h-16 w-auto"
-            />
-          </div>
-          <CardTitle className="text-2xl font-bold text-white">
-            Welcome Back
-          </CardTitle>
-          <CardDescription className="text-slate-400">
-            Sign in to your RusingAcademy account
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {/* OAuth Error Alert */}
-          {oauthError && (
-            <Alert variant="destructive" className="mb-4 bg-red-900/50 border-red-800">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>{getOAuthErrorMessage(oauthError)}</AlertDescription>
-            </Alert>
-          )}
+    <div className="min-h-screen flex bg-white">
+      {/* Left Side — Light teal hero */}
+      <div className="hidden lg:flex lg:w-1/2 items-center justify-center p-12 relative overflow-hidden" style={{
+        background: "linear-gradient(160deg, #f0fafb 0%, #e0f4f5 40%, #d0eef0 100%)",
+      }}>
+        {/* Decorative circles */}
+        <div className="absolute top-20 right-20 w-64 h-64 rounded-full opacity-20" style={{
+          background: "radial-gradient(circle, #008090, transparent)",
+        }} />
+        <div className="absolute bottom-20 left-10 w-80 h-80 rounded-full opacity-10" style={{
+          background: "radial-gradient(circle, #f5a623, transparent)",
+        }} />
 
-          {/* OAuth Sign-In Buttons */}
-          <div className="space-y-3 mb-4">
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full bg-white hover:bg-gray-100 text-gray-900 border-gray-300"
-              onClick={handleGoogleSignIn}
-              disabled={isPending || loginSuccess}
-            >
-              <GoogleIcon className="mr-2 h-5 w-5" />
-              Continue with Google
-            </Button>
-            
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full bg-[#2F2F2F] hover:bg-[#3F3F3F] text-white border-slate-600"
-              onClick={handleMicrosoftSignIn}
-              disabled={isPending || loginSuccess}
-            >
-              <MicrosoftIcon className="mr-2 h-5 w-5" />
-              Continue with Microsoft
-            </Button>
-          </div>
+        <div className="relative z-10 text-center max-w-md">
+          <img src={LOGO_ICON} alt="RusingÂcademy" className="w-20 h-20 mx-auto mb-8 rounded-2xl shadow-lg" />
+          <h2 className="text-4xl font-bold text-gray-900 mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
+            RusingÂcademy
+          </h2>
+          <p className="text-lg text-[#008090] font-medium mb-2">Learning Portal</p>
+          <p className="text-gray-600 text-sm leading-relaxed">
+            Master your second official language with Canada's premier bilingual training platform. 
+            Expert coaching meets innovative technology.
+          </p>
 
-          {/* Divider */}
-          <div className="relative my-6">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t border-slate-600" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-slate-800/50 px-2 text-slate-400">
-                Or continue with email
+          {/* Feature pills */}
+          <div className="flex flex-wrap justify-center gap-2 mt-8">
+            {["ESL Program", "FSL Program", "CEFR A1→C1+", "Gamification", "SLE Prep"].map((f) => (
+              <span key={f} className="text-xs px-3 py-1.5 rounded-full text-gray-700 font-medium bg-white/80 border border-gray-200 shadow-sm">
+                {f}
               </span>
-            </div>
+            ))}
           </div>
 
-          <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
-            {error && (
-              <Alert variant="destructive" className="bg-red-900/50 border-red-800">
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
-            
-            {loginSuccess && (
-              <Alert className="bg-green-900/50 border-green-800">
-                <CheckCircle2 className="h-4 w-4 text-green-400" />
-                <AlertDescription className="text-green-400">
-                  Login successful! Redirecting...
-                </AlertDescription>
-              </Alert>
-            )}
+          {/* Stats */}
+          <div className="grid grid-cols-3 gap-4 mt-10">
+            {[
+              { value: "12", label: "Paths" },
+              { value: "192", label: "Lessons" },
+              { value: "1,344", label: "Activities" },
+            ].map((s) => (
+              <div key={s.label} className="text-center bg-white/60 rounded-xl py-3 border border-gray-100">
+                <div className="text-2xl font-bold text-[#008090]">{s.value}</div>
+                <div className="text-[10px] text-gray-500 uppercase tracking-wider">{s.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="email" className="text-slate-200">
-                Email Address
-              </Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="Enter your email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                disabled={isPending || loginSuccess}
-                className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400"
-                autoComplete="email"
+      {/* Right Side - Login Form */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white">
+        <div className="w-full max-w-md">
+          {/* Language Selector */}
+          <div className="flex justify-end mb-8">
+            <select
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
+              className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm bg-white text-gray-700 focus:ring-2 focus:ring-[#008090]/20 focus:border-[#008090] outline-none"
+            >
+              <option>English</option>
+              <option>Français</option>
+            </select>
+          </div>
+
+          {/* Logo */}
+          <div className="flex items-center justify-center mb-6">
+            <img src={LOGO_FULL} alt="RusingÂcademy" className="h-20" />
+          </div>
+
+          {/* Title */}
+          <h1 className="text-center text-lg font-medium text-gray-800 mb-8">
+            {language === "English" ? "Log in to your Learning Portal." : "Connectez-vous à votre portail d'apprentissage."}
+          </h1>
+
+          {/* Login Form */}
+          <form onSubmit={handleLogin} className="space-y-5">
+            <div>
+              <label className="text-sm text-gray-700 mb-1 block font-medium">
+                {language === "English" ? "Username" : "Nom d'utilisateur"}
+              </label>
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="w-full rounded-xl px-4 py-3 text-sm outline-none transition-all duration-300 border border-gray-200 bg-white text-gray-900 focus:border-[#008090] focus:ring-2 focus:ring-[#008090]/10"
               />
             </div>
 
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password" className="text-slate-200">
-                  Password
-                </Label>
-                <Link
-                  to="/forgot-password"
-                  className="text-sm text-teal-400 hover:text-teal-300"
-                >
-                  Forgot password?
-                </Link>
-              </div>
+            <div>
+              <label className="text-sm text-gray-700 mb-1 block font-medium">
+                {language === "English" ? "Password" : "Mot de passe"} *
+              </label>
               <div className="relative">
-                <Input
-                  id="password"
-                  name="password"
+                <input
                   type={showPassword ? "text" : "password"}
-                  placeholder="Enter your password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  required
-                  disabled={isPending || loginSuccess}
-                  className="bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400 pr-10"
-                  autoComplete="current-password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full rounded-xl px-4 py-3 text-sm pr-10 outline-none transition-all duration-300 border border-gray-200 bg-white text-gray-900 focus:border-[#008090] focus:ring-2 focus:ring-[#008090]/10"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 focus:ring-offset-slate-800 rounded"
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                  aria-pressed={showPassword}
+                  className="absolute right-3 top-1/2 -translate-y-1/2"
                 >
-                  {showPassword ? <EyeOff className="h-4 w-4" aria-hidden="true" /> : <Eye className="h-4 w-4" aria-hidden="true" />}
+                  <span className="material-icons text-gray-400 text-[20px]">
+                    {showPassword ? "visibility_off" : "visibility"}
+                  </span>
                 </button>
               </div>
             </div>
 
-            <Button
+            <button
               type="submit"
-              className="w-full bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white"
-              disabled={isPending || loginSuccess}
+              className="w-full text-white font-semibold py-3.5 rounded-xl transition-all duration-300 hover:shadow-lg bg-[#008090] hover:bg-[#006d7a]"
             >
-              {isPending ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Signing in...
-                </>
-              ) : loginSuccess ? (
-                <>
-                  <CheckCircle2 className="mr-2 h-4 w-4" />
-                  Success!
-                </>
-              ) : (
-                "Sign In with Email"
-              )}
-            </Button>
+              {language === "English" ? "Log In" : "Se connecter"}
+            </button>
+
+            <div className="flex items-center justify-between">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={stayLoggedIn}
+                  onChange={(e) => setStayLoggedIn(e.target.checked)}
+                  className="rounded"
+                  style={{ accentColor: "#008090" }}
+                />
+                <span className="text-sm text-gray-600">
+                  {language === "English" ? "Stay Logged In" : "Rester connecté"}
+                </span>
+              </label>
+              <button type="button" className="text-sm text-[#008090] hover:underline">
+                {language === "English" ? "Reset Password" : "Réinitialiser"}
+              </button>
+            </div>
+
+            <div className="text-center">
+              <button type="button" className="text-sm text-[#008090] hover:underline">
+                {language === "English" ? "Frequently Asked Questions" : "Questions fréquentes"}
+              </button>
+            </div>
           </form>
 
-          {/* Debug panel - only in development */}
-          {AUTH_DEBUG && (
-            <div className="mt-4 p-3 bg-slate-900/80 border border-slate-700 rounded-lg text-xs font-mono">
-              <div className="text-teal-400 font-bold mb-2">🔧 Auth Debug</div>
-              <div className="text-slate-300">
-                <div>Redirect to: {redirectTo}</div>
-                <div>Login success: {loginSuccess ? "yes" : "no"}</div>
-                <div>Is pending: {isPending ? "yes" : "no"}</div>
-                <div>Auth method: HTTP-only cookie</div>
-                <div>OAuth error: {oauthError || "none"}</div>
-              </div>
-            </div>
-          )}
-        </CardContent>
-        <CardFooter className="flex flex-col space-y-4">
-          <div className="text-center text-sm text-slate-400">
-            Don't have an account?{" "}
-            <Link to="/signup" className="text-teal-400 hover:text-teal-300">
-              Sign up
-            </Link>
+          {/* Social Links */}
+          <div className="flex items-center justify-center gap-4 mt-8">
+            {[
+              { icon: "M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z", color: "#008090" },
+              { icon: "M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z", color: "#f5a623" },
+              { icon: "M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z", color: "#008090" },
+            ].map((s, i) => (
+              <a key={i} href="#" className="hover:opacity-70 transition-opacity">
+                <svg className="w-7 h-7" fill={s.color} viewBox="0 0 24 24"><path d={s.icon} /></svg>
+              </a>
+            ))}
           </div>
-        </CardFooter>
-      </Card>
-    </div>
-  );
-}
 
-/**
- * Login - Login page wrapped with GuestRoute
- * 
- * GuestRoute ensures:
- * 1. Shows loading while auth is being checked
- * 2. Redirects to dashboard if already authenticated
- * 3. Only shows login form for guests
- * 
- * This prevents the "flicker" issue where authenticated users
- * briefly see the login page before being redirected
- */
-export default function Login() {
-  return (
-    <GuestRoute redirectTo="/dashboard">
-      <LoginContent />
-    </GuestRoute>
+          {/* Footer */}
+          <p className="text-center text-xs text-gray-400 mt-6">
+            © 2026 RusingÂcademy — Barholex Media Inc.
+          </p>
+        </div>
+      </div>
+    </div>
   );
 }
