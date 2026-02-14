@@ -566,3 +566,6 @@
 
 ## Login Page Hero Photo
 - [x] Add happy student photo to Login page hero section (RINET2.jpg uploaded to CDN)
+
+## Login Page Social Links
+- [x] Add real social media URLs to Login page icons (Facebook, Instagram, LinkedIn)
