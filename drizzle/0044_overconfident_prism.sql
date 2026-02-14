@@ -1,0 +1,2 @@
+ALTER TABLE `coach_applications` ADD `residencyStatus` enum('canadian_citizen','permanent_resident','work_visa','other');--> statement-breakpoint
+ALTER TABLE `coach_applications` ADD `residencyStatusOther` varchar(200);

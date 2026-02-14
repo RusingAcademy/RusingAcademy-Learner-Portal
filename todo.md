@@ -508,3 +508,11 @@
 - [x] Add Coach Hub, Executive Summary, Content Pipeline to sidebar admin nav
 - [x] Write vitest tests for Sprint 2-5 admin procedures (20/20 passing)
 - [x] Verify TypeScript (0 errors) after all Sprint 2-5 changes
+
+## Multi-Portal System: Audit & Navigation Buttons
+- [x] Audit current Learner's Portal (architecture, pages, components, routes, DB schema, routers)
+- [x] Analyze GitHub repo for existing Coach/HR/Admin portal code
+- [x] Write comprehensive audit report with multi-portal implementation plan
+- [x] Create 3 portal navigation buttons (Coach Portal, HR Portal, Admin Portal) on login/landing page
+- [x] Verify buttons work and save checkpoint
+- [ ] Deliver audit report and plan to user (pending)

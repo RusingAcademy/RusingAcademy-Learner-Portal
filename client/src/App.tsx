@@ -54,6 +54,7 @@ import DailyReview from "./pages/DailyReview";
 import AdminCoachHub from "./pages/AdminCoachHub";
 import AdminExecutiveSummary from "./pages/AdminExecutiveSummary";
 import AdminContentPipeline from "./pages/AdminContentPipeline";
+import PortalComingSoon from "./pages/PortalComingSoon";
 import CelebrationOverlay from "./components/CelebrationOverlay";
 import FloatingAICompanion from "./components/FloatingAICompanion";
 import { LanguageProvider } from "./contexts/LanguageContext";
@@ -110,6 +111,9 @@ function Router() {
       <Route path="/admin/coaches" component={AdminCoachHub} />
       <Route path="/admin/analytics" component={AdminExecutiveSummary} />
       <Route path="/admin/content-pipeline" component={AdminContentPipeline} />
+      <Route path="/coach/portal">{() => <PortalComingSoon portalKey="coach" />}</Route>
+      <Route path="/hr/portal">{() => <PortalComingSoon portalKey="hr" />}</Route>
+      <Route path="/admin/control">{() => <PortalComingSoon portalKey="admin" />}</Route>
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

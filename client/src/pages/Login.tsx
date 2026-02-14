@@ -165,6 +165,55 @@ export default function Login() {
             </div>
           </form>
 
+          {/* Portal Selector */}
+          <div className="mt-8 pt-6 border-t border-gray-100">
+            <p className="text-center text-xs text-gray-400 uppercase tracking-wider mb-4 font-medium">
+              {language === "English" ? "Access Other Portals" : "Accéder aux autres portails"}
+            </p>
+            <div className="grid grid-cols-3 gap-2">
+              {[
+                {
+                  label: language === "English" ? "Coach Portal" : "Portail Coach",
+                  icon: "person",
+                  color: "#7c3aed",
+                  bg: "bg-violet-50 hover:bg-violet-100",
+                  border: "border-violet-200",
+                  href: "/coach/portal",
+                },
+                {
+                  label: language === "English" ? "HR Portal" : "Portail RH",
+                  icon: "business",
+                  color: "#2563eb",
+                  bg: "bg-blue-50 hover:bg-blue-100",
+                  border: "border-blue-200",
+                  href: "/hr/portal",
+                },
+                {
+                  label: language === "English" ? "Admin Control" : "Contrôle Admin",
+                  icon: "admin_panel_settings",
+                  color: "#dc2626",
+                  bg: "bg-red-50 hover:bg-red-100",
+                  border: "border-red-200",
+                  href: "/admin/control",
+                },
+              ].map((portal) => (
+                <button
+                  key={portal.href}
+                  type="button"
+                  onClick={() => setLocation(portal.href)}
+                  className={`flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl border ${portal.border} ${portal.bg} transition-all duration-200 hover:shadow-md group`}
+                >
+                  <span className="material-icons text-[22px] transition-transform group-hover:scale-110" style={{ color: portal.color }}>
+                    {portal.icon}
+                  </span>
+                  <span className="text-[10px] font-semibold text-gray-700 leading-tight text-center">
+                    {portal.label}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+
           {/* Social Links */}
           <div className="flex items-center justify-center gap-4 mt-8">
             {[
