@@ -569,3 +569,9 @@
 
 ## Login Page Social Links
 - [x] Add real social media URLs to Login page icons (Facebook, Instagram, LinkedIn)
+
+## Next Steps - Social Links, OAuth, GitHub PR Update
+- [ ] Push latest changes (photo + social links) to GitHub feat/pwa branch
+- [ ] Add social links (Facebook, Instagram, LinkedIn) to Dashboard footer and all portal footers
+- [ ] Connect Login form to Manus OAuth authentication (replace direct /dashboard redirect)
+- [ ] Run tests and verify all changes
