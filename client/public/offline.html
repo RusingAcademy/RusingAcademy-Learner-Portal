@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offline - RusingAcademy</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .container {
+      text-align: center;
+      max-width: 500px;
+      background: white;
+      padding: 48px 32px;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+    }
+    
+    .icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 24px;
+      background: #1E9B8A;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .icon svg {
+      width: 40px;
+      height: 40px;
+      color: white;
+    }
+    
+    h1 {
+      font-size: 24px;
+      color: #1a1a2e;
+      margin-bottom: 12px;
+    }
+    
+    p {
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    
+    .btn {
+      display: inline-block;
+      padding: 12px 24px;
+      background: #1E9B8A;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: background 0.2s;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    
+    .btn:hover {
+      background: #17847a;
+    }
+    
+    .tips {
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid #eee;
+    }
+    
+    .tips h3 {
+      font-size: 14px;
+      color: #888;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .tips ul {
+      list-style: none;
+      text-align: left;
+    }
+    
+    .tips li {
+      padding: 8px 0;
+      color: #666;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .tips li::before {
+      content: "•";
+      color: #1E9B8A;
+      font-weight: bold;
+    }
+    
+    /* French version toggle */
+    .lang-toggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size: 14px;
+      color: #666;
+    }
+    
+    .lang-toggle button {
+      background: none;
+      border: 1px solid #ddd;
+      padding: 4px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-left: 8px;
+    }
+    
+    .lang-toggle button:hover {
+      background: #f5f5f5;
+    }
+    
+    .fr { display: none; }
+    body.french .en { display: none; }
+    body.french .fr { display: block; }
+  </style>
+</head>
+<body>
+  <div class="lang-toggle">
+    <button onclick="document.body.classList.remove('french')">EN</button>
+    <button onclick="document.body.classList.add('french')">FR</button>
+  </div>
+  
+  <div class="container">
+    <div class="icon">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243 2.829a4.978 4.978 0 01-1.414-2.83m-1.414 5.658a9 9 0 01-2.167-9.238m7.824 2.167a1 1 0 111.414 1.414m-1.414-1.414L3 3" />
+      </svg>
+    </div>
+    
+    <div class="en">
+      <h1>You're Offline</h1>
+      <p>It looks like you've lost your internet connection. Don't worry, some features may still be available offline.</p>
+      <button class="btn" onclick="window.location.reload()">Try Again</button>
+      
+      <div class="tips">
+        <h3>While you're offline</h3>
+        <ul>
+          <li>Downloaded courses are still accessible</li>
+          <li>Your progress will sync when you're back online</li>
+          <li>Check your WiFi or mobile data connection</li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="fr">
+      <h1>Vous êtes hors ligne</h1>
+      <p>Il semble que vous ayez perdu votre connexion internet. Ne vous inquiétez pas, certaines fonctionnalités peuvent encore être disponibles hors ligne.</p>
+      <button class="btn" onclick="window.location.reload()">Réessayer</button>
+      
+      <div class="tips">
+        <h3>Pendant que vous êtes hors ligne</h3>
+        <ul>
+          <li>Les cours téléchargés sont toujours accessibles</li>
+          <li>Votre progression sera synchronisée à votre retour en ligne</li>
+          <li>Vérifiez votre connexion WiFi ou données mobiles</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Auto-detect language preference
+    const lang = navigator.language || navigator.userLanguage;
+    if (lang.startsWith('fr')) {
+      document.body.classList.add('french');
+    }
+    
+    // Auto-retry when connection is restored
+    window.addEventListener('online', () => {
+      window.location.reload();
+    });
+  </script>
+</body>
+</html>

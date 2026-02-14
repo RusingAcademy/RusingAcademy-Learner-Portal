@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "answer_guides",
+  "title": "SLE Answer Guide",
+  "description": "Expected elements, structures, and pitfalls for a given scenario.",
+  "type": "object",
+  "required": ["id", "scenario_id", "language", "expected_elements", "recommended_structures", "common_pitfalls", "model_answer_outline"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^AG-(FR|EN)-\\d{3}$" },
+    "scenario_id": { "type": "string", "pattern": "^SCN-(FR|EN)-\\d{3}$" },
+    "language": { "type": "string", "enum": ["FR", "EN"] },
+    "expected_elements": { "type": "array", "items": { "type": "string" }, "minItems": 2 },
+    "recommended_structures": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "common_pitfalls": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "model_answer_outline": { "type": "string", "minLength": 20 }
+  },
+  "additionalProperties": false
+}

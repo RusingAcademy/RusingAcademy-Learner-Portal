@@ -1,0 +1,442 @@
+/**
+ * ============================================
+ * RUSINGACADEMY ECOSYSTEM - ACCESSIBILITY CSS
+ * ============================================
+ * 
+ * WCAG 2.1 AA Compliant Utilities
+ * Version: 2.0.0
+ * 
+ * Features:
+ * - Semantic color system (success, warning, danger, info)
+ * - High contrast utilities
+ * - Focus states for keyboard navigation
+ * - Reduced motion support
+ * - Touch target sizes
+ * - Skip links for screen readers
+ */
+
+/* ============================================
+   SEMANTIC COLOR SYSTEM
+   ============================================
+   Psychology-based color meanings:
+   - Green (Success): Completion, achievement, positive
+   - Amber (Warning): Attention needed, caution
+   - Red (Danger): Error, urgent, critical
+   - Blue (Info): Information, neutral, guidance
+   ============================================ */
+
+:root {
+  /* Success (Green) - Achievements, completions */
+  --semantic-success: #059669;
+  --semantic-success-light: #D1FAE5;
+  --semantic-success-dark: #065F46;
+  --semantic-success-text: #065F46;
+  
+  /* Warning (Amber) - Attention needed */
+  --semantic-warning: #D97706;
+  --semantic-warning-light: #FEF3C7;
+  --semantic-warning-dark: #92400E;
+  --semantic-warning-text: #92400E;
+  
+  /* Danger (Red) - Errors, critical */
+  --semantic-danger: #DC2626;
+  --semantic-danger-light: #FEE2E2;
+  --semantic-danger-dark: #991B1B;
+  --semantic-danger-text: #991B1B;
+  
+  /* Info (Blue) - Information, guidance */
+  --semantic-info: #2563EB;
+  --semantic-info-light: #DBEAFE;
+  --semantic-info-dark: #1E40AF;
+  --semantic-info-text: #1E40AF;
+  
+  /* Neutral (Slate) - Default, secondary */
+  --semantic-neutral: #64748B;
+  --semantic-neutral-light: #F1F5F9;
+  --semantic-neutral-dark: #334155;
+  --semantic-neutral-text: #334155;
+}
+
+/* Dark mode semantic colors */
+.dark {
+  --semantic-success: #10B981;
+  --semantic-success-light: #064E3B;
+  --semantic-success-dark: #34D399;
+  --semantic-success-text: #6EE7B7;
+  
+  --semantic-warning: #F59E0B;
+  --semantic-warning-light: #78350F;
+  --semantic-warning-dark: #FBBF24;
+  --semantic-warning-text: #FCD34D;
+  
+  --semantic-danger: #EF4444;
+  --semantic-danger-light: #7F1D1D;
+  --semantic-danger-dark: #F87171;
+  --semantic-danger-text: #FCA5A5;
+  
+  --semantic-info: #3B82F6;
+  --semantic-info-light: #1E3A8A;
+  --semantic-info-dark: #60A5FA;
+  --semantic-info-text: #93C5FD;
+  
+  --semantic-neutral: #94A3B8;
+  --semantic-neutral-light: #1E293B;
+  --semantic-neutral-dark: #CBD5E1;
+  --semantic-neutral-text: #E2E8F0;
+}
+
+/* ============================================
+   SEMANTIC BACKGROUND UTILITIES
+   ============================================ */
+
+.bg-semantic-success {
+  background-color: var(--semantic-success);
+  color: white;
+}
+
+.bg-semantic-success-light {
+  background-color: var(--semantic-success-light);
+  color: var(--semantic-success-text);
+}
+
+.bg-semantic-warning {
+  background-color: var(--semantic-warning);
+  color: white;
+}
+
+.bg-semantic-warning-light {
+  background-color: var(--semantic-warning-light);
+  color: var(--semantic-warning-text);
+}
+
+.bg-semantic-danger {
+  background-color: var(--semantic-danger);
+  color: white;
+}
+
+.bg-semantic-danger-light {
+  background-color: var(--semantic-danger-light);
+  color: var(--semantic-danger-text);
+}
+
+.bg-semantic-info {
+  background-color: var(--semantic-info);
+  color: white;
+}
+
+.bg-semantic-info-light {
+  background-color: var(--semantic-info-light);
+  color: var(--semantic-info-text);
+}
+
+.bg-semantic-neutral {
+  background-color: var(--semantic-neutral);
+  color: white;
+}
+
+.bg-semantic-neutral-light {
+  background-color: var(--semantic-neutral-light);
+  color: var(--semantic-neutral-text);
+}
+
+/* ============================================
+   SEMANTIC TEXT UTILITIES
+   ============================================ */
+
+.text-semantic-success {
+  color: var(--semantic-success-text);
+}
+
+.text-semantic-warning {
+  color: var(--semantic-warning-text);
+}
+
+.text-semantic-danger {
+  color: var(--semantic-danger-text);
+}
+
+.text-semantic-info {
+  color: var(--semantic-info-text);
+}
+
+.text-semantic-neutral {
+  color: var(--semantic-neutral-text);
+}
+
+/* ============================================
+   SEMANTIC BORDER UTILITIES
+   ============================================ */
+
+.border-semantic-success {
+  border-color: var(--semantic-success);
+}
+
+.border-semantic-warning {
+  border-color: var(--semantic-warning);
+}
+
+.border-semantic-danger {
+  border-color: var(--semantic-danger);
+}
+
+.border-semantic-info {
+  border-color: var(--semantic-info);
+}
+
+.border-semantic-neutral {
+  border-color: var(--semantic-neutral);
+}
+
+/* ============================================
+   SEMANTIC BADGES/PILLS
+   ============================================ */
+
+.badge-success {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: 9999px;
+  background-color: var(--semantic-success-light);
+  color: var(--semantic-success-text);
+}
+
+.badge-warning {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: 9999px;
+  background-color: var(--semantic-warning-light);
+  color: var(--semantic-warning-text);
+}
+
+.badge-danger {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: 9999px;
+  background-color: var(--semantic-danger-light);
+  color: var(--semantic-danger-text);
+}
+
+.badge-info {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: 9999px;
+  background-color: var(--semantic-info-light);
+  color: var(--semantic-info-text);
+}
+
+.badge-neutral {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: 9999px;
+  background-color: var(--semantic-neutral-light);
+  color: var(--semantic-neutral-text);
+}
+
+/* ============================================
+   FOCUS STATES (WCAG 2.1 AA)
+   ============================================
+   Minimum 3:1 contrast for focus indicators
+   ============================================ */
+
+.focus-ring-success:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--semantic-success);
+}
+
+.focus-ring-warning:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--semantic-warning);
+}
+
+.focus-ring-danger:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--semantic-danger);
+}
+
+.focus-ring-info:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--semantic-info);
+}
+
+/* ============================================
+   SKIP LINK FOR SCREEN READERS
+   ============================================ */
+
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--semantic-info);
+  color: white;
+  padding: 8px 16px;
+  z-index: 100;
+  transition: top 0.3s;
+  font-weight: 600;
+  border-radius: 0 0 8px 0;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* ============================================
+   REDUCED MOTION PREFERENCE
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  /* Disable parallax and complex animations */
+  .parallax,
+  .animate-float,
+  .animate-pulse,
+  .animate-bounce {
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
+/* ============================================
+   TOUCH TARGET SIZES (WCAG 2.5.5)
+   ============================================
+   Minimum 44x44px for touch targets
+   ============================================ */
+
+.touch-target {
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.touch-target-lg {
+  min-width: 48px;
+  min-height: 48px;
+}
+
+/* ============================================
+   HIGH CONTRAST MODE SUPPORT
+   ============================================ */
+
+@media (prefers-contrast: high) {
+  :root {
+    --semantic-success: #047857;
+    --semantic-warning: #B45309;
+    --semantic-danger: #B91C1C;
+    --semantic-info: #1D4ED8;
+    --semantic-neutral: #475569;
+  }
+  
+  /* Increase border widths */
+  .border,
+  [class*="border-"] {
+    border-width: 2px;
+  }
+  
+  /* Ensure text is fully opaque */
+  .text-muted-foreground,
+  .text-slate-500,
+  .text-gray-500 {
+    opacity: 1;
+    color: #374151 !important;
+  }
+  
+  .dark .text-muted-foreground,
+  .dark .text-slate-500,
+  .dark .text-gray-500 {
+    color: #D1D5DB !important;
+  }
+}
+
+/* ============================================
+   SCREEN READER ONLY UTILITIES
+   ============================================ */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.not-sr-only {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: 0;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* ============================================
+   ARIA LIVE REGION STYLES
+   ============================================ */
+
+[aria-live="polite"],
+[aria-live="assertive"] {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* Make visible when there's content */
+[aria-live="polite"]:not(:empty),
+[aria-live="assertive"]:not(:empty) {
+  position: relative;
+  left: auto;
+  width: auto;
+  height: auto;
+  overflow: visible;
+}
+
+/* ============================================
+   DARK MODE TRANSITIONS
+   ============================================ */
+
+.theme-transition {
+  transition: background-color 0.3s ease, 
+              border-color 0.3s ease, 
+              color 0.2s ease,
+              box-shadow 0.3s ease;
+}
+
+/* Smooth theme toggle */
+html.transitioning,
+html.transitioning *,
+html.transitioning *::before,
+html.transitioning *::after {
+  transition: background-color 0.3s ease, 
+              border-color 0.3s ease, 
+              color 0.2s ease !important;
+}

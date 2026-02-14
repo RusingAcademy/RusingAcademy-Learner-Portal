@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "feedback_templates",
+  "title": "SLE Feedback Template",
+  "description": "A reusable feedback template for instant or end-of-session feedback.",
+  "type": "object",
+  "required": ["id", "language", "type", "criterion", "level_context", "template_text", "variables"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^FBT-(FR|EN)-\\d{3}$" },
+    "language": { "type": "string", "enum": ["FR", "EN"] },
+    "type": { "type": "string", "enum": ["instant_correction", "end_of_turn", "session_summary", "encouragement", "drill_suggestion"] },
+    "criterion": { "type": "string", "enum": ["fluency", "comprehension", "vocabulary", "grammar", "pronunciation", "general"] },
+    "level_context": { "type": "string", "enum": ["A", "B", "C", "all"] },
+    "template_text": { "type": "string", "minLength": 10, "description": "Template with {{variable}} placeholders" },
+    "variables": { "type": "array", "items": { "type": "string" }, "description": "List of variable names used in template_text" }
+  },
+  "additionalProperties": false
+}

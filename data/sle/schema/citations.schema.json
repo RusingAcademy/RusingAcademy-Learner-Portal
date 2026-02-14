@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "citations",
+  "title": "SLE Dataset Citation",
+  "description": "Source reference for the dataset content.",
+  "type": "object",
+  "required": ["id", "title", "url", "accessed_date"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^CIT-\\d{3}$" },
+    "title": { "type": "string", "minLength": 5 },
+    "url": { "type": "string", "format": "uri" },
+    "accessed_date": { "type": "string", "format": "date" },
+    "notes": { "type": "string" }
+  },
+  "additionalProperties": false
+}

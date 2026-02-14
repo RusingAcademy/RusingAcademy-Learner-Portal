@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "rubrics",
+  "title": "SLE Scoring Rubric",
+  "description": "One criterion × level × language descriptor for PSC oral assessment scoring.",
+  "type": "object",
+  "required": ["id", "criterion", "level", "language", "descriptor", "weight", "indicators"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^RUB-(FR|EN)-(fluency|comprehension|vocabulary|grammar|pronunciation)-(A|B|C)$" },
+    "criterion": { "type": "string", "enum": ["fluency", "comprehension", "vocabulary", "grammar", "pronunciation"] },
+    "level": { "type": "string", "enum": ["A", "B", "C"] },
+    "language": { "type": "string", "enum": ["FR", "EN"] },
+    "descriptor": { "type": "string", "minLength": 20 },
+    "weight": { "type": "number", "minimum": 0, "maximum": 1 },
+    "indicators": { "type": "array", "items": { "type": "string" }, "minItems": 2 }
+  },
+  "additionalProperties": false
+}

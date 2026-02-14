@@ -1,0 +1,284 @@
+{
+  "timestamp": "2026-02-11T05:52:14.112Z",
+  "dryRun": true,
+  "reports": [
+    {
+      "collection": "scenarios",
+      "totalLines": 46,
+      "validItems": 46,
+      "invalidItems": 0,
+      "normalizedFields": 40,
+      "unknownFields": 0,
+      "errors": [],
+      "warnings": [
+        {
+          "line": 1,
+          "field": "topic_domain",
+          "original": "WRK",
+          "normalized": "Workplace"
+        },
+        {
+          "line": 3,
+          "field": "topic_domain",
+          "original": "COM",
+          "normalized": "Communications"
+        },
+        {
+          "line": 4,
+          "field": "topic_domain",
+          "original": "SVC",
+          "normalized": "Service"
+        },
+        {
+          "line": 5,
+          "field": "topic_domain",
+          "original": "TEC",
+          "normalized": "IT"
+        },
+        {
+          "line": 6,
+          "field": "topic_domain",
+          "original": "ENV",
+          "normalized": "Environment"
+        },
+        {
+          "line": 7,
+          "field": "topic_domain",
+          "original": "PRJ",
+          "normalized": "Project"
+        },
+        {
+          "line": 8,
+          "field": "topic_domain",
+          "original": "WRK",
+          "normalized": "Workplace"
+        },
+        {
+          "line": 9,
+          "field": "topic_domain",
+          "original": "PRJ",
+          "normalized": "Project"
+        },
+        {
+          "line": 10,
+          "field": "topic_domain",
+          "original": "WRK",
+          "normalized": "Workplace"
+        },
+        {
+          "line": 11,
+          "field": "topic_domain",
+          "original": "POL",
+          "normalized": "Policy"
+        },
+        {
+          "line": 13,
+          "field": "topic_domain",
+          "original": "SVC",
+          "normalized": "Service"
+        },
+        {
+          "line": 14,
+          "field": "topic_domain",
+          "original": "TEC",
+          "normalized": "IT"
+        },
+        {
+          "line": 15,
+          "field": "topic_domain",
+          "original": "ENV",
+          "normalized": "Environment"
+        },
+        {
+          "line": 16,
+          "field": "topic_domain",
+          "original": "COM",
+          "normalized": "Communications"
+        },
+        {
+          "line": 17,
+          "field": "topic_domain",
+          "original": "WRK",
+          "normalized": "Workplace"
+        },
+        {
+          "line": 18,
+          "field": "topic_domain",
+          "original": "PRJ",
+          "normalized": "Project"
+        },
+        {
+          "line": 20,
+          "field": "topic_domain",
+          "original": "ENV",
+          "normalized": "Environment"
+        },
+        {
+          "line": 21,
+          "field": "topic_domain",
+          "original": "TEC",
+          "normalized": "IT"
+        },
+        {
+          "line": 22,
+          "field": "topic_domain",
+          "original": "DIV",
+          "normalized": "Diversity"
+        },
+        {
+          "line": 23,
+          "field": "topic_domain",
+          "original": "COM",
+          "normalized": "Communications"
+        },
+        {
+          "line": 24,
+          "field": "topic_domain",
+          "original": "WRK",
+          "normalized": "Workplace"
+        },
+        {
+          "line": 25,
+          "field": "topic_domain",
+          "original": "PRJ",
+          "normalized": "Project"
+        },
+        {
+          "line": 26,
+          "field": "topic_domain",
+          "original": "POL",
+          "normalized": "Policy"
+        },
+        {
+          "line": 28,
+          "field": "topic_domain",
+          "original": "SVC",
+          "normalized": "Service"
+        },
+        {
+          "line": 29,
+          "field": "topic_domain",
+          "original": "TEC",
+          "normalized": "IT"
+        },
+        {
+          "line": 30,
+          "field": "topic_domain",
+          "original": "ENV",
+          "normalized": "Environment"
+        },
+        {
+          "line": 31,
+          "field": "topic_domain",
+          "original": "COM",
+          "normalized": "Communications"
+        },
+        {
+          "line": 32,
+          "field": "topic_domain",
+          "original": "PRJ",
+          "normalized": "Project"
+        },
+        {
+          "line": 33,
+          "field": "topic_domain",
+          "original": "WRK",
+          "normalized": "Workplace"
+        },
+        {
+          "line": 34,
+          "field": "topic_domain",
+          "original": "POL",
+          "normalized": "Policy"
+        },
+        {
+          "line": 36,
+          "field": "topic_domain",
+          "original": "SVC",
+          "normalized": "Service"
+        },
+        {
+          "line": 37,
+          "field": "topic_domain",
+          "original": "TEC",
+          "normalized": "IT"
+        },
+        {
+          "line": 38,
+          "field": "topic_domain",
+          "original": "ENV",
+          "normalized": "Environment"
+        },
+        {
+          "line": 39,
+          "field": "topic_domain",
+          "original": "COM",
+          "normalized": "Communications"
+        },
+        {
+          "line": 40,
+          "field": "topic_domain",
+          "original": "WRK",
+          "normalized": "Workplace"
+        },
+        {
+          "line": 41,
+          "field": "topic_domain",
+          "original": "PRJ",
+          "normalized": "Project"
+        },
+        {
+          "line": 42,
+          "field": "topic_domain",
+          "original": "POL",
+          "normalized": "Policy"
+        },
+        {
+          "line": 44,
+          "field": "topic_domain",
+          "original": "ENV",
+          "normalized": "Environment"
+        },
+        {
+          "line": 45,
+          "field": "topic_domain",
+          "original": "COM",
+          "normalized": "Communications"
+        },
+        {
+          "line": 46,
+          "field": "topic_domain",
+          "original": "TEC",
+          "normalized": "IT"
+        }
+      ]
+    },
+    {
+      "collection": "common_errors",
+      "totalLines": 200,
+      "validItems": 200,
+      "invalidItems": 0,
+      "normalizedFields": 0,
+      "unknownFields": 0,
+      "errors": [],
+      "warnings": []
+    },
+    {
+      "collection": "question_bank",
+      "totalLines": 180,
+      "validItems": 180,
+      "invalidItems": 0,
+      "normalizedFields": 0,
+      "unknownFields": 0,
+      "errors": [],
+      "warnings": []
+    }
+  ],
+  "summary": {
+    "totalValid": 426,
+    "totalInvalid": 0,
+    "totalNormalized": 40,
+    "totalUnknown": 0,
+    "status": "PASS"
+  }
+}

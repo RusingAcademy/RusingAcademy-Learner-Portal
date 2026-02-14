@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "listening_assets",
+  "title": "SLE Listening Asset",
+  "description": "A voicemail or conversation transcript for Part II listening exercises.",
+  "type": "object",
+  "required": ["id", "language", "type", "transcript", "speaker_count", "duration_estimate_seconds", "summary_points", "key_details"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^LA-(FR|EN)-(VM|CONV)-\\d{2}$" },
+    "language": { "type": "string", "enum": ["FR", "EN"] },
+    "type": { "type": "string", "enum": ["voicemail", "conversation"] },
+    "transcript": { "type": "string", "minLength": 50 },
+    "speaker_count": { "type": "integer", "minimum": 1, "maximum": 4 },
+    "duration_estimate_seconds": { "type": "integer", "minimum": 15, "maximum": 180 },
+    "summary_points": { "type": "array", "items": { "type": "string" }, "minItems": 2 },
+    "key_details": { "type": "array", "items": { "type": "string" }, "minItems": 2 },
+    "audio_url": { "type": "string", "format": "uri" },
+    "topic_domain": { "type": "string", "enum": ["WRK", "PRJ", "POL", "HR", "SVC", "TEC", "ENV", "FIN", "COM", "DIV"] }
+  },
+  "additionalProperties": false
+}

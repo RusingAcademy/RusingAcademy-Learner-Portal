@@ -1,0 +1,1 @@
+ALTER TABLE `coach_profiles` ADD `totalReviews` int DEFAULT 0;

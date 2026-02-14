@@ -1,0 +1,535 @@
+/* ========================================
+   RUSINGACADEMY ECOSYSTEM - ANIMATIONS CSS
+   Modern, Professional, Compelling
+   ======================================== */
+
+/* ----------------------------------------
+   CSS Custom Properties
+   ---------------------------------------- */
+:root {
+  --animation-fast: 150ms;
+  --animation-normal: 300ms;
+  --animation-slow: 500ms;
+  --animation-slower: 800ms;
+  
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-in-out-circ: cubic-bezier(0.85, 0, 0.15, 1);
+  
+  --gradient-teal: linear-gradient(135deg, #1E9B8A 0%, #17E2C6 100%);
+  --gradient-gold: linear-gradient(135deg, #D4A853 0%, #F5D78E 100%);
+  --gradient-dark: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+/* ----------------------------------------
+   Keyframe Animations
+   ---------------------------------------- */
+
+/* Subtle pulse for CTAs */
+@keyframes pulse-subtle {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(30, 155, 138, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(30, 155, 138, 0);
+  }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 2s infinite;
+}
+
+/* Floating animation */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Gradient shift */
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-shift 4s ease infinite;
+}
+
+/* Shimmer effect */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  animation: shimmer 2s infinite;
+}
+
+/* Glow pulse */
+@keyframes glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(30, 155, 138, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(30, 155, 138, 0.6);
+  }
+}
+
+.animate-glow {
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+/* Rotate slow */
+@keyframes rotate-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-rotate-slow {
+  animation: rotate-slow 20s linear infinite;
+}
+
+/* Scale in */
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-scale-in {
+  animation: scale-in var(--animation-normal) var(--ease-out-expo) forwards;
+}
+
+/* Slide up fade */
+@keyframes slide-up-fade {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up-fade var(--animation-slow) var(--ease-out-expo) forwards;
+}
+
+/* ----------------------------------------
+   Hover Effects
+   ---------------------------------------- */
+
+/* Lift on hover */
+.hover-lift {
+  transition: transform var(--animation-normal) var(--ease-out-expo),
+              box-shadow var(--animation-normal) var(--ease-out-expo);
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.2);
+}
+
+/* Scale on hover */
+.hover-scale {
+  transition: transform var(--animation-normal) var(--ease-out-expo);
+}
+
+.hover-scale:hover {
+  transform: scale(1.02);
+}
+
+/* Glow on hover */
+.hover-glow {
+  transition: box-shadow var(--animation-normal) var(--ease-out-expo);
+}
+
+.hover-glow:hover {
+  box-shadow: 0 0 30px rgba(30, 155, 138, 0.4);
+}
+
+/* Border glow on hover */
+.hover-border-glow {
+  position: relative;
+  transition: all var(--animation-normal) var(--ease-out-expo);
+}
+
+.hover-border-glow::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: var(--gradient-teal);
+  opacity: 0;
+  z-index: -1;
+  transition: opacity var(--animation-normal) var(--ease-out-expo);
+}
+
+.hover-border-glow:hover::before {
+  opacity: 1;
+}
+
+/* ----------------------------------------
+   Glass Morphism
+   ---------------------------------------- */
+
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass-dark {
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-teal {
+  background: rgba(30, 155, 138, 0.1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(30, 155, 138, 0.3);
+}
+
+/* ----------------------------------------
+   Text Effects
+   ---------------------------------------- */
+
+/* Gradient text */
+.text-gradient {
+  background: var(--gradient-teal);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-gold {
+  background: var(--gradient-gold);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Text shadow glow */
+.text-glow {
+  text-shadow: 0 0 20px rgba(30, 155, 138, 0.5);
+}
+
+/* ----------------------------------------
+   Background Effects
+   ---------------------------------------- */
+
+/* Animated gradient background */
+.bg-animated-gradient {
+  background: linear-gradient(-45deg, #1E9B8A, #17E2C6, #1a1a2e, #D4A853);
+  background-size: 400% 400%;
+  animation: gradient-shift 15s ease infinite;
+}
+
+/* Noise texture overlay */
+.noise-overlay {
+  position: relative;
+}
+
+.noise-overlay::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.03;
+  pointer-events: none;
+}
+
+/* ----------------------------------------
+   Interactive Elements
+   ---------------------------------------- */
+
+/* Button ripple effect */
+.ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.3) 10%, transparent 10.01%);
+  background-repeat: no-repeat;
+  background-position: 50%;
+  transform: scale(10, 10);
+  opacity: 0;
+  transition: transform 0.5s, opacity 1s;
+}
+
+.ripple:active::after {
+  transform: scale(0, 0);
+  opacity: 0.3;
+  transition: 0s;
+}
+
+/* Focus ring */
+.focus-ring:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(30, 155, 138, 0.5);
+}
+
+/* ----------------------------------------
+   Loading States
+   ---------------------------------------- */
+
+/* Skeleton loading */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.1) 25%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.1) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Spinner */
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid rgba(30, 155, 138, 0.3);
+  border-top-color: #1E9B8A;
+  border-radius: 50%;
+  animation: rotate-slow 1s linear infinite;
+}
+
+/* ----------------------------------------
+   Scroll Animations (CSS only fallback)
+   ---------------------------------------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  .scroll-reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s var(--ease-out-expo),
+                transform 0.6s var(--ease-out-expo);
+  }
+
+  .scroll-reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ----------------------------------------
+   Page Transitions
+   ---------------------------------------- */
+
+/* Fade in page */
+@keyframes fade-in-page {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in-page {
+  animation: fade-in-page var(--animation-normal) var(--ease-out-expo) forwards;
+}
+
+/* Slide in from right */
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right var(--animation-slow) var(--ease-out-expo) forwards;
+}
+
+/* Slide in from left */
+@keyframes slide-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in-left {
+  animation: slide-in-left var(--animation-slow) var(--ease-out-expo) forwards;
+}
+
+/* Stagger children animations */
+.stagger-children > * {
+  opacity: 0;
+  animation: slide-up-fade var(--animation-slow) var(--ease-out-expo) forwards;
+}
+
+.stagger-children > *:nth-child(1) { animation-delay: 0ms; }
+.stagger-children > *:nth-child(2) { animation-delay: 50ms; }
+.stagger-children > *:nth-child(3) { animation-delay: 100ms; }
+.stagger-children > *:nth-child(4) { animation-delay: 150ms; }
+.stagger-children > *:nth-child(5) { animation-delay: 200ms; }
+.stagger-children > *:nth-child(6) { animation-delay: 250ms; }
+.stagger-children > *:nth-child(7) { animation-delay: 300ms; }
+.stagger-children > *:nth-child(8) { animation-delay: 350ms; }
+.stagger-children > *:nth-child(9) { animation-delay: 400ms; }
+.stagger-children > *:nth-child(10) { animation-delay: 450ms; }
+
+/* Card entrance animation */
+@keyframes card-entrance {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-card-entrance {
+  animation: card-entrance var(--animation-slow) var(--ease-out-expo) forwards;
+}
+
+/* List item entrance */
+@keyframes list-item-entrance {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-list-item {
+  animation: list-item-entrance var(--animation-normal) var(--ease-out-expo) forwards;
+}
+
+/* Button micro-interaction */
+.btn-interactive {
+  transition: transform var(--animation-fast) var(--ease-out-expo),
+              box-shadow var(--animation-fast) var(--ease-out-expo);
+}
+
+.btn-interactive:hover {
+  transform: translateY(-2px);
+}
+
+.btn-interactive:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Badge pop animation */
+@keyframes badge-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-badge-pop {
+  animation: badge-pop var(--animation-slow) var(--ease-out-back) forwards;
+}
+
+/* Success checkmark animation */
+@keyframes checkmark {
+  0% {
+    stroke-dashoffset: 100;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-checkmark {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: checkmark var(--animation-slow) var(--ease-out-expo) forwards;
+}
+
+/* ----------------------------------------
+   Responsive Adjustments
+   ---------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

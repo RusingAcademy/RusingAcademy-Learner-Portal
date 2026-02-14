@@ -1,0 +1,1 @@
+ALTER TABLE `activities` MODIFY COLUMN `slotType` enum('introduction','video_scenario','grammar_point','written_practice','oral_practice','quiz_slot','coaching_tip','extra');

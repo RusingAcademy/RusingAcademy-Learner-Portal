@@ -1,0 +1,50 @@
+{
+  "query": "SELECT * FROM __drizzle_migrations ORDER BY created_at DESC LIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user cYPAHDVF1MZtM6S.caf383761fdf --database Rc5qDPWJcsCQwb6WK47Ybr --execute SELECT * FROM __drizzle_migrations ORDER BY created_at DESC LIMIT 10;",
+  "rows": [
+    {
+      "id": "447036",
+      "hash": "ee016ae3ed9a735fff276323d17c2207f7ccfd8d120bf87d5308360f849c9622",
+      "created_at": "1771018138481"
+    },
+    {
+      "id": "447035",
+      "hash": "6a33d870b82838ea6cf8eb041ff83c1ddf129a3ba53c5a33b39a768a071897e8",
+      "created_at": "1771000750917"
+    },
+    {
+      "id": "447034",
+      "hash": "ba1ac9b8e6d74e5fb9980cd6062c632fe01e4dbbad670644ab18e1e11aa7747f",
+      "created_at": "1770999197063"
+    },
+    {
+      "id": "447033",
+      "hash": "ff3b868ffe60ca73ca906ce428a5fcb6be0e4b4150af65a899f9096129c25639",
+      "created_at": "1770998038859"
+    },
+    {
+      "id": "447032",
+      "hash": "ee116c243c4b8f99d2e1870a048cfa54ef19d1534754f3cc4f7a01edb5a09a9c",
+      "created_at": "1770996859639"
+    },
+    {
+      "id": "3",
+      "hash": "49262eac6e87f8c79439ecb8da7221bac76b30dce6a9a69a461f054e14e2cb7c",
+      "created_at": "1770962785590"
+    },
+    {
+      "id": "2",
+      "hash": "664652a7df82a9d185148d0cdd7a8a24767472ab6cc1a31edf4f0550384f032f",
+      "created_at": "1770960763287"
+    },
+    {
+      "id": "1",
+      "hash": "814a08e40d7fc2bcfd458759d18319198ca8ae394f2fa15617a78678e9c9c93b",
+      "created_at": "1770960630718"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\thash\tcreated_at\n447036\tee016ae3ed9a735fff276323d17c2207f7ccfd8d120bf87d5308360f849c9622\t1771018138481\n447035\t6a33d870b82838ea6cf8eb041ff83c1ddf129a3ba53c5a33b39a768a071897e8\t1771000750917\n447034\tba1ac9b8e6d74e5fb9980cd6062c632fe01e4dbbad670644ab18e1e11aa7747f\t1770999197063\n447033\tff3b868ffe60ca73ca906ce428a5fcb6be0e4b4150af65a899f9096129c25639\t1770998038859\n447032\tee116c243c4b8f99d2e1870a048cfa54ef19d1534754f3cc4f7a01edb5a09a9c\t1770996859639\n3\t49262eac6e87f8c79439ecb8da7221bac76b30dce6a9a69a461f054e14e2cb7c\t1770962785590\n2\t664652a7df82a9d185148d0cdd7a8a24767472ab6cc1a31edf4f0550384f032f\t1770960763287\n1\t814a08e40d7fc2bcfd458759d18319198ca8ae394f2fa15617a78678e9c9c93b\t1770960630718\n",
+  "stderr": "",
+  "execution_time_ms": 83
+}

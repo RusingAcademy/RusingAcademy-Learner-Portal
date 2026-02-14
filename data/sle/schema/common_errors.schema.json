@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "common_errors",
+  "title": "SLE Common Error",
+  "description": "A frequent error pattern with correction and instant feedback.",
+  "type": "object",
+  "required": ["id", "language", "category", "pattern", "correction", "feedback_text", "level_impact", "criterion_affected"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^ERR-(FR|EN)-\\d{3}$" },
+    "language": { "type": "string", "enum": ["FR", "EN"] },
+    "category": { "type": "string", "enum": ["grammar", "vocabulary", "pronunciation", "anglicism", "gallicism", "structure", "register"] },
+    "pattern": { "type": "string", "minLength": 3, "description": "The erroneous form or pattern" },
+    "correction": { "type": "string", "minLength": 3, "description": "The correct form" },
+    "feedback_text": { "type": "string", "minLength": 10, "description": "Explanation shown to the learner" },
+    "level_impact": { "type": "string", "enum": ["A", "B", "C"], "description": "Which level is most affected by this error" },
+    "criterion_affected": { "type": "string", "enum": ["fluency", "comprehension", "vocabulary", "grammar", "pronunciation"] }
+  },
+  "additionalProperties": false
+}

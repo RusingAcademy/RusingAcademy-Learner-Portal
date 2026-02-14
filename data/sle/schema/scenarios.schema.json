@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "scenarios",
+  "title": "SLE Practice Scenario",
+  "description": "A complete practice scenario for the SLE AI Companion.",
+  "type": "object",
+  "required": ["id", "language", "part", "mode", "level_target", "topic_domain", "context", "instructions", "prompt_text", "followups", "expected_elements", "rubric_ids"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^SCN-(FR|EN)-\\d{3}$" },
+    "language": { "type": "string", "enum": ["FR", "EN"] },
+    "part": { "type": "string", "enum": ["I", "II", "III", "IV"] },
+    "mode": { "type": "string", "enum": ["quick_chat", "listen_summarize", "deep_dive", "debate", "mock_exam"] },
+    "level_target": { "type": "string", "enum": ["A", "B", "C"] },
+    "topic_domain": { "type": "string", "enum": ["WRK", "PRJ", "POL", "HR", "SVC", "TEC", "ENV", "FIN", "COM", "DIV"] },
+    "context": { "type": "string", "minLength": 20 },
+    "instructions": { "type": "string", "minLength": 10 },
+    "prompt_text": { "type": "string", "minLength": 10 },
+    "followups": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "expected_elements": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "rubric_ids": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "common_error_ids": { "type": "array", "items": { "type": "string" } },
+    "feedback_template_ids": { "type": "array", "items": { "type": "string" } },
+    "answer_guide_id": { "type": "string" }
+  },
+  "additionalProperties": false
+}

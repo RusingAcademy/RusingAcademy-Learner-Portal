@@ -1,7 +1,7 @@
 User-agent: *
 Allow: /
 Disallow: /api/
-Disallow: /settings
-Disallow: /profile
+Disallow: /admin/
+Disallow: /dashboard/
 
-Sitemap: /sitemap.xml
+Sitemap: https://rusingacademy.manus.space/sitemap.xml

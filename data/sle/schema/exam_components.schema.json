@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "exam_components",
+  "title": "SLE Exam Component",
+  "description": "Defines one part (I–IV) of the OLA oral exam for a given language.",
+  "type": "object",
+  "required": ["id", "part", "language", "name", "duration_min", "duration_max", "objectives", "description"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^EC-(FR|EN)-(I|II|III|IV)$" },
+    "part": { "type": "string", "enum": ["I", "II", "III", "IV"] },
+    "language": { "type": "string", "enum": ["FR", "EN"] },
+    "name": { "type": "string", "minLength": 1 },
+    "duration_min": { "type": "integer", "minimum": 1 },
+    "duration_max": { "type": "integer", "minimum": 1 },
+    "objectives": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "description": { "type": "string", "minLength": 10 }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,378 @@
+/**
+ * ============================================
+ * RUSINGACADEMY ECOSYSTEM - DESIGN TOKENS
+ * ============================================
+ * 
+ * Design System: Néo-Institutionnel / Organic Tech
+ * Version: 4.0.0 - LIGHT LUXURY PALETTE
+ * 
+ * Palette: Vibrant Teal + Bright Gold + Light Luxury
+ * Typography: Merriweather (display) + Inter (UI)
+ * 
+ * This file is the SINGLE SOURCE OF TRUTH for all colors,
+ * spacing, shadows, and UI tokens across the ecosystem.
+ * 
+ * UPDATED: Light Luxury palette as per user specification
+ */
+
+
+/* ============================================
+   GOOGLE FONTS IMPORT
+   ============================================ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:wght@400;700;900&display=swap');
+
+
+/* ============================================
+   ROOT TOKENS - LIGHT LUXURY MASTER PALETTE
+   ============================================ */
+:root {
+  /* === FOUNDATION / TRUST (Deep Forest Teal — "Vert Laurentides") === */
+  --brand-foundation: #0F3D3E;
+  --brand-foundation-2: #145A5B;
+  --brand-foundation-soft: #E7F2F2;
+  
+  /* === RUSINGÂCADEMY PRIMARY (Vibrant Teal) === */
+  --rusingacademy-primary: #1E9B8A;
+  --rusingacademy-primary-hover: #178A7A;
+  --rusingacademy-primary-light: #E6F5F3;
+  --rusingacademy-primary-dark: #176B5D;
+  
+  /* === BARHOLEX MEDIA PRIMARY (Bright Gold - Light Luxury) === */
+  --barholex-primary: #F5A623;
+  --barholex-primary-hover: #E09515;
+  --barholex-primary-light: #FEF7E6;
+  --barholex-primary-dark: #C48A1C;
+  
+  /* === LINGUEEFY PRIMARY (Vibrant Cyan) === */
+  --lingueefy-primary: #17E2C6;
+  --lingueefy-primary-hover: #14C9B0;
+  --lingueefy-primary-light: #E8FFFB;
+  --lingueefy-primary-dark: #0FB8A0;
+  
+  /* === CTA ORANGE (High-Priority Actions) === */
+  --brand-cta: #FF6A2B;
+  --brand-cta-hover: #E85A1F;
+  --brand-cta-soft: #FFF1E8;
+  
+  /* === PREMIUM DARK (Obsidian Grey) === */
+  --brand-obsidian: #111827;
+  --brand-obsidian-2: #0B1220;
+  
+  /* === NEUTRALS (Porcelain & Sand) === */
+  --bg: #F7F6F3;
+  --surface: #FFFFFF;
+  --sand: #EEE9DF;
+  --text: #0B1220;
+  --text-inverse: #FFFFFF;
+  --text-on-dark: #F7F6F3;
+  --muted: #6B7280;
+  --muted-on-dark: rgba(255, 255, 255, 0.7);
+  --border: #E5E7EB;
+  
+  /* === LIGHT LUXURY BACKGROUNDS === */
+  --bg-cream: #FFFDF8;
+  --bg-warm: #FEF9F3;
+  --bg-soft-gold: #FFF9E6;
+  --bg-soft-teal: #F0FAF9;
+  
+  /* === BRAND ACCENTS (Legacy compatibility) === */
+  /* RusingAcademy (Formation/LMS) - Vibrant Teal */
+  --rusingacademy-accent: var(--rusingacademy-primary);
+  --rusingacademy-accent-2: var(--rusingacademy-primary-hover);
+  --rusingacademy-accent-soft: var(--rusingacademy-primary-light);
+  
+  /* Lingueefy (Coaching Marketplace) - Vibrant Cyan */
+  --lingueefy-accent: var(--lingueefy-primary);
+  --lingueefy-accent-2: var(--lingueefy-primary-hover);
+  --lingueefy-accent-soft: var(--lingueefy-primary-light);
+  
+  /* Barholex Media (Consulting/Media/AI) - Bright Gold */
+  --barholex-gold: var(--barholex-primary);
+  --barholex-gold-2: var(--barholex-primary-hover);
+  --barholex-gold-soft: var(--barholex-primary-light);
+  
+  /* === SEMANTIC COLORS === */
+  --danger: #B42318;
+  --danger-soft: #FEE4E2;
+  --success: #067647;
+  --success-soft: #DCFCE7;
+  --warning: #B54708;
+  --warning-soft: #FEF3C7;
+  
+  /* === TYPOGRAPHY === */
+  --font-display: 'Merriweather', Georgia, serif;
+  --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  
+  /* === UI TOKENS === */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-full: 9999px;
+  
+  --shadow-sm: 0 1px 2px 0 rgba(11, 18, 32, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(11, 18, 32, 0.08), 0 2px 4px -2px rgba(11, 18, 32, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(11, 18, 32, 0.1), 0 4px 6px -4px rgba(11, 18, 32, 0.08);
+  --shadow-xl: 0 20px 25px -5px rgba(11, 18, 32, 0.1), 0 8px 10px -6px rgba(11, 18, 32, 0.08);
+  
+  /* Light Luxury shadows (softer, warmer) */
+  --shadow-luxury: 0 4px 20px rgba(245, 166, 35, 0.1);
+  --shadow-luxury-hover: 0 8px 30px rgba(245, 166, 35, 0.15);
+  
+  /* Focus ring - Foundation based */
+  --ring: rgba(15, 61, 62, 0.4);
+  --ring-cta: rgba(255, 106, 43, 0.4);
+  --ring-teal: rgba(30, 155, 138, 0.4);
+  --ring-gold: rgba(245, 166, 35, 0.4);
+  --ring-offset: 2px;
+  
+  /* Links */
+  --link: var(--brand-foundation);
+  --link-hover: var(--brand-foundation-2);
+  
+  /* === TRANSITIONS === */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* === ACTIVE BRAND (Default = Hub/Ecosystem) === */
+  --brand-accent: var(--brand-foundation);
+  --brand-accent-2: var(--brand-foundation-2);
+  --brand-accent-soft: var(--brand-foundation-soft);
+}
+
+
+/* ============================================
+   BRAND OVERLAYS (data-brand attribute)
+   ============================================ */
+
+
+/* --- ECOSYSTEM (Hub) - Default Foundation === */
+body[data-brand="ecosystem"],
+[data-brand="ecosystem"] {
+  --brand-accent: var(--brand-foundation);
+  --brand-accent-2: var(--brand-foundation-2);
+  --brand-accent-soft: var(--brand-foundation-soft);
+}
+
+
+/* --- RUSINGACADEMY (LMS/B2B/B2G) - Vibrant Teal === */
+body[data-brand="rusingacademy"],
+[data-brand="rusingacademy"] {
+  --brand-accent: var(--rusingacademy-primary);
+  --brand-accent-2: var(--rusingacademy-primary-hover);
+  --brand-accent-soft: var(--rusingacademy-primary-light);
+}
+
+
+/* --- LINGUEEFY (Marketplace Coaching) - Vibrant Cyan === */
+body[data-brand="lingueefy"],
+[data-brand="lingueefy"] {
+  --brand-accent: var(--lingueefy-primary);
+  --brand-accent-2: var(--lingueefy-primary-hover);
+  --brand-accent-soft: var(--lingueefy-primary-light);
+}
+
+
+/* --- BARHOLEX (Consulting/EdTech/Media/AI) - Bright Gold Light Luxury === */
+body[data-brand="barholex"],
+[data-brand="barholex"] {
+  --brand-accent: var(--barholex-primary);
+  --brand-accent-2: var(--barholex-primary-hover);
+  --brand-accent-soft: var(--barholex-primary-light);
+  
+  /* Light Luxury specific overrides */
+  --bg: var(--bg-cream);
+  --surface: #FFFFFF;
+}
+
+
+/* ============================================
+   LIGHT LUXURY THEME (Barholex Media)
+   ============================================ */
+.light-luxury,
+[data-theme="light-luxury"] {
+  --bg: var(--bg-cream);
+  --surface: #FFFFFF;
+  --text: #2D2A26;
+  --muted: #7A7267;
+  --border: #E8E4DC;
+  
+  /* Gold accents throughout */
+  --brand-accent: var(--barholex-primary);
+  --brand-accent-2: var(--barholex-primary-hover);
+  --brand-accent-soft: var(--barholex-primary-light);
+}
+
+.light-luxury-card {
+  background: linear-gradient(135deg, #FFFFFF 0%, var(--bg-soft-gold) 100%);
+  border: 1px solid rgba(245, 166, 35, 0.2);
+  box-shadow: var(--shadow-luxury);
+}
+
+.light-luxury-card:hover {
+  box-shadow: var(--shadow-luxury-hover);
+  border-color: rgba(245, 166, 35, 0.4);
+}
+
+
+/* ============================================
+   FOCUS STATES (WCAG 2.1 AA Compliant)
+   ============================================ */
+:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--ring);
+}
+
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[role="button"]:focus-visible,
+[tabindex]:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--ring);
+}
+
+
+/* CTA buttons get orange focus ring */
+.btn-cta:focus-visible,
+[data-cta]:focus-visible {
+  box-shadow: 0 0 0 3px var(--ring-cta);
+}
+
+/* Teal buttons get teal focus ring */
+.btn-teal:focus-visible,
+[data-brand="rusingacademy"] button:focus-visible {
+  box-shadow: 0 0 0 3px var(--ring-teal);
+}
+
+/* Gold buttons get gold focus ring */
+.btn-gold:focus-visible,
+[data-brand="barholex"] button:focus-visible {
+  box-shadow: 0 0 0 3px var(--ring-gold);
+}
+
+
+/* ============================================
+   TYPOGRAPHY UTILITIES
+   ============================================ */
+.font-display {
+  font-family: var(--font-display);
+}
+
+
+.font-ui {
+  font-family: var(--font-ui);
+}
+
+
+/* ============================================
+   COLOR UTILITY CLASSES
+   ============================================ */
+
+/* RusingÂcademy Teal */
+.text-rusingacademy { color: var(--rusingacademy-primary); }
+.bg-rusingacademy { background-color: var(--rusingacademy-primary); }
+.bg-rusingacademy-light { background-color: var(--rusingacademy-primary-light); }
+.border-rusingacademy { border-color: var(--rusingacademy-primary); }
+
+/* Lingueefy Cyan */
+.text-lingueefy { color: var(--lingueefy-primary); }
+.bg-lingueefy { background-color: var(--lingueefy-primary); }
+.bg-lingueefy-light { background-color: var(--lingueefy-primary-light); }
+.border-lingueefy { border-color: var(--lingueefy-primary); }
+
+/* Barholex Gold */
+.text-barholex { color: var(--barholex-primary); }
+.bg-barholex { background-color: var(--barholex-primary); }
+.bg-barholex-light { background-color: var(--barholex-primary-light); }
+.border-barholex { border-color: var(--barholex-primary); }
+
+/* CTA Orange */
+.text-cta { color: var(--brand-cta); }
+.bg-cta { background-color: var(--brand-cta); }
+.bg-cta-soft { background-color: var(--brand-cta-soft); }
+.border-cta { border-color: var(--brand-cta); }
+
+/* Light Luxury backgrounds */
+.bg-cream { background-color: var(--bg-cream); }
+.bg-warm { background-color: var(--bg-warm); }
+.bg-soft-gold { background-color: var(--bg-soft-gold); }
+.bg-soft-teal { background-color: var(--bg-soft-teal); }
+
+
+/* ============================================
+   BUTTON VARIANTS
+   ============================================ */
+
+/* RusingÂcademy Teal Button */
+.btn-rusingacademy {
+  background-color: var(--rusingacademy-primary);
+  color: white;
+  transition: background-color var(--transition-base);
+}
+.btn-rusingacademy:hover {
+  background-color: var(--rusingacademy-primary-hover);
+}
+
+/* Lingueefy Cyan Button */
+.btn-lingueefy {
+  background-color: var(--lingueefy-primary);
+  color: var(--brand-obsidian);
+  transition: background-color var(--transition-base);
+}
+.btn-lingueefy:hover {
+  background-color: var(--lingueefy-primary-hover);
+}
+
+/* Barholex Gold Button */
+.btn-barholex {
+  background-color: var(--barholex-primary);
+  color: var(--brand-obsidian);
+  transition: background-color var(--transition-base);
+}
+.btn-barholex:hover {
+  background-color: var(--barholex-primary-hover);
+}
+
+/* CTA Orange Button */
+.btn-cta {
+  background-color: var(--brand-cta);
+  color: white;
+  transition: background-color var(--transition-base);
+}
+.btn-cta:hover {
+  background-color: var(--brand-cta-hover);
+}
+
+
+/* ============================================
+   GRADIENT UTILITIES
+   ============================================ */
+
+/* RusingÂcademy gradient */
+.gradient-rusingacademy {
+  background: linear-gradient(135deg, var(--rusingacademy-primary) 0%, var(--rusingacademy-primary-dark) 100%);
+}
+
+/* Lingueefy gradient */
+.gradient-lingueefy {
+  background: linear-gradient(135deg, var(--lingueefy-primary) 0%, var(--lingueefy-primary-dark) 100%);
+}
+
+/* Barholex Light Luxury gradient */
+.gradient-barholex {
+  background: linear-gradient(135deg, var(--barholex-primary-light) 0%, var(--bg-cream) 100%);
+}
+
+/* Premium gold shimmer */
+.gradient-gold-shimmer {
+  background: linear-gradient(90deg, 
+    var(--barholex-primary-light) 0%, 
+    rgba(245, 166, 35, 0.3) 50%, 
+    var(--barholex-primary-light) 100%);
+}

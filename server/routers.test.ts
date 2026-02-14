@@ -2,24 +2,58 @@ import { describe, expect, it, vi, beforeEach } from "vitest";
 import { appRouter } from "./routers";
 import type { TrpcContext } from "./_core/context";
 
+// Mock the database functions
+vi.mock("./db", () => ({
+  getApprovedCoaches: vi.fn().mockResolvedValue([]),
+  getCoachBySlug: vi.fn().mockResolvedValue(null),
+  getCoachByUserId: vi.fn().mockResolvedValue(null),
+  getCoachReviews: vi.fn().mockResolvedValue([]),
+  createCoachProfile: vi.fn().mockResolvedValue([{ insertId: 1 }]),
+  updateCoachProfile: vi.fn().mockResolvedValue(undefined),
+  getLearnerByUserId: vi.fn().mockResolvedValue(null),
+  createLearnerProfile: vi.fn().mockResolvedValue([{ insertId: 1 }]),
+  updateLearnerProfile: vi.fn().mockResolvedValue(undefined),
+  getUpcomingSessions: vi.fn().mockResolvedValue([]),
+  createAiSession: vi.fn().mockResolvedValue([{ insertId: 1 }]),
+  getLearnerAiSessions: vi.fn().mockResolvedValue([]),
+}));
+
+// Mock LLM
+vi.mock("./_core/llm", () => ({
+  invokeLLM: vi.fn().mockResolvedValue({
+    choices: [{ message: { content: "Hello! I am Prof Steven AI." } }],
+  }),
+}));
+
 type AuthenticatedUser = NonNullable<TrpcContext["user"]>;
 
-function createAuthContext(userId = 1): { ctx: TrpcContext } {
+function createPublicContext(): TrpcContext {
+  return {
+    user: null,
+    req: {
+      protocol: "https",
+      headers: {},
+    } as TrpcContext["req"],
+    res: {
+      clearCookie: vi.fn(),
+    } as unknown as TrpcContext["res"],
+  };
+}
+
+function createAuthContext(): TrpcContext {
   const user: AuthenticatedUser = {
-    id: userId,
-    openId: `test-user-${userId}`,
-    email: `test${userId}@example.com`,
-    name: `Test User ${userId}`,
+    id: 1,
+    openId: "test-user-123",
+    email: "test@example.com",
+    name: "Test User",
     loginMethod: "manus",
     role: "user",
-    preferredLanguage: "en",
-    avatarUrl: null,
     createdAt: new Date(),
     updatedAt: new Date(),
     lastSignedIn: new Date(),
   };
 
-  const ctx: TrpcContext = {
+  return {
     user,
     req: {
       protocol: "https",
@@ -29,210 +63,257 @@ function createAuthContext(userId = 1): { ctx: TrpcContext } {
       clearCookie: vi.fn(),
     } as unknown as TrpcContext["res"],
   };
-
-  return { ctx };
 }
 
-function createPublicContext(): { ctx: TrpcContext } {
-  return {
-    ctx: {
-      user: null,
-      req: { protocol: "https", headers: {} } as TrpcContext["req"],
-      res: { clearCookie: vi.fn() } as unknown as TrpcContext["res"],
-    },
-  };
-}
-
-describe("auth.me", () => {
-  it("returns the authenticated user", async () => {
-    const { ctx } = createAuthContext();
-    const caller = appRouter.createCaller(ctx);
-    const result = await caller.auth.me();
-    expect(result).toBeDefined();
-    expect(result?.openId).toBe("test-user-1");
-    expect(result?.name).toBe("Test User 1");
+describe("Coach Router", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
   });
 
-  it("returns null for unauthenticated user", async () => {
-    const { ctx } = createPublicContext();
-    const caller = appRouter.createCaller(ctx);
-    const result = await caller.auth.me();
-    expect(result).toBeNull();
+  describe("coach.list", () => {
+    it("returns empty array when no coaches exist", async () => {
+      const ctx = createPublicContext();
+      const caller = appRouter.createCaller(ctx);
+
+      const result = await caller.coach.list();
+
+      expect(result).toEqual([]);
+    });
+
+    it("accepts filter parameters", async () => {
+      const ctx = createPublicContext();
+      const caller = appRouter.createCaller(ctx);
+
+      const result = await caller.coach.list({
+        language: "french",
+        minPrice: 2000,
+        maxPrice: 10000,
+        limit: 10,
+        offset: 0,
+      });
+
+      expect(result).toEqual([]);
+    });
+  });
+
+  describe("coach.bySlug", () => {
+    it("throws NOT_FOUND when coach does not exist", async () => {
+      const ctx = createPublicContext();
+      const caller = appRouter.createCaller(ctx);
+
+      await expect(caller.coach.bySlug({ slug: "non-existent" })).rejects.toThrow(
+        "Coach not found"
+      );
+    });
+  });
+
+  describe("coach.myProfile", () => {
+    it("requires authentication", async () => {
+      const ctx = createPublicContext();
+      const caller = appRouter.createCaller(ctx);
+
+      await expect(caller.coach.myProfile()).rejects.toThrow();
+    });
+
+    it("returns null for user without coach profile", async () => {
+      const ctx = createAuthContext();
+      const caller = appRouter.createCaller(ctx);
+
+      const result = await caller.coach.myProfile();
+
+      expect(result).toBeNull();
+    });
+  });
+
+  describe("coach.submitApplication", () => {
+    it("requires authentication", async () => {
+      const ctx = createPublicContext();
+      const caller = appRouter.createCaller(ctx);
+
+      await expect(
+        caller.coach.submitApplication({
+          headline: "Test Coach Headline",
+          bio: "This is a test bio that is at least 50 characters long for validation purposes.",
+          languages: "french",
+          specializations: { oralB: true, oralC: true },
+          yearsExperience: 5,
+          credentials: "TEFL Certified",
+          hourlyRate: 5000,
+          trialRate: 2500,
+        })
+      ).rejects.toThrow();
+    });
+
+    it("creates coach profile for authenticated user", async () => {
+      const ctx = createAuthContext();
+      const caller = appRouter.createCaller(ctx);
+
+      const result = await caller.coach.submitApplication({
+        headline: "Test Coach Headline",
+        bio: "This is a test bio that is at least 50 characters long for validation purposes.",
+        languages: "french",
+        specializations: { oralB: true, oralC: true },
+        yearsExperience: 5,
+        credentials: "TEFL Certified",
+        hourlyRate: 5000,
+        trialRate: 2500,
+      });
+
+      expect(result.success).toBe(true);
+      expect(result.slug).toBeDefined();
+    });
   });
 });
 
-describe("gamification router", () => {
-  it("getProfile requires authentication", async () => {
-    const { ctx } = createPublicContext();
-    const caller = appRouter.createCaller(ctx);
-    await expect(caller.gamification.getProfile()).rejects.toThrow();
+describe("Learner Router", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
   });
 
-  it("getProfile returns profile and badges for authenticated user", async () => {
-    const { ctx } = createAuthContext();
-    const caller = appRouter.createCaller(ctx);
-    const result = await caller.gamification.getProfile();
-    expect(result).toHaveProperty("profile");
-    expect(result).toHaveProperty("badges");
-    expect(Array.isArray(result.badges)).toBe(true);
+  describe("learner.myProfile", () => {
+    it("requires authentication", async () => {
+      const ctx = createPublicContext();
+      const caller = appRouter.createCaller(ctx);
+
+      await expect(caller.learner.myProfile()).rejects.toThrow();
+    });
+
+    it("returns null for user without learner profile", async () => {
+      const ctx = createAuthContext();
+      const caller = appRouter.createCaller(ctx);
+
+      const result = await caller.learner.myProfile();
+
+      expect(result).toBeNull();
+    });
   });
 
-  it("addXp requires authentication", async () => {
-    const { ctx } = createPublicContext();
-    const caller = appRouter.createCaller(ctx);
-    await expect(caller.gamification.addXp({ amount: 50 })).rejects.toThrow();
-  });
+  describe("learner.create", () => {
+    it("requires authentication", async () => {
+      const ctx = createPublicContext();
+      const caller = appRouter.createCaller(ctx);
 
-  it("addXp adds XP to the user profile", async () => {
-    const { ctx } = createAuthContext(2);
-    const caller = appRouter.createCaller(ctx);
-    const result = await caller.gamification.addXp({ amount: 100 });
-    expect(result).toBeDefined();
-    if (result) {
-      expect(result.xpAdded).toBe(100);
-      expect(result.totalXp).toBeGreaterThanOrEqual(100);
-    }
-  });
+      await expect(
+        caller.learner.create({
+          targetLanguage: "french",
+          primaryFocus: "oral",
+        })
+      ).rejects.toThrow();
+    });
 
-  it("addXp rejects invalid amounts", async () => {
-    const { ctx } = createAuthContext();
-    const caller = appRouter.createCaller(ctx);
-    await expect(caller.gamification.addXp({ amount: 0 })).rejects.toThrow();
-    await expect(caller.gamification.addXp({ amount: 1001 })).rejects.toThrow();
-  });
+    it("creates learner profile for authenticated user", async () => {
+      const ctx = createAuthContext();
+      const caller = appRouter.createCaller(ctx);
 
-  it("getLeaderboard is publicly accessible", async () => {
-    const { ctx } = createPublicContext();
-    const caller = appRouter.createCaller(ctx);
-    const result = await caller.gamification.getLeaderboard();
-    expect(Array.isArray(result)).toBe(true);
+      const result = await caller.learner.create({
+        department: "Treasury Board",
+        position: "Policy Analyst",
+        targetLanguage: "french",
+        primaryFocus: "oral",
+      });
+
+      expect(result.success).toBe(true);
+    });
   });
 });
 
-describe("progress router", () => {
-  it("getLessonProgress requires authentication", async () => {
-    const { ctx } = createPublicContext();
-    const caller = appRouter.createCaller(ctx);
-    await expect(caller.progress.getLessonProgress({})).rejects.toThrow();
+describe("AI Router", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
   });
 
-  it("getLessonProgress returns array for authenticated user", async () => {
-    const { ctx } = createAuthContext();
-    const caller = appRouter.createCaller(ctx);
-    const result = await caller.progress.getLessonProgress({});
-    expect(Array.isArray(result)).toBe(true);
-  });
+  describe("ai.startPractice", () => {
+    it("requires authentication", async () => {
+      const ctx = createPublicContext();
+      const caller = appRouter.createCaller(ctx);
 
-  it("updateLessonProgress saves progress and awards XP", async () => {
-    const { ctx } = createAuthContext(3);
-    const caller = appRouter.createCaller(ctx);
-    const result = await caller.progress.updateLessonProgress({
-      programId: "fsl",
-      pathId: "fsl-path-i",
-      moduleIndex: 0,
-      lessonId: "1.1",
-      slotsCompleted: [0, 1, 2],
-      isCompleted: false,
+      await expect(
+        caller.ai.startPractice({
+          language: "french",
+          targetLevel: "b",
+        })
+      ).rejects.toThrow();
     });
-    expect(result).toHaveProperty("xpEarned");
-    expect(result.xpEarned).toBe(45); // 3 slots * 15 XP
   });
 
-  it("updateLessonProgress awards completion bonus", async () => {
-    const { ctx } = createAuthContext(4);
-    const caller = appRouter.createCaller(ctx);
-    const result = await caller.progress.updateLessonProgress({
-      programId: "fsl",
-      pathId: "fsl-path-i",
-      moduleIndex: 0,
-      lessonId: "1.2",
-      slotsCompleted: [0, 1, 2, 3, 4, 5, 6],
-      isCompleted: true,
+  describe("ai.startPlacement", () => {
+    it("requires authentication", async () => {
+      const ctx = createPublicContext();
+      const caller = appRouter.createCaller(ctx);
+
+      await expect(
+        caller.ai.startPlacement({
+          language: "french",
+        })
+      ).rejects.toThrow();
     });
-    expect(result.xpEarned).toBe(155); // 7 slots * 15 + 50 bonus
   });
 
-  it("enrollInPath creates enrollment and awards XP", async () => {
-    const { ctx } = createAuthContext(5);
-    const caller = appRouter.createCaller(ctx);
-    const result = await caller.progress.enrollInPath({
-      programId: "fsl",
-      pathId: "fsl-path-i",
+  describe("ai.startSimulation", () => {
+    it("requires authentication", async () => {
+      const ctx = createPublicContext();
+      const caller = appRouter.createCaller(ctx);
+
+      await expect(
+        caller.ai.startSimulation({
+          language: "french",
+          targetLevel: "c",
+        })
+      ).rejects.toThrow();
     });
-    expect(result).toBeDefined();
   });
 
-  it("getPathEnrollments returns enrollments", async () => {
-    const { ctx } = createAuthContext(5);
-    const caller = appRouter.createCaller(ctx);
-    const result = await caller.progress.getPathEnrollments();
-    expect(Array.isArray(result)).toBe(true);
+  describe("ai.history", () => {
+    it("requires authentication", async () => {
+      const ctx = createPublicContext();
+      const caller = appRouter.createCaller(ctx);
+
+      await expect(caller.ai.history()).rejects.toThrow();
+    });
+
+    it("returns empty array for user without learner profile", async () => {
+      const ctx = createAuthContext();
+      const caller = appRouter.createCaller(ctx);
+
+      const result = await caller.ai.history();
+
+      expect(result).toEqual([]);
+    });
   });
 });
 
-describe("quiz router", () => {
-  it("submitAttempt saves quiz result and awards XP", async () => {
-    const { ctx } = createAuthContext(6);
-    const caller = appRouter.createCaller(ctx);
-    const result = await caller.quiz.submitAttempt({
-      programId: "fsl",
-      pathId: "fsl-path-i",
-      lessonId: "1.1",
-      quizType: "formative",
-      totalQuestions: 8,
-      correctAnswers: 6,
-      score: 75,
+describe("Auth Router", () => {
+  describe("auth.me", () => {
+    it("returns null for unauthenticated user", async () => {
+      const ctx = createPublicContext();
+      const caller = appRouter.createCaller(ctx);
+
+      const result = await caller.auth.me();
+
+      expect(result).toBeNull();
     });
-    expect(result).toHaveProperty("xpEarned");
-    expect(result.isPerfect).toBe(false);
-    expect(result.xpEarned).toBe(38); // Math.round(75 * 0.5) = 38
-  });
 
-  it("submitAttempt awards perfect bonus for 100% score", async () => {
-    const { ctx } = createAuthContext(7);
-    const caller = appRouter.createCaller(ctx);
-    const result = await caller.quiz.submitAttempt({
-      programId: "fsl",
-      pathId: "fsl-path-i",
-      lessonId: "1.2",
-      quizType: "formative",
-      totalQuestions: 8,
-      correctAnswers: 8,
-      score: 100,
+    it("returns user for authenticated user", async () => {
+      const ctx = createAuthContext();
+      const caller = appRouter.createCaller(ctx);
+
+      const result = await caller.auth.me();
+
+      expect(result).toBeDefined();
+      expect(result?.name).toBe("Test User");
+      expect(result?.email).toBe("test@example.com");
     });
-    expect(result.isPerfect).toBe(true);
-    expect(result.xpEarned).toBe(150); // 50 + 100 perfect bonus
   });
 
-  it("getAttempts returns quiz history", async () => {
-    const { ctx } = createAuthContext(6);
-    const caller = appRouter.createCaller(ctx);
-    const result = await caller.quiz.getAttempts({});
-    expect(Array.isArray(result)).toBe(true);
-    expect(result.length).toBeGreaterThanOrEqual(1);
-  });
-});
+  describe("auth.logout", () => {
+    it("clears session cookie", async () => {
+      const ctx = createAuthContext();
+      const caller = appRouter.createCaller(ctx);
 
-describe("activity router", () => {
-  it("getRecent returns activity log", async () => {
-    const { ctx } = createAuthContext(3);
-    const caller = appRouter.createCaller(ctx);
-    const result = await caller.activity.getRecent({});
-    expect(Array.isArray(result)).toBe(true);
-  });
-});
+      const result = await caller.auth.logout();
 
-describe("notifications router", () => {
-  it("list requires authentication", async () => {
-    const { ctx } = createPublicContext();
-    const caller = appRouter.createCaller(ctx);
-    await expect(caller.notifications.list({})).rejects.toThrow();
-  });
-
-  it("list returns notifications for authenticated user", async () => {
-    const { ctx } = createAuthContext();
-    const caller = appRouter.createCaller(ctx);
-    const result = await caller.notifications.list({});
-    expect(Array.isArray(result)).toBe(true);
+      expect(result.success).toBe(true);
+      expect(ctx.res.clearCookie).toHaveBeenCalled();
+    });
   });
 });

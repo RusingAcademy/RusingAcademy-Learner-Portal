@@ -13,7 +13,8 @@ export default defineConfig({
     },
   },
   test: {
-    environment: "node",
+    // Server tests use node environment
     include: ["server/**/*.test.ts", "server/**/*.spec.ts"],
+    environment: "node",
   },
 });

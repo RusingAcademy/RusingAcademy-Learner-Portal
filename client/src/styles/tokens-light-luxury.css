@@ -1,0 +1,122 @@
+/**
+ * ============================================
+ * RUSINGACADEMY ECOSYSTEM - DESIGN TOKENS
+ * ============================================
+ *
+ * Design System: Néo-Institutionnel / Organic Tech
+ * Version: 4.0.0 - LIGHT LUXURY PALETTE
+ *
+ * Palette: Vibrant Teal + Bright Gold + Light Luxury
+ * Typography: Merriweather (display) + Inter (UI)
+ *
+ * This file is the SINGLE SOURCE OF TRUTH for all colors,
+ * spacing, shadows, and UI tokens across the ecosystem.
+ *
+ * UPDATED: Light Luxury palette as per user specification
+ */
+
+/* ============================================
+   GOOGLE FONTS IMPORT
+   ============================================ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:wght@400;700;900&display=swap');
+
+/* ============================================
+   ROOT TOKENS - LIGHT LUXURY MASTER PALETTE
+   ============================================ */
+:root {
+  /* === FOUNDATION / TRUST (Deep Forest Teal) === */
+  --brand-foundation: #0F3D3E;
+  --brand-foundation-2: #145A5B;
+  --brand-foundation-soft: #E7F2F2;
+
+  /* === RUSINGÂCADEMY PRIMARY (Vibrant Teal) === */
+  --rusingacademy-primary: #1E9B8A;
+  --rusingacademy-primary-hover: #178A7A;
+  --rusingacademy-primary-light: #E6F5F3;
+  --rusingacademy-primary-dark: #176B5D;
+
+  /* === BARHOLEX MEDIA PRIMARY (Bright Gold - Light Luxury) === */
+  --barholex-primary: #F5A623;
+  --barholex-primary-hover: #E09515;
+  --barholex-primary-light: #FEF7E6;
+  --barholex-primary-dark: #C48A1C;
+
+  /* === LINGUEEFY PRIMARY (Vibrant Cyan) === */
+  --lingueefy-primary: #17E2C6;
+  --lingueefy-primary-hover: #14C9B0;
+  --lingueefy-primary-light: #E8FFFB;
+  --lingueefy-primary-dark: #0FB8A0;
+
+  /* === CTA ORANGE (High-Priority Actions) === */
+  --brand-cta: #FF6A2B;
+  --brand-cta-hover: #E85A1F;
+  --brand-cta-soft: #FFF1E8;
+
+  /* === PREMIUM DARK (Obsidian Grey) === */
+  --brand-obsidian: #111827;
+  --brand-obsidian-2: #0B1220;
+
+  /* === NEUTRALS (Porcelain & Sand) === */
+  --bg: #F7F6F3;
+  --surface: #FFFFFF;
+  --sand: #EEE9DF;
+  --text: #0B1220;
+  --text-inverse: #FFFFFF;
+  --text-on-dark: #F7F6F3;
+  --muted: #6B7280;
+  --muted-on-dark: rgba(255, 255, 255, 0.7);
+  --border: #E5E7EB;
+
+  /* === LEGACY BRAND ACCENTS (backward compatibility) === */
+  --rusingacademy-accent: var(--rusingacademy-primary);
+  --rusingacademy-accent-2: var(--rusingacademy-primary-hover);
+  --rusingacademy-accent-soft: var(--rusingacademy-primary-light);
+
+  --lingueefy-accent: var(--lingueefy-primary);
+  --lingueefy-accent-2: var(--lingueefy-primary-hover);
+  --lingueefy-accent-soft: var(--lingueefy-primary-light);
+
+  --barholex-gold: var(--barholex-primary);
+  --barholex-gold-2: var(--barholex-primary-hover);
+  --barholex-gold-soft: var(--barholex-primary-light);
+
+  /* === SEMANTIC COLORS === */
+  --danger: #B42318;
+  --danger-soft: #FEE4E2;
+  --success: #067647;
+  --success-soft: #DCFCE7;
+  --warning: #DC6803;
+  --warning-soft: #FEF3C7;
+  --info: #0284C7;
+  --info-soft: #E0F2FE;
+
+  /* === TYPOGRAPHY === */
+  --font-display: 'Merriweather', Georgia, serif;
+  --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* === SPACING (8-point grid) === */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+
+  /* === BORDER RADIUS === */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+
+  /* === SHADOWS === */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}

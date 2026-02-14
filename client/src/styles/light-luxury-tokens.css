@@ -1,0 +1,243 @@
+/**
+ * RusingÂcademy Ecosystem Design Tokens v5.0.0
+ * Light Luxury Palette - Official
+ * 
+ * Rules:
+ * - Light backgrounds everywhere (ivory/white)
+ * - Orange = CTA primary only
+ * - Violet = SLE AI Companion widget only
+ * - Barholex = Light Luxury (gold + light bg, NO dark backgrounds)
+ */
+
+:root {
+  /* ========================================
+     CORE BACKGROUNDS (Light Luxury)
+     ======================================== */
+  --bg: #FEFEF8;              /* Main background - warm ivory */
+  --bg-alt: #F5F1D6;          /* Alternate background - soft cream */
+  --surface: #FFFFFF;         /* Cards, modals - pure white */
+  --border: #E6E6E0;          /* Borders - soft gray */
+  
+  /* ========================================
+     TEXT COLORS (HIGH CONTRAST)
+     ======================================== */
+  --text: #0a0a0a;            /* Primary text - near black for max contrast */
+  --text-muted: #374151;      /* Secondary text - dark gray (was #4A5B66) */
+  --text-inverse: #FFFFFF;    /* Text on dark/colored backgrounds */
+  --text-paragraph: #1f2937;  /* Paragraph text - very dark gray */
+  
+  /* ========================================
+     BRAND COLORS - ECOSYSTEM
+     ======================================== */
+  /* RusingÂcademy - Teal */
+  --teal: #008090;
+  --teal-hover: #00A0A0;
+  --teal-light: #E6F5F5;
+  
+  /* Lingueefy - Cyan */
+  --lingueefy-cyan: #17E2C6;
+  --lingueefy-cyan-hover: #0FB8A0;
+  --lingueefy-cyan-light: #E6FBF8;
+  
+  /* Barholex Media - Gold (Light Luxury) */
+  --barholex-gold: #F5A623;
+  --barholex-gold-hover: #E69500;
+  --barholex-gold-light: #FEF9EE;
+  --barholex-ink: #111827;
+  
+  /* ========================================
+     CTA COLORS (Orange Only)
+     ======================================== */
+  --cta: #F08800;
+  --cta-hover: #D97A00;
+  --cta-light: #FEF3E6;
+  
+  /* ========================================
+     AI COMPANION (Violet Only)
+     ======================================== */
+  --ai-violet: #6D28D9;
+  --ai-violet-hover: #5B21B6;
+  --ai-violet-light: #F3EEFF;
+  --ai-violet-halo: rgba(109, 40, 217, 0.10);
+  
+  /* ========================================
+     SEMANTIC COLORS
+     ======================================== */
+  --success: #10B981;
+  --success-light: #ECFDF5;
+  --warning: #F59E0B;
+  --warning-light: #FFFBEB;
+  --error: #EF4444;
+  --error-light: #FEF2F2;
+  --info: #3B82F6;
+  --info-light: #EFF6FF;
+  
+  /* ========================================
+     SHADOWS & EFFECTS
+     ======================================== */
+  --shadow-sm: 0 1px 2px rgba(8, 32, 56, 0.05);
+  --shadow-md: 0 4px 6px rgba(8, 32, 56, 0.07);
+  --shadow-lg: 0 10px 15px rgba(8, 32, 56, 0.10);
+  --shadow-xl: 0 20px 25px rgba(8, 32, 56, 0.15);
+  
+  /* ========================================
+     BORDER RADIUS
+     ======================================== */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+  
+  /* ========================================
+     TRANSITIONS
+     ======================================== */
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+  --transition-slow: 350ms ease;
+  
+  /* ========================================
+     TYPOGRAPHY
+     ======================================== */
+  --font-heading: 'Merriweather', Georgia, serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  
+  /* ========================================
+     SPACING (8-point grid)
+     ======================================== */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+  
+  /* ========================================
+     LEGACY MAPPINGS (for compatibility)
+     ======================================== */
+  --brand-foundation: var(--teal);
+  --brand-cta: var(--cta);
+  --brand-accent: var(--barholex-gold);
+  --background: var(--bg);
+  --foreground: var(--text);
+  --muted: var(--bg-alt);                    /* Background muted - cream */
+  --muted-foreground: #374151;               /* TEXT muted - DARK GRAY for contrast */
+  --card: var(--surface);
+  --card-foreground: var(--text);
+  --primary: var(--teal);
+  --primary-foreground: var(--text-inverse);
+  --secondary: var(--bg-alt);
+  --secondary-foreground: var(--text);
+  --accent: var(--barholex-gold);
+  --accent-foreground: var(--barholex-ink);
+  --destructive: var(--error);
+  --destructive-foreground: var(--text-inverse);
+  --ring: var(--teal);
+  --input: var(--border);
+  --popover: var(--surface);
+  --popover-foreground: var(--text);
+}
+
+/* ========================================
+   COMPONENT UTILITIES
+   ======================================== */
+
+/* CTA Buttons (Orange) */
+.btn-cta {
+  background-color: var(--cta);
+  color: var(--text-inverse);
+  border: none;
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.btn-cta:hover {
+  background-color: var(--cta-hover);
+}
+
+/* Teal Buttons (Secondary) */
+.btn-teal {
+  background-color: var(--teal);
+  color: var(--text-inverse);
+  border: none;
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.btn-teal:hover {
+  background-color: var(--teal-hover);
+}
+
+/* Barholex Gold Accents */
+.barholex-accent {
+  color: var(--barholex-gold);
+}
+
+.barholex-bg {
+  background-color: var(--barholex-gold-light);
+}
+
+.barholex-border {
+  border-color: var(--barholex-gold);
+}
+
+/* AI Companion Widget (Violet) */
+.ai-widget {
+  background-color: var(--ai-violet);
+  color: var(--text-inverse);
+  box-shadow: 0 0 20px var(--ai-violet-halo);
+}
+
+.ai-widget:hover {
+  background-color: var(--ai-violet-hover);
+}
+
+/* Light Luxury Cards */
+.card-luxury {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+/* Section Backgrounds */
+.section-light {
+  background-color: var(--bg);
+}
+
+.section-alt {
+  background-color: var(--bg-alt);
+}
+
+/* Text Utilities */
+.text-primary {
+  color: var(--text);
+}
+
+.text-muted {
+  color: var(--text-muted);
+}
+
+.text-teal {
+  color: var(--teal);
+}
+
+.text-gold {
+  color: var(--barholex-gold);
+}
+
+.text-cta {
+  color: var(--cta);
+}

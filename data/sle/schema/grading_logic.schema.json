@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "grading_logic",
+  "title": "SLE Grading Logic Configuration",
+  "description": "Sustained performance rules, rolling window, and score thresholds.",
+  "type": "object",
+  "required": ["id", "rolling_window_sessions", "sustained_threshold", "level_thresholds", "composite_rules", "criteria_weights"],
+  "properties": {
+    "id": { "type": "string", "const": "GRADING-V1" },
+    "rolling_window_sessions": { "type": "integer", "minimum": 3, "maximum": 20 },
+    "sustained_threshold": { "type": "number", "minimum": 0.5, "maximum": 1.0, "description": "Fraction of window sessions that must be at a level to award it" },
+    "level_thresholds": {
+      "type": "object",
+      "required": ["A", "B", "C"],
+      "properties": {
+        "A": { "type": "object", "required": ["min_score", "max_score"], "properties": { "min_score": { "type": "number" }, "max_score": { "type": "number" } } },
+        "B": { "type": "object", "required": ["min_score", "max_score"], "properties": { "min_score": { "type": "number" }, "max_score": { "type": "number" } } },
+        "C": { "type": "object", "required": ["min_score", "max_score"], "properties": { "min_score": { "type": "number" }, "max_score": { "type": "number" } } }
+      }
+    },
+    "criteria_weights": {
+      "type": "object",
+      "required": ["fluency", "comprehension", "vocabulary", "grammar", "pronunciation"],
+      "properties": {
+        "fluency": { "type": "number" },
+        "comprehension": { "type": "number" },
+        "vocabulary": { "type": "number" },
+        "grammar": { "type": "number" },
+        "pronunciation": { "type": "number" }
+      }
+    },
+    "composite_rules": { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+  },
+  "additionalProperties": false
+}
