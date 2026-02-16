@@ -665,3 +665,11 @@
 - [x] Compact layout: absolute-positioned logo + stats, MacBook centered with negative margin
 - [x] High-end, modern, professional finish with glassmorphism auth card
 - [x] All 399/399 vitest tests passing, zero TypeScript errors
+
+## 20-Wave Beautification & Aesthetification Program
+- [ ] Phase 1: Deep audit of entire codebase (pages, components, styles, routes, UI states)
+- [ ] Phase 2: Research best practices (EdTech LMS, gov-ready UI, design systems, accessibility, trust)
+- [ ] Phase 3: Produce BEAUTIFICATION_AUDIT.md
+- [ ] Phase 4: Produce DESIGN_SYSTEM_BASELINE.md
+- [ ] Phase 5: Produce WAVES_20_PLAN.md
+- [ ] Phase 6: Deliver documents and present Wave 1 for execution
