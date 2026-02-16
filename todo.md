@@ -673,3 +673,7 @@
 - [ ] Phase 4: Produce DESIGN_SYSTEM_BASELINE.md
 - [ ] Phase 5: Produce WAVES_20_PLAN.md
 - [ ] Phase 6: Deliver documents and present Wave 1 for execution
+
+## Login Page Visual Edits v3
+- [x] Replace logo with real RusingÂcademy logo (teal R on orange), make it bigger, center above computer
+- [x] Center stats/counters and move them below the computer mockup

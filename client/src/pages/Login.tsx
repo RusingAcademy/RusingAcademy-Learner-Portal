@@ -32,7 +32,7 @@ const DASHBOARD_SCREENSHOT =
   "https://files.manuscdn.com/user_upload_by_module/session_file/310519663049070748/VszWDDWmVcPrzvxa.png";
 
 const LOGO_ICON =
-  "https://files.manuscdn.com/user_upload_by_module/session_file/310519663049070748/mrXRaWLUDJGHdcjc.png";
+  "https://files.manuscdn.com/user_upload_by_module/session_file/310519663049070748/vOOwfivmRZqlQBIL.png";
 
 /* ─── CSS MacBook Mockup Component ─── */
 function MacBookMockup({ screenshot, alt }: { screenshot: string; alt: string }) {
@@ -315,28 +315,26 @@ export default function Login() {
         <div className="absolute bottom-20 left-8 w-40 h-40 rounded-full bg-[#C9A96A]/[0.06] blur-3xl pointer-events-none" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-[#2A5C5A]/[0.02] blur-[100px] pointer-events-none" />
 
-        {/* Top-left: Logo + Brand (absolute overlay) */}
-        <div className="absolute top-3 left-5 z-20 flex items-center gap-2.5">
+        {/* TOP: Logo + Brand — centered above the MacBook */}
+        <div className="relative z-20 flex flex-col items-center pt-2 mb-1">
           <img
             src={LOGO_ICON}
             alt="RusingÂcademy"
-            className="w-8 h-8 rounded-lg shadow-md object-contain"
+            className="w-16 h-16 rounded-2xl shadow-lg object-contain mb-1.5"
           />
-          <div>
-            <h1
-              className="text-base text-[#1a1a1a] leading-tight"
-              style={{ fontFamily: "'DM Serif Display', serif" }}
-            >
-              RusingÂcademy
-            </h1>
-            <p className="text-[#2A5C5A] font-semibold text-[8px] tracking-[0.15em] uppercase">
-              {t("Learning Portal", "Portail d'apprentissage")}
-            </p>
-          </div>
+          <h1
+            className="text-xl text-[#1a1a1a] leading-tight text-center"
+            style={{ fontFamily: "'DM Serif Display', serif" }}
+          >
+            RusingÂcademy
+          </h1>
+          <p className="text-[#2A5C5A] font-semibold text-[9px] tracking-[0.18em] uppercase">
+            {t("Learning Portal", "Portail d'apprentissage")}
+          </p>
         </div>
 
-        {/* Center: MacBook Mockup — fills the panel */}
-        <div className="relative z-10 w-full px-4" style={{ marginTop: "-8vh" }}>
+        {/* CENTER: MacBook Mockup — fills the panel */}
+        <div className="relative z-10 w-full px-4 flex-1 flex items-center" style={{ marginTop: "-2vh" }}>
           <div className="w-full">
             <MacBookMockup
               screenshot={DASHBOARD_SCREENSHOT}
@@ -348,15 +346,15 @@ export default function Login() {
           </div>
         </div>
 
-        {/* Bottom-left: Tagline + Stats (absolute overlay) */}
-        <div className="absolute bottom-2 left-5 right-5 z-20">
-          <p className="text-[#555] text-[10px] leading-relaxed mb-1.5 max-w-md">
+        {/* BOTTOM: Tagline + Stats — centered below the MacBook */}
+        <div className="relative z-20 pb-3 px-5">
+          <p className="text-[#555] text-[10px] leading-relaxed mb-2 text-center max-w-md mx-auto">
             {t(
               "Master your second official language with Canada's premier bilingual training platform.",
               "Maîtrisez votre langue seconde officielle avec la première plateforme bilingue de formation au Canada."
             )}
           </p>
-          <div className="flex items-center gap-5">
+          <div className="flex items-center justify-center gap-6">
             {[
               { n: "12", l: t("Paths", "Parcours") },
               { n: "192", l: t("Lessons", "Leçons") },
@@ -364,12 +362,12 @@ export default function Login() {
             ].map((s) => (
               <div key={s.l} className="flex items-baseline gap-1.5">
                 <span
-                  className="text-base font-bold text-[#2A5C5A]"
+                  className="text-lg font-bold text-[#2A5C5A]"
                   style={{ fontFamily: "'DM Serif Display', serif" }}
                 >
                   {s.n}
                 </span>
-                <span className="text-[8px] font-semibold text-[#999] tracking-[0.12em] uppercase">
+                <span className="text-[9px] font-semibold text-[#999] tracking-[0.12em] uppercase">
                   {s.l}
                 </span>
               </div>
