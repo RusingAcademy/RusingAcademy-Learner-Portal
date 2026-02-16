@@ -82,6 +82,180 @@ function FloatingOrb({
   );
 }
 
+/* ─── Realistic MacBook Keyboard ─── */
+const KEY_STYLE: React.CSSProperties = {
+  background: "linear-gradient(180deg, #333 0%, #252525 40%, #1e1e1e 100%)",
+  borderRadius: "2px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  color: "#b0b0b0",
+  fontFamily: "'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif",
+  fontWeight: 400,
+  lineHeight: 1,
+  userSelect: "none" as const,
+  boxShadow: "0 0.5px 1px rgba(0,0,0,0.4), inset 0 0.5px 0 rgba(255,255,255,0.06), inset 0 -0.5px 0 rgba(0,0,0,0.2)",
+  position: "relative" as const,
+  overflow: "hidden" as const,
+};
+
+function Key({ label, w, h = 9, fontSize = 3.5 }: { label: string; w?: string; h?: number; fontSize?: number }) {
+  return (
+    <div
+      className="flex-1"
+      style={{
+        ...KEY_STYLE,
+        height: `${h}px`,
+        fontSize: `${fontSize}px`,
+        letterSpacing: "0.2px",
+        ...(w ? { flex: "none", width: w } : {}),
+      }}
+    >
+      {label}
+    </div>
+  );
+}
+
+function FnKey({ label }: { label: string }) {
+  return (
+    <div
+      className="flex-1"
+      style={{
+        ...KEY_STYLE,
+        height: "6px",
+        fontSize: "2.5px",
+        letterSpacing: "0.1px",
+      }}
+    >
+      {label}
+    </div>
+  );
+}
+
+function RealisticKeyboard() {
+  return (
+    <div className="flex flex-col gap-[1.5px]">
+      {/* Row 0 — Touch Bar / Function keys */}
+      <div className="flex gap-[1.5px]">
+        <FnKey label="esc" />
+        <FnKey label="F1" />
+        <FnKey label="F2" />
+        <FnKey label="F3" />
+        <FnKey label="F4" />
+        <FnKey label="F5" />
+        <FnKey label="F6" />
+        <FnKey label="F7" />
+        <FnKey label="F8" />
+        <FnKey label="F9" />
+        <FnKey label="F10" />
+        <FnKey label="F11" />
+        <FnKey label="F12" />
+        <div className="flex-1" style={{ ...KEY_STYLE, height: "6px", fontSize: "2.5px" }}>
+          <svg width="5" height="3" viewBox="0 0 10 6" fill="none"><circle cx="5" cy="3" r="2.5" stroke="#888" strokeWidth="0.8" fill="none" /></svg>
+        </div>
+      </div>
+
+      {/* Row 1 — Number row */}
+      <div className="flex gap-[1.5px]">
+        <Key label="`" />
+        <Key label="1" />
+        <Key label="2" />
+        <Key label="3" />
+        <Key label="4" />
+        <Key label="5" />
+        <Key label="6" />
+        <Key label="7" />
+        <Key label="8" />
+        <Key label="9" />
+        <Key label="0" />
+        <Key label="-" />
+        <Key label="=" />
+        <Key label="delete" w="9.5%" fontSize={2.8} />
+      </div>
+
+      {/* Row 2 — QWERTY */}
+      <div className="flex gap-[1.5px]">
+        <Key label="tab" w="9%" fontSize={2.8} />
+        <Key label="Q" />
+        <Key label="W" />
+        <Key label="E" />
+        <Key label="R" />
+        <Key label="T" />
+        <Key label="Y" />
+        <Key label="U" />
+        <Key label="I" />
+        <Key label="O" />
+        <Key label="P" />
+        <Key label="[" />
+        <Key label="]" />
+        <Key label="\\" />
+      </div>
+
+      {/* Row 3 — ASDF */}
+      <div className="flex gap-[1.5px]">
+        <Key label="caps" w="11%" fontSize={2.8} />
+        <Key label="A" />
+        <Key label="S" />
+        <Key label="D" />
+        <Key label="F" />
+        <Key label="G" />
+        <Key label="H" />
+        <Key label="J" />
+        <Key label="K" />
+        <Key label="L" />
+        <Key label=";" />
+        <Key label="'" />
+        <Key label="return" w="11%" fontSize={2.8} />
+      </div>
+
+      {/* Row 4 — ZXCV */}
+      <div className="flex gap-[1.5px]">
+        <Key label="shift" w="14%" fontSize={2.8} />
+        <Key label="Z" />
+        <Key label="X" />
+        <Key label="C" />
+        <Key label="V" />
+        <Key label="B" />
+        <Key label="N" />
+        <Key label="M" />
+        <Key label="," />
+        <Key label="." />
+        <Key label="/" />
+        <Key label="shift" w="14%" fontSize={2.8} />
+      </div>
+
+      {/* Row 5 — Space bar row */}
+      <div className="flex gap-[1.5px] items-end">
+        <Key label="fn" w="5%" fontSize={2.5} />
+        <Key label="ctrl" w="5%" fontSize={2.5} />
+        <Key label="opt" w="5%" fontSize={2.5} />
+        <Key label="cmd" w="7%" fontSize={2.5} />
+        {/* Space bar */}
+        <div
+          className="flex-1"
+          style={{
+            ...KEY_STYLE,
+            height: "9px",
+          }}
+        />
+        <Key label="cmd" w="7%" fontSize={2.5} />
+        <Key label="opt" w="5%" fontSize={2.5} />
+        {/* Arrow keys — inverted T */}
+        <div className="flex flex-col gap-[0.5px]" style={{ width: "10%", flexShrink: 0 }}>
+          <div className="flex justify-center">
+            <div style={{ ...KEY_STYLE, height: "4px", width: "33%", fontSize: "3px" }}>▲</div>
+          </div>
+          <div className="flex gap-[0.5px]">
+            <div style={{ ...KEY_STYLE, height: "4px", flex: 1, fontSize: "3px" }}>◀</div>
+            <div style={{ ...KEY_STYLE, height: "4px", flex: 1, fontSize: "3px" }}>▼</div>
+            <div style={{ ...KEY_STYLE, height: "4px", flex: 1, fontSize: "3px" }}>▶</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ─── CSS MacBook Mockup ─── */
 function MacBookMockup({
   screenshot,
@@ -179,97 +353,16 @@ function MacBookMockup({
               "0 4px 12px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.5)",
           }}
         >
-          {/* Keyboard rows */}
-          <div className="flex flex-col gap-[2px]">
-            {/* Row 1 — function keys */}
-            <div className="flex gap-[2px]">
-              {Array.from({ length: 14 }).map((_, i) => (
-                <div
-                  key={`r1-${i}`}
-                  className="flex-1 rounded-[2px]"
-                  style={{
-                    height: "6px",
-                    background: "linear-gradient(180deg, #2a2a2a 0%, #1f1f1f 100%)",
-                    boxShadow: "0 0.5px 1px rgba(0,0,0,0.3), inset 0 0.5px 0 rgba(255,255,255,0.05)",
-                  }}
-                />
-              ))}
-            </div>
-            {/* Row 2 — number keys */}
-            <div className="flex gap-[2px]">
-              {Array.from({ length: 13 }).map((_, i) => (
-                <div
-                  key={`r2-${i}`}
-                  className="flex-1 rounded-[2px]"
-                  style={{
-                    height: "8px",
-                    background: "linear-gradient(180deg, #2a2a2a 0%, #1f1f1f 100%)",
-                    boxShadow: "0 0.5px 1px rgba(0,0,0,0.3), inset 0 0.5px 0 rgba(255,255,255,0.05)",
-                  }}
-                />
-              ))}
-            </div>
-            {/* Row 3 — QWERTY */}
-            <div className="flex gap-[2px]">
-              <div className="rounded-[2px]" style={{ width: "10%", height: "8px", background: "linear-gradient(180deg, #2a2a2a 0%, #1f1f1f 100%)", boxShadow: "0 0.5px 1px rgba(0,0,0,0.3), inset 0 0.5px 0 rgba(255,255,255,0.05)" }} />
-              {Array.from({ length: 11 }).map((_, i) => (
-                <div
-                  key={`r3-${i}`}
-                  className="flex-1 rounded-[2px]"
-                  style={{
-                    height: "8px",
-                    background: "linear-gradient(180deg, #2a2a2a 0%, #1f1f1f 100%)",
-                    boxShadow: "0 0.5px 1px rgba(0,0,0,0.3), inset 0 0.5px 0 rgba(255,255,255,0.05)",
-                  }}
-                />
-              ))}
-              <div className="rounded-[2px]" style={{ width: "10%", height: "8px", background: "linear-gradient(180deg, #2a2a2a 0%, #1f1f1f 100%)", boxShadow: "0 0.5px 1px rgba(0,0,0,0.3), inset 0 0.5px 0 rgba(255,255,255,0.05)" }} />
-            </div>
-            {/* Row 4 — ASDF */}
-            <div className="flex gap-[2px]">
-              <div className="rounded-[2px]" style={{ width: "12%", height: "8px", background: "linear-gradient(180deg, #2a2a2a 0%, #1f1f1f 100%)", boxShadow: "0 0.5px 1px rgba(0,0,0,0.3), inset 0 0.5px 0 rgba(255,255,255,0.05)" }} />
-              {Array.from({ length: 10 }).map((_, i) => (
-                <div
-                  key={`r4-${i}`}
-                  className="flex-1 rounded-[2px]"
-                  style={{
-                    height: "8px",
-                    background: "linear-gradient(180deg, #2a2a2a 0%, #1f1f1f 100%)",
-                    boxShadow: "0 0.5px 1px rgba(0,0,0,0.3), inset 0 0.5px 0 rgba(255,255,255,0.05)",
-                  }}
-                />
-              ))}
-              <div className="rounded-[2px]" style={{ width: "12%", height: "8px", background: "linear-gradient(180deg, #2a2a2a 0%, #1f1f1f 100%)", boxShadow: "0 0.5px 1px rgba(0,0,0,0.3), inset 0 0.5px 0 rgba(255,255,255,0.05)" }} />
-            </div>
-            {/* Row 5 — space bar row */}
-            <div className="flex gap-[2px] items-center">
-              <div className="rounded-[2px]" style={{ width: "8%", height: "8px", background: "linear-gradient(180deg, #2a2a2a 0%, #1f1f1f 100%)", boxShadow: "0 0.5px 1px rgba(0,0,0,0.3), inset 0 0.5px 0 rgba(255,255,255,0.05)" }} />
-              <div className="rounded-[2px]" style={{ width: "6%", height: "8px", background: "linear-gradient(180deg, #2a2a2a 0%, #1f1f1f 100%)", boxShadow: "0 0.5px 1px rgba(0,0,0,0.3), inset 0 0.5px 0 rgba(255,255,255,0.05)" }} />
-              <div className="rounded-[2px]" style={{ width: "6%", height: "8px", background: "linear-gradient(180deg, #2a2a2a 0%, #1f1f1f 100%)", boxShadow: "0 0.5px 1px rgba(0,0,0,0.3), inset 0 0.5px 0 rgba(255,255,255,0.05)" }} />
-              {/* Space bar */}
-              <div className="flex-1 rounded-[2px]" style={{ height: "8px", background: "linear-gradient(180deg, #2a2a2a 0%, #1f1f1f 100%)", boxShadow: "0 0.5px 1px rgba(0,0,0,0.3), inset 0 0.5px 0 rgba(255,255,255,0.05)" }} />
-              <div className="rounded-[2px]" style={{ width: "6%", height: "8px", background: "linear-gradient(180deg, #2a2a2a 0%, #1f1f1f 100%)", boxShadow: "0 0.5px 1px rgba(0,0,0,0.3), inset 0 0.5px 0 rgba(255,255,255,0.05)" }} />
-              <div className="rounded-[2px]" style={{ width: "6%", height: "8px", background: "linear-gradient(180deg, #2a2a2a 0%, #1f1f1f 100%)", boxShadow: "0 0.5px 1px rgba(0,0,0,0.3), inset 0 0.5px 0 rgba(255,255,255,0.05)" }} />
-              {/* Arrow keys */}
-              <div className="flex flex-col gap-[1px]" style={{ width: "8%" }}>
-                <div className="rounded-[1px] mx-auto" style={{ width: "60%", height: "3.5px", background: "linear-gradient(180deg, #2a2a2a 0%, #1f1f1f 100%)", boxShadow: "0 0.5px 1px rgba(0,0,0,0.3)" }} />
-                <div className="flex gap-[1px]">
-                  {Array.from({ length: 3 }).map((_, i) => (
-                    <div key={`arr-${i}`} className="flex-1 rounded-[1px]" style={{ height: "3.5px", background: "linear-gradient(180deg, #2a2a2a 0%, #1f1f1f 100%)", boxShadow: "0 0.5px 1px rgba(0,0,0,0.3)" }} />
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
+          <RealisticKeyboard />
 
           {/* Trackpad */}
           <div
-            className="mx-auto mt-[4px] rounded-[4px]"
+            className="mx-auto mt-[5px] rounded-[4px]"
             style={{
               width: "38%",
-              height: "22px",
-              background: "linear-gradient(180deg, #d0d0d0 0%, #c4c4c4 100%)",
-              boxShadow: "inset 0 0 0 0.5px rgba(0,0,0,0.12), inset 0 1px 2px rgba(0,0,0,0.06)",
+              height: "24px",
+              background: "linear-gradient(180deg, #d2d2d2 0%, #c6c6c6 100%)",
+              boxShadow: "inset 0 0 0 0.5px rgba(0,0,0,0.1), inset 0 1px 2px rgba(0,0,0,0.05)",
             }}
           />
         </div>

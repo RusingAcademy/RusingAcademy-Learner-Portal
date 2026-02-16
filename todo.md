@@ -702,3 +702,10 @@
 ## Login Page MacBook Adjustments
 - [x] Make the MacBook mockup bigger (max-w 520px → 600px)
 - [x] Add visible keyboard with 5 key rows, arrow keys, trackpad, and hinge to the CSS laptop frame
+
+## Login Page — Realistic MacBook Keyboard
+- [x] Replace abstract dark rectangles with realistic MacBook-style keyboard
+- [x] Add proper key labels (esc, F1–F12, numbers, QWERTY, ASDF, ZXCV, fn/ctrl/opt/cmd)
+- [x] Correct key sizing ratios (Tab 9%, Caps 11%, Shift 14%, Return 11%, Delete 9.5%)
+- [x] Beveled key caps with 3D gradient + box-shadow depth
+- [x] Proper MacBook keyboard layout with inverted-T arrow keys and trackpad
