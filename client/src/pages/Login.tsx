@@ -136,28 +136,140 @@ function MacBookMockup({
           </div>
         </div>
 
-        {/* Bottom hinge / base */}
+        {/* Bottom hinge / lip */}
         <div
           className="mx-auto relative"
           style={{
             width: "108%",
             maxWidth: "108%",
             marginLeft: "-4%",
-            height: "10px",
+            height: "6px",
             background:
               "linear-gradient(180deg, #c0c0c0 0%, #a8a8a8 30%, #b8b8b8 70%, #d0d0d0 100%)",
-            borderRadius: "0 0 6px 6px",
+            borderRadius: "0 0 2px 2px",
             boxShadow:
-              "0 2px 8px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.4)",
+              "0 1px 4px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.4)",
           }}
         >
           <div
             className="absolute top-0 left-1/2 -translate-x-1/2"
             style={{
               width: "16%",
-              height: "3px",
+              height: "2px",
               background: "linear-gradient(180deg, #999 0%, #b0b0b0 100%)",
-              borderRadius: "0 0 3px 3px",
+              borderRadius: "0 0 2px 2px",
+            }}
+          />
+        </div>
+
+        {/* Keyboard body */}
+        <div
+          className="mx-auto relative"
+          style={{
+            width: "112%",
+            maxWidth: "112%",
+            marginLeft: "-6%",
+            marginTop: "0px",
+            height: "auto",
+            background:
+              "linear-gradient(180deg, #e8e8e8 0%, #d4d4d4 40%, #c8c8c8 100%)",
+            borderRadius: "0 0 8px 8px",
+            padding: "6px 10px 8px 10px",
+            boxShadow:
+              "0 4px 12px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.5)",
+          }}
+        >
+          {/* Keyboard rows */}
+          <div className="flex flex-col gap-[2px]">
+            {/* Row 1 — function keys */}
+            <div className="flex gap-[2px]">
+              {Array.from({ length: 14 }).map((_, i) => (
+                <div
+                  key={`r1-${i}`}
+                  className="flex-1 rounded-[2px]"
+                  style={{
+                    height: "6px",
+                    background: "linear-gradient(180deg, #2a2a2a 0%, #1f1f1f 100%)",
+                    boxShadow: "0 0.5px 1px rgba(0,0,0,0.3), inset 0 0.5px 0 rgba(255,255,255,0.05)",
+                  }}
+                />
+              ))}
+            </div>
+            {/* Row 2 — number keys */}
+            <div className="flex gap-[2px]">
+              {Array.from({ length: 13 }).map((_, i) => (
+                <div
+                  key={`r2-${i}`}
+                  className="flex-1 rounded-[2px]"
+                  style={{
+                    height: "8px",
+                    background: "linear-gradient(180deg, #2a2a2a 0%, #1f1f1f 100%)",
+                    boxShadow: "0 0.5px 1px rgba(0,0,0,0.3), inset 0 0.5px 0 rgba(255,255,255,0.05)",
+                  }}
+                />
+              ))}
+            </div>
+            {/* Row 3 — QWERTY */}
+            <div className="flex gap-[2px]">
+              <div className="rounded-[2px]" style={{ width: "10%", height: "8px", background: "linear-gradient(180deg, #2a2a2a 0%, #1f1f1f 100%)", boxShadow: "0 0.5px 1px rgba(0,0,0,0.3), inset 0 0.5px 0 rgba(255,255,255,0.05)" }} />
+              {Array.from({ length: 11 }).map((_, i) => (
+                <div
+                  key={`r3-${i}`}
+                  className="flex-1 rounded-[2px]"
+                  style={{
+                    height: "8px",
+                    background: "linear-gradient(180deg, #2a2a2a 0%, #1f1f1f 100%)",
+                    boxShadow: "0 0.5px 1px rgba(0,0,0,0.3), inset 0 0.5px 0 rgba(255,255,255,0.05)",
+                  }}
+                />
+              ))}
+              <div className="rounded-[2px]" style={{ width: "10%", height: "8px", background: "linear-gradient(180deg, #2a2a2a 0%, #1f1f1f 100%)", boxShadow: "0 0.5px 1px rgba(0,0,0,0.3), inset 0 0.5px 0 rgba(255,255,255,0.05)" }} />
+            </div>
+            {/* Row 4 — ASDF */}
+            <div className="flex gap-[2px]">
+              <div className="rounded-[2px]" style={{ width: "12%", height: "8px", background: "linear-gradient(180deg, #2a2a2a 0%, #1f1f1f 100%)", boxShadow: "0 0.5px 1px rgba(0,0,0,0.3), inset 0 0.5px 0 rgba(255,255,255,0.05)" }} />
+              {Array.from({ length: 10 }).map((_, i) => (
+                <div
+                  key={`r4-${i}`}
+                  className="flex-1 rounded-[2px]"
+                  style={{
+                    height: "8px",
+                    background: "linear-gradient(180deg, #2a2a2a 0%, #1f1f1f 100%)",
+                    boxShadow: "0 0.5px 1px rgba(0,0,0,0.3), inset 0 0.5px 0 rgba(255,255,255,0.05)",
+                  }}
+                />
+              ))}
+              <div className="rounded-[2px]" style={{ width: "12%", height: "8px", background: "linear-gradient(180deg, #2a2a2a 0%, #1f1f1f 100%)", boxShadow: "0 0.5px 1px rgba(0,0,0,0.3), inset 0 0.5px 0 rgba(255,255,255,0.05)" }} />
+            </div>
+            {/* Row 5 — space bar row */}
+            <div className="flex gap-[2px] items-center">
+              <div className="rounded-[2px]" style={{ width: "8%", height: "8px", background: "linear-gradient(180deg, #2a2a2a 0%, #1f1f1f 100%)", boxShadow: "0 0.5px 1px rgba(0,0,0,0.3), inset 0 0.5px 0 rgba(255,255,255,0.05)" }} />
+              <div className="rounded-[2px]" style={{ width: "6%", height: "8px", background: "linear-gradient(180deg, #2a2a2a 0%, #1f1f1f 100%)", boxShadow: "0 0.5px 1px rgba(0,0,0,0.3), inset 0 0.5px 0 rgba(255,255,255,0.05)" }} />
+              <div className="rounded-[2px]" style={{ width: "6%", height: "8px", background: "linear-gradient(180deg, #2a2a2a 0%, #1f1f1f 100%)", boxShadow: "0 0.5px 1px rgba(0,0,0,0.3), inset 0 0.5px 0 rgba(255,255,255,0.05)" }} />
+              {/* Space bar */}
+              <div className="flex-1 rounded-[2px]" style={{ height: "8px", background: "linear-gradient(180deg, #2a2a2a 0%, #1f1f1f 100%)", boxShadow: "0 0.5px 1px rgba(0,0,0,0.3), inset 0 0.5px 0 rgba(255,255,255,0.05)" }} />
+              <div className="rounded-[2px]" style={{ width: "6%", height: "8px", background: "linear-gradient(180deg, #2a2a2a 0%, #1f1f1f 100%)", boxShadow: "0 0.5px 1px rgba(0,0,0,0.3), inset 0 0.5px 0 rgba(255,255,255,0.05)" }} />
+              <div className="rounded-[2px]" style={{ width: "6%", height: "8px", background: "linear-gradient(180deg, #2a2a2a 0%, #1f1f1f 100%)", boxShadow: "0 0.5px 1px rgba(0,0,0,0.3), inset 0 0.5px 0 rgba(255,255,255,0.05)" }} />
+              {/* Arrow keys */}
+              <div className="flex flex-col gap-[1px]" style={{ width: "8%" }}>
+                <div className="rounded-[1px] mx-auto" style={{ width: "60%", height: "3.5px", background: "linear-gradient(180deg, #2a2a2a 0%, #1f1f1f 100%)", boxShadow: "0 0.5px 1px rgba(0,0,0,0.3)" }} />
+                <div className="flex gap-[1px]">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <div key={`arr-${i}`} className="flex-1 rounded-[1px]" style={{ height: "3.5px", background: "linear-gradient(180deg, #2a2a2a 0%, #1f1f1f 100%)", boxShadow: "0 0.5px 1px rgba(0,0,0,0.3)" }} />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Trackpad */}
+          <div
+            className="mx-auto mt-[4px] rounded-[4px]"
+            style={{
+              width: "38%",
+              height: "22px",
+              background: "linear-gradient(180deg, #d0d0d0 0%, #c4c4c4 100%)",
+              boxShadow: "inset 0 0 0 0.5px rgba(0,0,0,0.12), inset 0 1px 2px rgba(0,0,0,0.06)",
             }}
           />
         </div>
@@ -355,7 +467,7 @@ export default function Login() {
 
         {/* ─── CENTER: MacBook Mockup (dominant, fills available space) ─── */}
         <div className="relative z-10 flex-1 flex items-center justify-center px-6 min-h-0 overflow-hidden">
-          <div className="w-full max-w-[520px]">
+          <div className="w-full max-w-[600px]">
             <MacBookMockup
               screenshot={DASHBOARD_SCREENSHOT}
               alt={t(

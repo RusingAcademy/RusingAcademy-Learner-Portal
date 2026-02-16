@@ -700,5 +700,5 @@
 - [x] Center element at line ~370 (tagline/stats section) — flex-col items-center text-center, justify-center on stats row
 
 ## Login Page MacBook Adjustments
-- [ ] Make the MacBook mockup bigger
-- [ ] Add visible keyboard to the CSS laptop frame
+- [x] Make the MacBook mockup bigger (max-w 520px → 600px)
+- [x] Add visible keyboard with 5 key rows, arrow keys, trackpad, and hinge to the CSS laptop frame
