@@ -626,4 +626,21 @@
   - [x] Glassmorphism styling on dark teal background (from Image 2)
   - [x] "Log In with RusingÂcademy" OAuth button preserved
   - [x] Responsive mobile layout
-- [ ] Push to GitHub
+- [x] Push to GitHub (feat/pwa + main synced at d3fc77d)
+
+## Auth Page Redesign v2 - "Institutional Elegance" from Reference ZIP
+- [x] Extract and analyze reference design code from auth-page-redesign.zip
+- [x] Adapt "Institutional Elegance" design into Login.tsx:
+  - [x] Swiss Modernist asymmetric split layout (45% cream left / 55% dark teal right)
+  - [x] Left panel: "R" logo, RusingÂcademy heading, student hero image, program tags, animated counters (12 Paths, 192 Lessons, 1344 Activities)
+  - [x] Right panel: glassmorphism auth card with Google/Microsoft SSO, email/password form, "Sign In with Email" OAuth button
+  - [x] Floating orbs with CSS animations on dark teal gradient background
+  - [x] Language switcher (EN/FR) with dropdown
+  - [x] Portal access cards (Coach, Client, Admin) with icons and colors
+  - [x] Social links (Facebook, Instagram, LinkedIn) in gold accent
+  - [x] Copyright: "© 2026 Rusinga International Consulting Ltd."
+  - [x] Framer Motion entrance animations
+  - [x] DM Serif Display typography for headings
+  - [x] Secure redirect notice and FAQ link
+- [x] All 399/399 vitest tests passing, zero TypeScript errors
+- [x] Push to GitHub and save checkpoint
