@@ -331,7 +331,7 @@ export default function Login() {
         <div className="absolute top-1/3 left-1/3 w-[400px] h-[400px] rounded-full bg-[#2A5C5A]/[0.02] blur-[120px] pointer-events-none" />
 
         {/* ─── TOP: Logo + Brand ─── */}
-        <div className="relative z-20 shrink-0 flex items-center gap-3 px-8 pt-3 pb-1">
+        <div className="relative z-20 shrink-0 flex flex-col items-center justify-center gap-1 px-8 pt-3 pb-1">
           <motion.img
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -340,7 +340,7 @@ export default function Login() {
             alt="RusingÂcademy"
             className="w-12 h-12 rounded-xl shadow-md object-contain"
           />
-          <div>
+          <div className="text-center">
             <h1
               className="text-2xl text-[#1a1a1a] leading-none"
               style={{ fontFamily: "'DM Serif Display', serif" }}
@@ -367,14 +367,14 @@ export default function Login() {
         </div>
 
         {/* ─── BOTTOM: Tagline + Stats ─── */}
-        <div className="relative z-20 shrink-0 px-8 pb-4 pt-2">
+        <div className="relative z-20 shrink-0 px-8 pb-4 pt-2 flex flex-col items-center text-center">
           <p className="text-[#666] text-[11px] leading-snug mb-2 max-w-md">
             {t(
               "Master your second official language with Canada's premier bilingual training platform.",
               "Maîtrisez votre langue seconde officielle avec la première plateforme bilingue de formation au Canada."
             )}
           </p>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center justify-center gap-6">
             {[
               { n: "12", l: t("Paths", "Parcours"), icon: GraduationCap },
               { n: "192", l: t("Lessons", "Leçons"), icon: BookOpen },

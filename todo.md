@@ -694,3 +694,7 @@
 - [x] Real RusingÂcademy logo prominent and centered
 - [x] Copyright: © 2026 Rusinga International Consulting Ltd.
 - [x] All 399/399 vitest tests passing, 0 TypeScript errors
+
+## Login Page Centering Fix
+- [x] Center element at line ~334 (logo/brand section) — flex-col items-center justify-center
+- [x] Center element at line ~370 (tagline/stats section) — flex-col items-center text-center, justify-center on stats row
