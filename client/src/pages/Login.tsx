@@ -314,9 +314,9 @@ function MacBookMockup({
         <div
           className="mx-auto relative"
           style={{
-            width: "108%",
-            maxWidth: "108%",
-            marginLeft: "-4%",
+            width: "101%",
+            maxWidth: "101%",
+            marginLeft: "-0.5%",
             height: "6px",
             background:
               "linear-gradient(180deg, #c0c0c0 0%, #a8a8a8 30%, #b8b8b8 70%, #d0d0d0 100%)",
@@ -340,9 +340,9 @@ function MacBookMockup({
         <div
           className="mx-auto relative"
           style={{
-            width: "112%",
-            maxWidth: "112%",
-            marginLeft: "-6%",
+            width: "102%",
+            maxWidth: "102%",
+            marginLeft: "-1%",
             marginTop: "0px",
             height: "auto",
             background:
