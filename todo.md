@@ -651,5 +651,17 @@
 - [x] Remove duplicate logo from the right panel (glassmorphism card)
 - [x] Move email/password form section UP (above social SSO buttons)
 - [x] Move portal access cards + social links section DOWN (to bottom)
-- [ ] Prepare for hero image replacement (user will upload screenshot of learning portal for laptop screen)
+- [x] Prepare for hero image replacement (user uploaded screenshot of learning portal for laptop screen)
 - [x] Ensure overall layout coherence between left and right panels
+
+## Auth Page — Single Viewport + Hero Image Integration
+- [x] Upload Learning Portal screenshot to CDN
+- [x] Take fresh high-res screenshot of Learning Portal dashboard from live app
+- [x] Tried AI image generation + stock photo compositing — text not readable
+- [x] NEW APPROACH: CSS/HTML MacBook device frame with real dashboard screenshot at native resolution
+- [x] Dashboard text is 100% crisp and readable (Dashboard, ESL/FSL Programs, Leaderboard, etc.)
+- [x] Restructure Login page to fit 100% within one viewport (no scrolling)
+- [x] Target viewports: 1440×900 and 1366×768 — verified 0 pixels below viewport
+- [x] Compact layout: absolute-positioned logo + stats, MacBook centered with negative margin
+- [x] High-end, modern, professional finish with glassmorphism auth card
+- [x] All 399/399 vitest tests passing, zero TypeScript errors
