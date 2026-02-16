@@ -34,6 +34,10 @@ import {
 const HERO_IMAGE =
   "https://files.manuscdn.com/user_upload_by_module/session_file/310519663049070748/fhdSEAAjPWRDflyl.png";
 
+/* Real RusingÂcademy logo from CDN */
+const LOGO_ICON =
+  "https://files.manuscdn.com/user_upload_by_module/session_file/310519663049070748/mrXRaWLUDJGHdcjc.png";
+
 /* ─── Animated Counter ─── */
 function AnimatedCounter({
   target,
@@ -268,12 +272,7 @@ export default function Login() {
       >
         <div className="text-center">
           <div className="w-16 h-16 rounded-2xl bg-white/10 border border-white/15 flex items-center justify-center mx-auto mb-4 animate-pulse">
-            <span
-              className="text-white text-2xl font-bold"
-              style={{ fontFamily: "'DM Serif Display', serif" }}
-            >
-              R
-            </span>
+            <img src={LOGO_ICON} alt="RusingÂcademy" className="w-10 h-10 rounded-lg" />
           </div>
           <p className="text-white/60 text-sm">
             {t("Loading...", "Chargement...")}
@@ -287,33 +286,32 @@ export default function Login() {
     <div className="min-h-screen flex flex-col lg:flex-row overflow-hidden">
       {/* ═══════════════════════════════════════════════════════
           LEFT PANEL — Brand Showcase (Warm Cream)
+          Both panels use items-center + justify-center for
+          coherent vertical alignment at the same level.
          ═══════════════════════════════════════════════════════ */}
       <motion.div
         initial={{ opacity: 0, x: -30 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-        className="lg:w-[45%] w-full bg-[#F7F5F0] relative flex flex-col items-center justify-center px-8 py-12 lg:py-8 lg:px-12"
+        className="lg:w-[45%] w-full bg-[#F7F5F0] relative flex flex-col items-center justify-center px-8 py-12 lg:py-10 lg:px-12 min-h-screen"
       >
         {/* Subtle decorative circles */}
         <div className="absolute top-20 right-10 w-64 h-64 rounded-full bg-[#2A5C5A]/[0.03] blur-2xl" />
         <div className="absolute bottom-20 left-10 w-48 h-48 rounded-full bg-[#C9A96A]/[0.05] blur-2xl" />
 
-        <div className="relative z-10 max-w-md w-full mx-auto space-y-8">
-          {/* Logo */}
+        <div className="relative z-10 max-w-md w-full mx-auto space-y-7">
+          {/* EDIT #2: Real Logo — replaces "R" placeholder */}
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.5 }}
             className="flex flex-col items-center text-center"
           >
-            <div className="w-16 h-16 rounded-2xl bg-[#2A5C5A] flex items-center justify-center shadow-lg shadow-[#2A5C5A]/20 mb-4">
-              <span
-                className="text-white text-2xl font-bold"
-                style={{ fontFamily: "'DM Serif Display', serif" }}
-              >
-                R
-              </span>
-            </div>
+            <img
+              src={LOGO_ICON}
+              alt="RusingÂcademy"
+              className="w-16 h-16 rounded-2xl shadow-lg shadow-[#2A5C5A]/20 mb-4 object-contain"
+            />
             <h1
               className="text-3xl lg:text-4xl text-[#1a1a1a] tracking-tight"
               style={{ fontFamily: "'DM Serif Display', serif" }}
@@ -331,7 +329,7 @@ export default function Login() {
             </p>
           </motion.div>
 
-          {/* Hero Image */}
+          {/* Hero Image — User will upload a learning portal screenshot for the laptop screen */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -407,12 +405,13 @@ export default function Login() {
 
       {/* ═══════════════════════════════════════════════════════
           RIGHT PANEL — Auth Form (Deep Teal Gradient)
+          Same min-h-screen + justify-between for coherent alignment
          ═══════════════════════════════════════════════════════ */}
       <motion.div
         initial={{ opacity: 0, x: 30 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-        className="lg:w-[55%] w-full relative flex flex-col items-center justify-center px-6 py-12 lg:py-8 lg:px-12 overflow-hidden"
+        className="lg:w-[55%] w-full relative flex flex-col items-center justify-between px-6 py-10 lg:py-10 lg:px-12 overflow-hidden min-h-screen"
         style={{
           background:
             "linear-gradient(160deg, #0F2B2B 0%, #1A3F3F 40%, #1E4A4A 70%, #163636 100%)",
@@ -429,13 +428,15 @@ export default function Login() {
           style={{ animationDelay: "-13s" }}
         />
 
-        {/* Language Switcher */}
-        <div className="absolute top-5 right-6 z-20">
+        {/* Language Switcher — top right */}
+        <div className="w-full flex justify-end z-20">
           <LanguageSwitcher lang={language} setLang={setLanguage} />
         </div>
 
-        <div className="relative z-10 w-full max-w-md space-y-6">
+        {/* ─── CENTER: Auth Card ─── */}
+        <div className="relative z-10 w-full max-w-md space-y-5 flex-1 flex flex-col justify-center">
           {/* Auth Card — Glassmorphism */}
+          {/* EDIT #3: Duplicate logo REMOVED — only heading + subtitle remain */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -446,16 +447,8 @@ export default function Login() {
             }}
             className="glass-card-auth rounded-2xl p-8 animate-pulse-glow"
           >
-            {/* Logo + Heading */}
+            {/* Heading — no logo here, only text */}
             <div className="flex flex-col items-center mb-6">
-              <div className="w-14 h-14 rounded-xl bg-white/10 border border-white/15 flex items-center justify-center mb-4">
-                <span
-                  className="text-white text-xl font-bold"
-                  style={{ fontFamily: "'DM Serif Display', serif" }}
-                >
-                  R
-                </span>
-              </div>
               <h2
                 className="text-2xl text-white"
                 style={{ fontFamily: "'DM Serif Display', serif" }}
@@ -470,35 +463,8 @@ export default function Login() {
               </p>
             </div>
 
-            {/* SSO Buttons */}
-            <div className="space-y-3 mb-5">
-              <button
-                onClick={() => handleSocialLogin("Google")}
-                className="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-xl bg-white text-[#333] text-sm font-medium shadow-sm hover:shadow-md hover:bg-gray-50 transition-all duration-200"
-              >
-                <GoogleIcon />
-                {t("Continue with Google", "Continuer avec Google")}
-              </button>
-              <button
-                onClick={() => handleSocialLogin("Microsoft")}
-                className="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-xl bg-[#2F2F2F] text-white text-sm font-medium shadow-sm hover:bg-[#3a3a3a] transition-all duration-200"
-              >
-                <MicrosoftIcon />
-                {t("Continue with Microsoft", "Continuer avec Microsoft")}
-              </button>
-            </div>
-
-            {/* Divider */}
-            <div className="flex items-center gap-3 mb-5">
-              <div className="flex-1 h-px bg-white/15" />
-              <span className="text-[#7FBFBF] text-xs font-medium tracking-wider uppercase">
-                {t("Or continue with email", "Ou continuer par courriel")}
-              </span>
-              <div className="flex-1 h-px bg-white/15" />
-            </div>
-
-            {/* Email/Password Form */}
-            <form className="space-y-4" onSubmit={handleOAuthLogin}>
+            {/* EDIT #4 & #5: Email/Password Form FIRST, then SSO buttons below */}
+            <form className="space-y-4 mb-5" onSubmit={handleOAuthLogin}>
               <div>
                 <label className="block text-white/80 text-xs font-semibold mb-1.5 tracking-wide">
                   {t("Email Address", "Adresse courriel")}
@@ -571,8 +537,35 @@ export default function Login() {
               </button>
             </form>
 
+            {/* Divider */}
+            <div className="flex items-center gap-3 mb-5">
+              <div className="flex-1 h-px bg-white/15" />
+              <span className="text-[#7FBFBF] text-xs font-medium tracking-wider uppercase">
+                {t("Or continue with", "Ou continuer avec")}
+              </span>
+              <div className="flex-1 h-px bg-white/15" />
+            </div>
+
+            {/* SSO Buttons — now BELOW the email form */}
+            <div className="space-y-3 mb-4">
+              <button
+                onClick={() => handleSocialLogin("Google")}
+                className="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-xl bg-white text-[#333] text-sm font-medium shadow-sm hover:shadow-md hover:bg-gray-50 transition-all duration-200"
+              >
+                <GoogleIcon />
+                {t("Continue with Google", "Continuer avec Google")}
+              </button>
+              <button
+                onClick={() => handleSocialLogin("Microsoft")}
+                className="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-xl bg-[#2F2F2F] text-white text-sm font-medium shadow-sm hover:bg-[#3a3a3a] transition-all duration-200"
+              >
+                <MicrosoftIcon />
+                {t("Continue with Microsoft", "Continuer avec Microsoft")}
+              </button>
+            </div>
+
             {/* Sign Up Link */}
-            <p className="text-center text-white/50 text-xs mt-4">
+            <p className="text-center text-white/50 text-xs mt-3">
               {t("Don't have an account?", "Pas encore de compte ?")}{" "}
               <a
                 href="#"
@@ -626,7 +619,11 @@ export default function Login() {
               {t("Frequently Asked Questions", "Foire aux questions")}
             </a>
           </motion.div>
+        </div>
 
+        {/* ─── BOTTOM: Portal Access + Social Links ─── */}
+        {/* EDIT #5: Portals and social links moved to the very bottom */}
+        <div className="relative z-10 w-full max-w-md space-y-5 pt-4">
           {/* Portal Access Cards */}
           <motion.div
             initial={{ opacity: 0, y: 15 }}
@@ -644,14 +641,14 @@ export default function Login() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.8 + i * 0.1 }}
                   onClick={() => setLocation(portal.href)}
-                  className="flex flex-col items-center gap-2 py-4 px-3 rounded-xl bg-white/[0.05] border border-white/10 hover:bg-white/[0.1] hover:border-white/20 hover:scale-[1.03] transition-all duration-200 group"
+                  className="flex flex-col items-center gap-2 py-3 px-3 rounded-xl bg-white/[0.05] border border-white/10 hover:bg-white/[0.1] hover:border-white/20 hover:scale-[1.03] transition-all duration-200 group"
                 >
                   <div
-                    className="w-10 h-10 rounded-xl flex items-center justify-center transition-transform duration-200 group-hover:scale-110"
+                    className="w-9 h-9 rounded-xl flex items-center justify-center transition-transform duration-200 group-hover:scale-110"
                     style={{ backgroundColor: portal.bgColor }}
                   >
                     <portal.icon
-                      className="w-5 h-5"
+                      className="w-4.5 h-4.5"
                       style={{ color: portal.color }}
                     />
                   </div>
@@ -668,7 +665,7 @@ export default function Login() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.9 }}
-            className="flex flex-col items-center gap-4 pt-2"
+            className="flex flex-col items-center gap-3"
           >
             <div className="flex items-center gap-4">
               {socialLinks.map((social) => (

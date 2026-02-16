@@ -644,3 +644,12 @@
   - [x] Secure redirect notice and FAQ link
 - [x] All 399/399 vitest tests passing, zero TypeScript errors
 - [x] Push to GitHub and save checkpoint
+
+## Auth Page Visual Edits (User Feedback)
+- [x] Align left and right panels at the same level (coherent alignment)
+- [x] Replace "R" logo placeholder with real RusingÂcademy logo
+- [x] Remove duplicate logo from the right panel (glassmorphism card)
+- [x] Move email/password form section UP (above social SSO buttons)
+- [x] Move portal access cards + social links section DOWN (to bottom)
+- [ ] Prepare for hero image replacement (user will upload screenshot of learning portal for laptop screen)
+- [x] Ensure overall layout coherence between left and right panels
