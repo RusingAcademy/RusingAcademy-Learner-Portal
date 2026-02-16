@@ -698,3 +698,7 @@
 ## Login Page Centering Fix
 - [x] Center element at line ~334 (logo/brand section) — flex-col items-center justify-center
 - [x] Center element at line ~370 (tagline/stats section) — flex-col items-center text-center, justify-center on stats row
+
+## Login Page MacBook Adjustments
+- [ ] Make the MacBook mockup bigger
+- [ ] Add visible keyboard to the CSS laptop frame
