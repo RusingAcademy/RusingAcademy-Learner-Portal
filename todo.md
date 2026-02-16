@@ -614,4 +614,16 @@
 - [x] Wire invitation notifications to notifyOwner + notification_log
 - [x] Add session confirmation/cancellation notification helpers
 - [x] Write vitest tests for invitation system and notification procedures (49 new tests, 399/399 total)
-- [ ] Push all changes to GitHub
+- [x] Push all changes to GitHub (feat/pwa + main synced at 30de074)
+
+## Auth Page Redesign - Merge Two Designs
+- [x] Merge both auth designs into one cohesive page:
+  - [x] Left panel: branding, student photo, feature pills, stats (from Image 1)
+  - [x] Right panel: Welcome Back, Google/Microsoft buttons, email/password form, Forgot password, Sign up (from Image 2)
+  - [x] Portal access buttons (Coach/HR/Admin) integrated elegantly
+  - [x] Language switcher (EN/FR)
+  - [x] Social links + copyright footer
+  - [x] Glassmorphism styling on dark teal background (from Image 2)
+  - [x] "Log In with RusingÂcademy" OAuth button preserved
+  - [x] Responsive mobile layout
+- [ ] Push to GitHub
