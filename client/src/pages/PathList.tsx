@@ -135,19 +135,12 @@ export default function PathList() {
             const completedCount = allLessonKeys.filter((k: string) => completedLessons.has(k)).length;
             const progressPct = allLessonKeys.length > 0 ? Math.round((completedCount / allLessonKeys.length) * 100) : 0;
             const isComplete = progressPct === 100;
-            const isLocked = idx > 0 && (() => {
-              const prevPath = program.paths[idx - 1];
-              const prevKeys = (prevPath.modules || []).flatMap((m: any) =>
-                (m.lessons || []).map((l: any) => `${programId}-${l.id}`)
-              );
-              const prevCompleted = prevKeys.filter((k: string) => completedLessons.has(k)).length;
-              return prevKeys.length > 0 ? prevCompleted / prevKeys.length < 0.5 : false;
-            })();
+            const isLocked = false; // All paths are now open and accessible
 
             return (
-              <Link key={path.id} href={isLocked ? "#" : `/programs/${programId}/${path.id}`}>
+              <Link key={path.id} href={`/programs/${programId}/${path.id}`}>
                 <div className={`group rounded-2xl overflow-hidden transition-all duration-500 ${
-                  isLocked ? "opacity-60 cursor-not-allowed" : "hover:shadow-lg cursor-pointer"
+                  "hover:shadow-lg cursor-pointer"
                 }`} style={{
                   background: "rgba(255,255,255,0.8)",
                   backdropFilter: "blur(12px)",
@@ -171,11 +164,7 @@ export default function PathList() {
                       <div className="absolute bottom-3 left-3">
                         <span className="text-white/80 text-xs font-bold">PATH {path.number}</span>
                       </div>
-                      {isLocked && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/30 backdrop-blur-sm">
-                          <span className="material-icons text-white text-3xl">lock</span>
-                        </div>
-                      )}
+
                     </div>
 
                     {/* Content */}
@@ -235,12 +224,10 @@ export default function PathList() {
                         <span className="text-[10px] text-gray-400">
                           {completedCount}/{allLessonKeys.length} lessons completed
                         </span>
-                        {!isLocked && (
-                          <span className="text-xs font-semibold flex items-center gap-1 group-hover:gap-2 transition-all" style={{ color: "#008090" }}>
+                        <span className="text-xs font-semibold flex items-center gap-1 group-hover:gap-2 transition-all" style={{ color: "#008090" }}>
                             {progressPct > 0 ? "Continue" : "Start"}
                             <span className="material-icons" style={{ fontSize: "16px" }}>arrow_forward</span>
                           </span>
-                        )}
                       </div>
                     </div>
                   </div>

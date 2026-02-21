@@ -763,4 +763,10 @@
 - [x] Add Import/Export page to admin navigation
 - [x] Write vitest tests for all new features (37 new tests, 483 total passing)
 - [x] Validate zero regression (483 tests passing, zero failures)
-- [ ] Save checkpoint and push to GitHub (pending)
+- [x] Save checkpoint and push to GitHub (version bb2b7059)
+
+## Unlock All Courses + GitHub Push
+- [x] Remove path-level locking in PathList.tsx (all paths accessible regardless of progression)
+- [x] Remove lock icon overlay and cursor-not-allowed styling
+- [x] Keep progress tracking intact (just remove the gate)
+- [ ] Push updated code to GitHub RusingAcademy/RusingAcademy-Learner-Portal
