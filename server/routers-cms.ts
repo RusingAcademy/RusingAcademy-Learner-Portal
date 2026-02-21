@@ -40,6 +40,7 @@ const programsRouter = router({
       coverUrl: z.string().optional(),
       sortOrder: z.number().optional(),
       isPublished: z.boolean().optional(),
+      status: z.enum(["draft", "review", "published"]).optional(),
     }))
     .mutation(({ input, ctx }) => cmsDb.createProgram({ ...input, createdBy: ctx.user.id })),
 
@@ -56,6 +57,7 @@ const programsRouter = router({
       coverUrl: z.string().optional(),
       sortOrder: z.number().optional(),
       isPublished: z.boolean().optional(),
+      status: z.enum(["draft", "review", "published"]).optional(),
     }))
     .mutation(({ input }) => {
       const { id, ...data } = input;
@@ -92,6 +94,7 @@ const pathsRouter = router({
       badgeUrl: z.string().optional(),
       sortOrder: z.number().optional(),
       isPublished: z.boolean().optional(),
+      status: z.enum(["draft", "review", "published"]).optional(),
     }))
     .mutation(({ input, ctx }) => cmsDb.createPath({ ...input, createdBy: ctx.user.id })),
 
@@ -111,6 +114,7 @@ const pathsRouter = router({
       badgeUrl: z.string().optional(),
       sortOrder: z.number().optional(),
       isPublished: z.boolean().optional(),
+      status: z.enum(["draft", "review", "published"]).optional(),
     }))
     .mutation(({ input }) => {
       const { id, ...data } = input;
@@ -143,6 +147,7 @@ const modulesRouter = router({
       quizPassingScore: z.number().min(0).max(100).optional(),
       sortOrder: z.number().optional(),
       isPublished: z.boolean().optional(),
+      status: z.enum(["draft", "review", "published"]).optional(),
     }))
     .mutation(({ input }) => cmsDb.createModule(input)),
 
@@ -158,6 +163,7 @@ const modulesRouter = router({
       quizPassingScore: z.number().min(0).max(100).optional(),
       sortOrder: z.number().optional(),
       isPublished: z.boolean().optional(),
+      status: z.enum(["draft", "review", "published"]).optional(),
     }))
     .mutation(({ input }) => {
       const { id, ...data } = input;
@@ -193,6 +199,7 @@ const lessonsRouter = router({
       xpReward: z.number().optional(),
       sortOrder: z.number().optional(),
       isPublished: z.boolean().optional(),
+      status: z.enum(["draft", "review", "published"]).optional(),
     }))
     .mutation(({ input }) => cmsDb.createLesson(input)),
 
@@ -207,6 +214,7 @@ const lessonsRouter = router({
       xpReward: z.number().optional(),
       sortOrder: z.number().optional(),
       isPublished: z.boolean().optional(),
+      status: z.enum(["draft", "review", "published"]).optional(),
     }))
     .mutation(({ input }) => {
       const { id, ...data } = input;
@@ -401,6 +409,47 @@ const mediaRouter = router({
     .mutation(({ input }) => cmsDb.deleteMediaAsset(input.id)),
 });
 
+/* ═══════════════════════ WORKFLOW ═══════════════════════ */
+const workflowRouter = router({
+  /** Update status of any CMS entity */
+  updateStatus: adminProcedure
+    .input(z.object({
+      entityType: z.enum(["program", "path", "module", "lesson"]),
+      id: z.number(),
+      status: z.enum(["draft", "review", "published"]),
+    }))
+    .mutation(async ({ input }) => {
+      const { entityType, id, status } = input;
+      switch (entityType) {
+        case "program": return cmsDb.updateProgram(id, { status });
+        case "path": return cmsDb.updatePath(id, { status });
+        case "module": return cmsDb.updateModule(id, { status });
+        case "lesson": return cmsDb.updateLesson(id, { status });
+      }
+    }),
+
+  /** Bulk update status for multiple entities */
+  bulkUpdateStatus: adminProcedure
+    .input(z.object({
+      entityType: z.enum(["program", "path", "module", "lesson"]),
+      ids: z.array(z.number()).min(1),
+      status: z.enum(["draft", "review", "published"]),
+    }))
+    .mutation(async ({ input }) => {
+      const { entityType, ids, status } = input;
+      const results = [];
+      for (const id of ids) {
+        switch (entityType) {
+          case "program": results.push(await cmsDb.updateProgram(id, { status })); break;
+          case "path": results.push(await cmsDb.updatePath(id, { status })); break;
+          case "module": results.push(await cmsDb.updateModule(id, { status })); break;
+          case "lesson": results.push(await cmsDb.updateLesson(id, { status })); break;
+        }
+      }
+      return { updated: results.length };
+    }),
+});
+
 /* ═══════════════════════ STATS ═══════════════════════ */
 const statsRouter = router({
   overview: adminProcedure.query(() => cmsDb.getCmsStats()),
@@ -442,6 +491,7 @@ export const cmsRouter = router({
   quizzes: quizzesRouter,
   questions: questionsRouter,
   media: mediaRouter,
+  workflow: workflowRouter,
   stats: statsRouter,
   public: publicCmsRouter,
 });

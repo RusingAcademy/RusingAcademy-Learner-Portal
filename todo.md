@@ -728,7 +728,7 @@
 - [x] Wire learner-facing pages to read from CMS database instead of hardcoded courseData.ts
 - [x] Write vitest tests for all CMS procedures (30 tests, 429 total passing)
 - [x] Verify zero regression on all existing features (446 tests passing)
-- [ ] Save checkpoint and push to GitHub
+- [x] Save checkpoint and push to GitHub (version a4fbfe8c)
 
 ## CMS Enhancement — Content Seeding, Media Library, Dynamic Pages
 - [x] Analyze courseData.ts and lessonContent.ts structure for seeding
@@ -745,4 +745,22 @@
 - [x] Wire LessonViewer to read from CMS database (with static fallback)
 - [x] Write vitest tests for public CMS procedures (17 new tests, 446 total passing)
 - [x] Verify zero regression on all existing features (446 tests passing)
-- [ ] Save checkpoint and push to GitHub
+- [x] Save checkpoint and push to GitHub (version a4fbfe8c)
+
+## CMS Enhancement — WYSIWYG Editor, Publication Workflow, Bulk Import/Export
+- [x] Install TipTap editor dependencies (@tiptap/react, @tiptap/starter-kit, extensions)
+- [x] Build reusable RichTextEditor component with toolbar (bold, italic, headings, lists, links, images, videos)
+- [x] Integrate RichTextEditor into AdminCourses lesson slot editing (replace textarea)
+- [x] Render rich HTML content in learner-facing LessonViewer slots (RichContentRenderer)
+- [x] Add status column to cms_lessons table (draft, review, published)
+- [x] Add status column to cms_paths, cms_programs, and cms_modules tables
+- [x] Build status workflow UI in AdminCourses (StatusDropdown with draft/review/published transitions)
+- [x] Filter learner-facing pages to only show published content (already filtered via isPublished + status)
+- [x] Build bulk export tool (download programs/paths/lessons as JSON)
+- [x] Build bulk export tool (download as CSV)
+- [x] Build bulk import tool (upload JSON to create/update content)
+- [x] Build bulk import tool (upload CSV to create/update content)
+- [x] Add Import/Export page to admin navigation
+- [x] Write vitest tests for all new features (37 new tests, 483 total passing)
+- [x] Validate zero regression (483 tests passing, zero failures)
+- [ ] Save checkpoint and push to GitHub (pending)

@@ -898,6 +898,7 @@ export const cmsPrograms = mysqlTable("cms_programs", {
   coverUrl: text("coverUrl"),
   sortOrder: int("sortOrder").default(0).notNull(),
   isPublished: boolean("isPublished").default(false).notNull(),
+  status: mysqlEnum("status", ["draft", "review", "published"]).default("published").notNull(),
   createdBy: int("createdBy"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
@@ -921,6 +922,7 @@ export const cmsPaths = mysqlTable("cms_paths", {
   badgeUrl: text("badgeUrl"),
   sortOrder: int("sortOrder").default(0).notNull(),
   isPublished: boolean("isPublished").default(false).notNull(),
+  status: mysqlEnum("status", ["draft", "review", "published"]).default("published").notNull(),
   createdBy: int("createdBy"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
@@ -940,6 +942,7 @@ export const cmsModules = mysqlTable("cms_modules", {
   quizPassingScore: int("quizPassingScore").default(80).notNull(), // percentage
   sortOrder: int("sortOrder").default(0).notNull(),
   isPublished: boolean("isPublished").default(false).notNull(),
+  status: mysqlEnum("status", ["draft", "review", "published"]).default("published").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -957,6 +960,7 @@ export const cmsLessons = mysqlTable("cms_lessons", {
   xpReward: int("xpReward").default(100).notNull(),
   sortOrder: int("sortOrder").default(0).notNull(),
   isPublished: boolean("isPublished").default(false).notNull(),
+  status: mysqlEnum("status", ["draft", "review", "published"]).default("published").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
