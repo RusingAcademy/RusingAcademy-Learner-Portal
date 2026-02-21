@@ -6,6 +6,7 @@ import AdminControlLayout from "@/components/AdminControlLayout";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { trpc } from "@/lib/trpc";
 import { useState, useMemo } from "react";
+import RichTextEditor, { RichContentRenderer } from "@/components/RichTextEditor";
 
 const ACCENT = "#dc2626";
 
@@ -114,6 +115,20 @@ export default function AdminCourses() {
     onSuccess: () => { utils.cms.lessons.getFull.invalidate(); },
   });
 
+  // Workflow status mutation
+  const updateStatus = trpc.cms.workflow.updateStatus.useMutation({
+    onSuccess: () => {
+      utils.cms.programs.list.invalidate();
+      utils.cms.paths.list.invalidate();
+      utils.cms.modules.list.invalidate();
+      utils.cms.lessons.list.invalidate();
+    },
+  });
+
+  const handleStatusChange = (entityType: "program" | "path" | "module" | "lesson", item: any, status: string) => {
+    updateStatus.mutate({ entityType, id: item.id, status: status as any });
+  };
+
   // Breadcrumbs
   const breadcrumbs = useMemo(() => {
     const items: BreadcrumbItem[] = [{ label: lang === "fr" ? "Programmes" : "Programs", view: "programs" }];
@@ -212,6 +227,7 @@ export default function AdminCourses() {
             onEdit={(item: any) => { setDialogMode("edit"); setEditingItem(item); setShowDialog(true); }}
             onDelete={(id: number) => { if (confirm(lang === "fr" ? "Supprimer ce programme ?" : "Delete this program?")) deleteProgram.mutate({ id }); }}
             onTogglePublish={(item: any) => updateProgram.mutate({ id: item.id, isPublished: !item.isPublished })}
+            onStatusChange={(item: any, status: string) => handleStatusChange("program", item, status)}
           />
         )}
 
@@ -225,6 +241,7 @@ export default function AdminCourses() {
             onEdit={(item: any) => { setDialogMode("edit"); setEditingItem(item); setShowDialog(true); }}
             onDelete={(id: number) => { if (confirm(lang === "fr" ? "Supprimer ce parcours ?" : "Delete this path?")) deletePath.mutate({ id }); }}
             onTogglePublish={(item: any) => updatePath.mutate({ id: item.id, isPublished: !item.isPublished })}
+            onStatusChange={(item: any, status: string) => handleStatusChange("path", item, status)}
           />
         )}
 
@@ -238,6 +255,7 @@ export default function AdminCourses() {
             onEdit={(item: any) => { setDialogMode("edit"); setEditingItem(item); setShowDialog(true); }}
             onDelete={(id: number) => { if (confirm(lang === "fr" ? "Supprimer ce module ?" : "Delete this module?")) deleteModule.mutate({ id }); }}
             onTogglePublish={(item: any) => updateModule.mutate({ id: item.id, isPublished: !item.isPublished })}
+            onStatusChange={(item: any, status: string) => handleStatusChange("module", item, status)}
           />
         )}
 
@@ -251,6 +269,7 @@ export default function AdminCourses() {
             onEdit={(item: any) => { setDialogMode("edit"); setEditingItem(item); setShowDialog(true); }}
             onDelete={(id: number) => { if (confirm(lang === "fr" ? "Supprimer cette leçon ?" : "Delete this lesson?")) deleteLesson.mutate({ id }); }}
             onTogglePublish={(item: any) => updateLesson.mutate({ id: item.id, isPublished: !item.isPublished })}
+            onStatusChange={(item: any, status: string) => handleStatusChange("lesson", item, status)}
           />
         )}
 
@@ -334,19 +353,58 @@ function ListHeader({ title, count, actionLabel, onAction }: { title: string; co
   );
 }
 
-function StatusBadge({ published, lang }: { published: boolean; lang: string }) {
+const STATUS_CONFIG = {
+  draft: { bg: "bg-gray-50", text: "text-gray-600", border: "border-gray-200", icon: "edit_note", labelEn: "Draft", labelFr: "Brouillon" },
+  review: { bg: "bg-amber-50", text: "text-amber-700", border: "border-amber-200", icon: "rate_review", labelEn: "In Review", labelFr: "En révision" },
+  published: { bg: "bg-green-50", text: "text-green-700", border: "border-green-200", icon: "check_circle", labelEn: "Published", labelFr: "Publié" },
+} as const;
+
+function StatusBadge({ status, lang, onClick }: { status?: string; lang: string; onClick?: () => void }) {
+  const s = (status && status in STATUS_CONFIG) ? status as keyof typeof STATUS_CONFIG : "draft";
+  const cfg = STATUS_CONFIG[s];
   return (
-    <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${
-      published ? "bg-green-50 text-green-700 border-green-200" : "bg-gray-50 text-gray-600 border-gray-200"
-    }`}>
-      {published ? (lang === "fr" ? "Publié" : "Published") : (lang === "fr" ? "Brouillon" : "Draft")}
-    </span>
+    <button
+      onClick={onClick}
+      className={`inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full border ${cfg.bg} ${cfg.text} ${cfg.border} ${onClick ? "cursor-pointer hover:opacity-80" : "cursor-default"}`}
+    >
+      <span className="material-icons" style={{ fontSize: "12px" }}>{cfg.icon}</span>
+      {lang === "fr" ? cfg.labelFr : cfg.labelEn}
+    </button>
+  );
+}
+
+function StatusDropdown({ currentStatus, lang, onSelect }: { currentStatus: string; lang: string; onSelect: (status: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const statuses = ["draft", "review", "published"] as const;
+  return (
+    <div className="relative">
+      <StatusBadge status={currentStatus} lang={lang} onClick={() => setOpen(!open)} />
+      {open && (
+        <div className="absolute right-0 top-full mt-1 z-50 bg-white border border-gray-200 rounded-lg shadow-lg py-1 min-w-[140px]">
+          {statuses.map((s) => {
+            const cfg = STATUS_CONFIG[s];
+            const isCurrent = s === currentStatus;
+            return (
+              <button
+                key={s}
+                onClick={() => { onSelect(s); setOpen(false); }}
+                className={`w-full flex items-center gap-2 px-3 py-1.5 text-xs hover:bg-gray-50 ${isCurrent ? "font-bold" : ""}`}
+              >
+                <span className={`material-icons ${cfg.text}`} style={{ fontSize: "14px" }}>{cfg.icon}</span>
+                <span className={cfg.text}>{lang === "fr" ? cfg.labelFr : cfg.labelEn}</span>
+                {isCurrent && <span className="material-icons text-green-500 ml-auto" style={{ fontSize: "14px" }}>check</span>}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
   );
 }
 
 /* ═══════════════════════ PROGRAMS LIST ═══════════════════════ */
 
-function ProgramsList({ programs, loading, lang, onSelect, onCreate, onEdit, onDelete, onTogglePublish }: any) {
+function ProgramsList({ programs, loading, lang, onSelect, onCreate, onEdit, onDelete, onTogglePublish, onStatusChange }: any) {
   if (loading) return <div className="text-center py-12 text-gray-400">Loading...</div>;
   if (!programs.length) return (
     <EmptyState
@@ -375,7 +433,7 @@ function ProgramsList({ programs, loading, lang, onSelect, onCreate, onEdit, onD
                   <p className="text-[11px] text-gray-400">{prog.slug}</p>
                 </div>
               </div>
-              <StatusBadge published={prog.isPublished} lang={lang} />
+              <StatusDropdown currentStatus={prog.status || (prog.isPublished ? "published" : "draft")} lang={lang} onSelect={(s: string) => onStatusChange(prog, s)} />
             </div>
             <p className="text-xs text-gray-500 mb-3 line-clamp-2">{prog.description || (lang === "fr" ? "Aucune description" : "No description")}</p>
             <div className="flex items-center justify-between">
@@ -403,7 +461,7 @@ function ProgramsList({ programs, loading, lang, onSelect, onCreate, onEdit, onD
 
 /* ═══════════════════════ PATHS LIST ═══════════════════════ */
 
-function PathsList({ paths, loading, lang, onSelect, onCreate, onEdit, onDelete, onTogglePublish }: any) {
+function PathsList({ paths, loading, lang, onSelect, onCreate, onEdit, onDelete, onTogglePublish, onStatusChange }: any) {
   if (loading) return <div className="text-center py-12 text-gray-400">Loading...</div>;
   if (!paths.length) return (
     <EmptyState
@@ -429,7 +487,7 @@ function PathsList({ paths, loading, lang, onSelect, onCreate, onEdit, onDelete,
                   {path.cefrLevel}
                 </span>
               </div>
-              <StatusBadge published={path.isPublished} lang={lang} />
+              <StatusDropdown currentStatus={path.status || (path.isPublished ? "published" : "draft")} lang={lang} onSelect={(s: string) => onStatusChange(path, s)} />
             </div>
             <h3 className="text-sm font-semibold text-gray-900 mb-1 cursor-pointer hover:underline" onClick={() => onSelect(path.id)}>
               {path.title}
@@ -460,7 +518,7 @@ function PathsList({ paths, loading, lang, onSelect, onCreate, onEdit, onDelete,
 
 /* ═══════════════════════ MODULES LIST ═══════════════════════ */
 
-function ModulesList({ modules, loading, lang, onSelect, onCreate, onEdit, onDelete, onTogglePublish }: any) {
+function ModulesList({ modules, loading, lang, onSelect, onCreate, onEdit, onDelete, onTogglePublish, onStatusChange }: any) {
   if (loading) return <div className="text-center py-12 text-gray-400">Loading...</div>;
   if (!modules.length) return (
     <EmptyState
@@ -486,7 +544,7 @@ function ModulesList({ modules, loading, lang, onSelect, onCreate, onEdit, onDel
               </h3>
               <p className="text-xs text-gray-400 truncate">{mod.description || mod.titleFr}</p>
             </div>
-            <StatusBadge published={mod.isPublished} lang={lang} />
+            <StatusDropdown currentStatus={mod.status || (mod.isPublished ? "published" : "draft")} lang={lang} onSelect={(s: string) => onStatusChange(mod, s)} />
             <div className="flex items-center gap-1">
               <button onClick={() => onSelect(mod.id)} className="p-1 rounded hover:bg-gray-100">
                 <span className="material-icons text-base text-gray-400">arrow_forward</span>
@@ -510,7 +568,7 @@ function ModulesList({ modules, loading, lang, onSelect, onCreate, onEdit, onDel
 
 /* ═══════════════════════ LESSONS LIST ═══════════════════════ */
 
-function LessonsList({ lessons, loading, lang, onSelect, onCreate, onEdit, onDelete, onTogglePublish }: any) {
+function LessonsList({ lessons, loading, lang, onSelect, onCreate, onEdit, onDelete, onTogglePublish, onStatusChange }: any) {
   if (loading) return <div className="text-center py-12 text-gray-400">Loading...</div>;
   if (!lessons.length) return (
     <EmptyState
@@ -536,7 +594,7 @@ function LessonsList({ lessons, loading, lang, onSelect, onCreate, onEdit, onDel
               </h3>
               <p className="text-xs text-gray-400">{lesson.titleFr} · {lesson.duration} · {lesson.xpReward} XP</p>
             </div>
-            <StatusBadge published={lesson.isPublished} lang={lang} />
+            <StatusDropdown currentStatus={lesson.status || (lesson.isPublished ? "published" : "draft")} lang={lang} onSelect={(s: string) => onStatusChange(lesson, s)} />
             <div className="flex items-center gap-1">
               <button onClick={() => onSelect(lesson.id)} className="p-1 rounded hover:bg-gray-100" title="Edit content">
                 <span className="material-icons text-base" style={{ color: ACCENT }}>edit_note</span>
@@ -649,8 +707,8 @@ function LessonEditor({ lesson, lang, onCreateSlot, onUpdateSlot, onDeleteSlot, 
                 </button>
               </div>
             </div>
-            <div className="prose prose-sm max-w-none text-gray-600 whitespace-pre-wrap text-xs leading-relaxed max-h-64 overflow-y-auto">
-              {slot.content}
+            <div className="max-h-64 overflow-y-auto">
+              <RichContentRenderer content={slot.content} className="text-gray-600 text-xs leading-relaxed" />
             </div>
           </div>
         ))}
@@ -669,12 +727,12 @@ function LessonEditor({ lesson, lang, onCreateSlot, onUpdateSlot, onDeleteSlot, 
                 onChange={(e) => setSlotFormTitle(e.target.value)}
                 className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-200"
               />
-              <textarea
-                placeholder="Content (Markdown supported)"
-                value={slotFormContent}
-                onChange={(e) => setSlotFormContent(e.target.value)}
-                rows={12}
-                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-200 font-mono"
+              <RichTextEditor
+                content={slotFormContent}
+                onChange={(html: string) => setSlotFormContent(html)}
+                placeholder="Start writing lesson content..."
+                minHeight="250px"
+                maxHeight="500px"
               />
               <div className="flex items-center gap-2">
                 <button
