@@ -878,3 +878,159 @@ export const hrInvitations = mysqlTable("hr_invitations", {
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
 export type HrInvitation = typeof hrInvitations.$inferSelect;
+
+
+/* ═══════════════════════════════════════════════════════════
+   CMS — COURSE CONTENT MANAGEMENT SYSTEM
+   Admin-managed programs, paths, modules, lessons, quizzes
+   ═══════════════════════════════════════════════════════════ */
+
+/* ───────────────────── CMS PROGRAMS ───────────────────── */
+export const cmsPrograms = mysqlTable("cms_programs", {
+  id: int("id").autoincrement().primaryKey(),
+  slug: varchar("slug", { length: 32 }).notNull().unique(),        // "fsl" | "esl"
+  title: varchar("title", { length: 256 }).notNull(),
+  titleFr: varchar("titleFr", { length: 256 }).notNull(),
+  description: text("description"),
+  descriptionFr: text("descriptionFr"),
+  icon: varchar("icon", { length: 32 }),                           // emoji or material icon
+  color: varchar("color", { length: 16 }),                         // hex color
+  coverUrl: text("coverUrl"),
+  sortOrder: int("sortOrder").default(0).notNull(),
+  isPublished: boolean("isPublished").default(false).notNull(),
+  createdBy: int("createdBy"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type CmsProgram = typeof cmsPrograms.$inferSelect;
+export type InsertCmsProgram = typeof cmsPrograms.$inferInsert;
+
+/* ───────────────────── CMS PATHS ───────────────────── */
+export const cmsPaths = mysqlTable("cms_paths", {
+  id: int("id").autoincrement().primaryKey(),
+  programId: int("programId").notNull(),                           // FK → cms_programs.id
+  slug: varchar("slug", { length: 64 }).notNull(),                 // "fsl-path-i"
+  number: varchar("number", { length: 8 }).notNull(),              // "I", "II", etc.
+  title: varchar("title", { length: 256 }).notNull(),
+  titleFr: varchar("titleFr", { length: 256 }).notNull(),
+  subtitle: varchar("subtitle", { length: 512 }),
+  subtitleFr: varchar("subtitleFr", { length: 512 }),
+  cefrLevel: mysqlEnum("cefrLevel", ["A1", "A2", "B1", "B2", "C1", "C1+"]).notNull(),
+  color: varchar("color", { length: 16 }),
+  coverUrl: text("coverUrl"),
+  badgeUrl: text("badgeUrl"),
+  sortOrder: int("sortOrder").default(0).notNull(),
+  isPublished: boolean("isPublished").default(false).notNull(),
+  createdBy: int("createdBy"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type CmsPath = typeof cmsPaths.$inferSelect;
+export type InsertCmsPath = typeof cmsPaths.$inferInsert;
+
+/* ───────────────────── CMS MODULES ───────────────────── */
+export const cmsModules = mysqlTable("cms_modules", {
+  id: int("id").autoincrement().primaryKey(),
+  pathId: int("pathId").notNull(),                                 // FK → cms_paths.id
+  title: varchar("title", { length: 256 }).notNull(),
+  titleFr: varchar("titleFr", { length: 256 }).notNull(),
+  description: text("description"),
+  descriptionFr: text("descriptionFr"),
+  badgeUrl: text("badgeUrl"),
+  quizPassingScore: int("quizPassingScore").default(80).notNull(), // percentage
+  sortOrder: int("sortOrder").default(0).notNull(),
+  isPublished: boolean("isPublished").default(false).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type CmsModule = typeof cmsModules.$inferSelect;
+export type InsertCmsModule = typeof cmsModules.$inferInsert;
+
+/* ───────────────────── CMS LESSONS ───────────────────── */
+export const cmsLessons = mysqlTable("cms_lessons", {
+  id: int("id").autoincrement().primaryKey(),
+  moduleId: int("moduleId").notNull(),                             // FK → cms_modules.id
+  lessonNumber: varchar("lessonNumber", { length: 16 }).notNull(), // "1.1", "5.3"
+  title: varchar("title", { length: 256 }).notNull(),
+  titleFr: varchar("titleFr", { length: 256 }).notNull(),
+  duration: varchar("duration", { length: 32 }).default("50 min").notNull(),
+  xpReward: int("xpReward").default(100).notNull(),
+  sortOrder: int("sortOrder").default(0).notNull(),
+  isPublished: boolean("isPublished").default(false).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type CmsLesson = typeof cmsLessons.$inferSelect;
+export type InsertCmsLesson = typeof cmsLessons.$inferInsert;
+
+/* ───────────────────── CMS LESSON SLOTS ───────────────────── */
+export const cmsLessonSlots = mysqlTable("cms_lesson_slots", {
+  id: int("id").autoincrement().primaryKey(),
+  lessonId: int("lessonId").notNull(),                             // FK → cms_lessons.id
+  slotType: mysqlEnum("slotType", ["hook", "video", "strategy", "written", "oral", "quiz", "coaching"]).notNull(),
+  title: varchar("title", { length: 256 }).notNull(),
+  titleFr: varchar("titleFr", { length: 256 }),
+  content: text("content").notNull(),                              // Markdown content
+  contentFr: text("contentFr"),                                    // French version
+  sortOrder: int("sortOrder").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type CmsLessonSlot = typeof cmsLessonSlots.$inferSelect;
+export type InsertCmsLessonSlot = typeof cmsLessonSlots.$inferInsert;
+
+/* ───────────────────── CMS QUIZZES ───────────────────── */
+export const cmsQuizzes = mysqlTable("cms_quizzes", {
+  id: int("id").autoincrement().primaryKey(),
+  lessonId: int("lessonId"),                                       // FK → cms_lessons.id (null for standalone)
+  moduleId: int("moduleId"),                                       // FK → cms_modules.id (for module-level quizzes)
+  title: varchar("title", { length: 256 }).notNull(),
+  titleFr: varchar("titleFr", { length: 256 }),
+  quizType: mysqlEnum("quizType", ["formative", "summative", "final_exam", "placement"]).default("formative").notNull(),
+  passingScore: int("passingScore").default(80).notNull(),         // percentage
+  timeLimitMinutes: int("timeLimitMinutes"),                       // null = untimed
+  isPublished: boolean("isPublished").default(false).notNull(),
+  sortOrder: int("sortOrder").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type CmsQuiz = typeof cmsQuizzes.$inferSelect;
+export type InsertCmsQuiz = typeof cmsQuizzes.$inferInsert;
+
+/* ───────────────────── CMS QUIZ QUESTIONS ───────────────────── */
+export const cmsQuizQuestions = mysqlTable("cms_quiz_questions", {
+  id: int("id").autoincrement().primaryKey(),
+  quizId: int("quizId").notNull(),                                 // FK → cms_quizzes.id
+  questionType: mysqlEnum("questionType", ["multiple_choice", "fill_in_blank", "true_false", "matching", "ordering"]).default("multiple_choice").notNull(),
+  question: text("question").notNull(),
+  questionFr: text("questionFr"),
+  options: json("options").$type<string[]>(),                      // for multiple choice
+  optionsFr: json("optionsFr").$type<string[]>(),
+  correctAnswer: text("correctAnswer").notNull(),                  // answer text or index
+  correctAnswerFr: text("correctAnswerFr"),
+  feedback: text("feedback"),
+  feedbackFr: text("feedbackFr"),
+  points: int("points").default(1).notNull(),
+  sortOrder: int("sortOrder").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type CmsQuizQuestion = typeof cmsQuizQuestions.$inferSelect;
+export type InsertCmsQuizQuestion = typeof cmsQuizQuestions.$inferInsert;
+
+/* ───────────────────── CMS MEDIA ASSETS ───────────────────── */
+export const cmsMediaAssets = mysqlTable("cms_media_assets", {
+  id: int("id").autoincrement().primaryKey(),
+  filename: varchar("filename", { length: 512 }).notNull(),
+  fileUrl: text("fileUrl").notNull(),
+  fileKey: varchar("fileKey", { length: 512 }).notNull(),          // S3 key
+  mimeType: varchar("mimeType", { length: 128 }).notNull(),
+  fileSizeBytes: int("fileSizeBytes"),
+  altText: varchar("altText", { length: 512 }),
+  altTextFr: varchar("altTextFr", { length: 512 }),
+  category: mysqlEnum("category", ["cover", "badge", "lesson_image", "audio", "video", "document", "other"]).default("other").notNull(),
+  uploadedBy: int("uploadedBy"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type CmsMediaAsset = typeof cmsMediaAssets.$inferSelect;
+export type InsertCmsMediaAsset = typeof cmsMediaAssets.$inferInsert;

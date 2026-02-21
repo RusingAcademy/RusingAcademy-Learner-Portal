@@ -1,0 +1,52 @@
+{
+  "query": "SHOW TABLES LIKE 'cms_%';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user cYPAHDVF1MZtM6S.caf383761fdf --database Rc5qDPWJcsCQwb6WK47Ybr --execute SHOW TABLES LIKE 'cms_%';",
+  "rows": [
+    {
+      "Tables_in_Rc5qDPWJcsCQwb6WK47Ybr (cms_%)": "cms_lesson_slots"
+    },
+    {
+      "Tables_in_Rc5qDPWJcsCQwb6WK47Ybr (cms_%)": "cms_lessons"
+    },
+    {
+      "Tables_in_Rc5qDPWJcsCQwb6WK47Ybr (cms_%)": "cms_media_assets"
+    },
+    {
+      "Tables_in_Rc5qDPWJcsCQwb6WK47Ybr (cms_%)": "cms_modules"
+    },
+    {
+      "Tables_in_Rc5qDPWJcsCQwb6WK47Ybr (cms_%)": "cms_page_sections"
+    },
+    {
+      "Tables_in_Rc5qDPWJcsCQwb6WK47Ybr (cms_%)": "cms_page_versions"
+    },
+    {
+      "Tables_in_Rc5qDPWJcsCQwb6WK47Ybr (cms_%)": "cms_pages"
+    },
+    {
+      "Tables_in_Rc5qDPWJcsCQwb6WK47Ybr (cms_%)": "cms_paths"
+    },
+    {
+      "Tables_in_Rc5qDPWJcsCQwb6WK47Ybr (cms_%)": "cms_programs"
+    },
+    {
+      "Tables_in_Rc5qDPWJcsCQwb6WK47Ybr (cms_%)": "cms_quiz_questions"
+    },
+    {
+      "Tables_in_Rc5qDPWJcsCQwb6WK47Ybr (cms_%)": "cms_quizzes"
+    },
+    {
+      "Tables_in_Rc5qDPWJcsCQwb6WK47Ybr (cms_%)": "cms_section_revisions"
+    },
+    {
+      "Tables_in_Rc5qDPWJcsCQwb6WK47Ybr (cms_%)": "cms_section_templates"
+    },
+    {
+      "Tables_in_Rc5qDPWJcsCQwb6WK47Ybr (cms_%)": "cms_style_presets"
+    }
+  ],
+  "messages": [],
+  "stdout": "Tables_in_Rc5qDPWJcsCQwb6WK47Ybr (cms_%)\ncms_lesson_slots\ncms_lessons\ncms_media_assets\ncms_modules\ncms_page_sections\ncms_page_versions\ncms_pages\ncms_paths\ncms_programs\ncms_quiz_questions\ncms_quizzes\ncms_section_revisions\ncms_section_templates\ncms_style_presets\n",
+  "stderr": "",
+  "execution_time_ms": 55
+}

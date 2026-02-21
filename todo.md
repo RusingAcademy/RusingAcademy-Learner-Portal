@@ -709,3 +709,23 @@
 - [x] Correct key sizing ratios (Tab 9%, Caps 11%, Shift 14%, Return 11%, Delete 9.5%)
 - [x] Beveled key caps with 3D gradient + box-shadow depth
 - [x] Proper MacBook keyboard layout with inverted-T arrow keys and trackpad
+
+## Admin CMS — Course Content Management System
+- [x] Design comprehensive DB schema (programs, paths, modules, lessons, lesson_slots, quizzes, quiz_questions, media_assets)
+- [x] Push DB migrations for CMS tables
+- [x] Build tRPC admin procedures: Programs CRUD (create, read, update, delete, reorder)
+- [x] Build tRPC admin procedures: Paths CRUD with module management
+- [x] Build tRPC admin procedures: Lessons CRUD with 7-slot structure
+- [x] Build tRPC admin procedures: Quizzes CRUD with question management
+- [x] Build tRPC admin procedures: Media asset upload and management
+- [x] Build Admin CMS navigation (sidebar section for content management)
+- [x] Build Admin Programs page (list, create, edit, delete, reorder programs)
+- [x] Build Admin Paths page (list, create, edit, delete paths within a program)
+- [x] Build Admin Modules page (manage modules within a path)
+- [x] Build Admin Lessons page (rich content editor with 7-slot structure)
+- [x] Build Admin Quizzes page (quiz builder with question types)
+- [ ] Build Admin Media Library page (upload, browse, attach media to lessons)
+- [ ] Wire learner-facing pages to read from CMS database instead of hardcoded courseData.ts
+- [x] Write vitest tests for all CMS procedures (30 tests, 429 total passing)
+- [ ] Verify zero regression on all existing features (399+ tests passing)
+- [ ] Save checkpoint and push to GitHub
