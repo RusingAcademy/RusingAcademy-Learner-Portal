@@ -1,0 +1,9 @@
+{
+  "query": "ALTER TABLE cms_lesson_slots MODIFY COLUMN content MEDIUMTEXT NOT NULL; ALTER TABLE cms_lesson_slots MODIFY COLUMN contentFr MEDIUMTEXT;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user cYPAHDVF1MZtM6S.caf383761fdf --database Rc5qDPWJcsCQwb6WK47Ybr --execute ALTER TABLE cms_lesson_slots MODIFY COLUMN content MEDIUMTEXT NOT NULL; ALTER TABLE cms_lesson_slots MODIFY COLUMN contentFr MEDIUMTEXT;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 326
+}

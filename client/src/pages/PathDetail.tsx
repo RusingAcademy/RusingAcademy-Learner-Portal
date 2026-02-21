@@ -1,6 +1,7 @@
 /**
  * PathDetail — RusingÂcademy Learning Portal
  * Shows all modules within a Path with lessons, progress, and gamification
+ * Now reads from CMS database with fallback to static courseData.ts
  * Design: Premium glassmorphism, teal/gold accents, accessible
  */
 import { useState } from "react";
@@ -8,13 +9,15 @@ import { Link, useParams } from "wouter";
 import { getProgramById, type Program, type Module } from "@/data/courseData";
 import { useGamification } from "@/contexts/GamificationContext";
 import DashboardLayout from "@/components/DashboardLayout";
+import { useCmsProgram } from "@/hooks/useCmsData";
 
 function ModuleCard({ mod, pathId, programId, completedLessons, isExpanded, onToggle }: {
-  mod: Module; pathId: string; programId: string; completedLessons: Set<string>;
+  mod: any; pathId: string; programId: string; completedLessons: Set<string>;
   isExpanded: boolean; onToggle: () => void;
 }) {
-  const lessonKeys = mod.lessons.map((l) => `${programId}-${l.id}`);
-  const completedCount = lessonKeys.filter((k) => completedLessons.has(k)).length;
+  const lessons = mod.lessons || [];
+  const lessonKeys = lessons.map((l: any) => `${programId}-${l.id}`);
+  const completedCount = lessonKeys.filter((k: string) => completedLessons.has(k)).length;
   const progressPct = lessonKeys.length > 0 ? Math.round((completedCount / lessonKeys.length) * 100) : 0;
   const isComplete = progressPct === 100;
 
@@ -28,7 +31,7 @@ function ModuleCard({ mod, pathId, programId, completedLessons, isExpanded, onTo
       {/* Module Header */}
       <button onClick={onToggle} className="w-full text-left p-5 flex items-start gap-4">
         <div className="relative flex-shrink-0">
-          <img src={mod.badgeUrl} alt="" className="w-14 h-14 rounded-xl object-cover" style={{
+          <img src={mod.badgeUrl || ""} alt="" className="w-14 h-14 rounded-xl object-cover" style={{
             border: isComplete ? "2px solid #f5a623" : "2px solid rgba(0,128,144,0.2)",
             filter: isComplete ? "none" : "grayscale(30%)",
           }} />
@@ -68,7 +71,7 @@ function ModuleCard({ mod, pathId, programId, completedLessons, isExpanded, onTo
               }} />
             </div>
             <span className="text-xs font-bold" style={{ color: isComplete ? "#f5a623" : "#008090" }}>
-              {completedCount}/{mod.lessons.length}
+              {completedCount}/{lessons.length}
             </span>
           </div>
         </div>
@@ -83,11 +86,11 @@ function ModuleCard({ mod, pathId, programId, completedLessons, isExpanded, onTo
       {isExpanded && (
         <div className="px-5 pb-5 space-y-2" style={{ borderTop: "1px solid rgba(0,128,144,0.06)" }}>
           <div className="pt-3">
-            {mod.lessons.map((lesson, idx) => {
+            {lessons.map((lesson: any, idx: number) => {
               const lessonKey = `${programId}-${lesson.id}`;
               const isLessonComplete = completedLessons.has(lessonKey);
               const isNext = !isLessonComplete && idx === 0 || (
-                idx > 0 && completedLessons.has(`${programId}-${mod.lessons[idx - 1].id}`) && !isLessonComplete
+                idx > 0 && completedLessons.has(`${programId}-${lessons[idx - 1].id}`) && !isLessonComplete
               );
 
               return (
@@ -152,7 +155,7 @@ function ModuleCard({ mod, pathId, programId, completedLessons, isExpanded, onTo
                 </div>
                 <div className="flex-1">
                   <h4 className="text-sm font-semibold text-gray-900">Summative Quiz — Module {mod.id}</h4>
-                  <p className="text-[11px] text-gray-400">Passing score: {mod.quizPassing}% — 10 questions</p>
+                  <p className="text-[11px] text-gray-400">Passing score: {mod.quizPassing || 70}% — 10 questions</p>
                 </div>
                 <span className="material-icons text-[#008090]" style={{ fontSize: "18px" }}>arrow_forward</span>
               </div>
@@ -168,10 +171,53 @@ export default function PathDetail() {
   const params = useParams<{ programId: string; pathId: string }>();
   const programId = params.programId as Program;
   const pathId = params.pathId || "";
-  const program = getProgramById(programId);
-  const path = program?.paths.find((p) => p.id === pathId);
+
+  // CMS-first with fallback
+  const { program: cmsProgram, isLoading, source } = useCmsProgram(programId);
+
+  // Fallback to static
+  const staticProgram = getProgramById(programId);
+  const program = cmsProgram || (staticProgram ? {
+    id: staticProgram.id,
+    title: staticProgram.title,
+    titleFr: (staticProgram as any).titleFr || "",
+    description: staticProgram.description,
+    descriptionFr: (staticProgram as any).descriptionFr || "",
+    icon: staticProgram.icon,
+    color: "",
+    paths: staticProgram.paths.map(p => ({
+      ...p,
+      titleFr: (p as any).titleFr || "",
+      subtitleFr: (p as any).subtitleFr || p.subtitle,
+      modules: p.modules.map(m => ({
+        ...m,
+        titleFr: (m as any).titleFr || m.title,
+        descriptionFr: (m as any).descriptionFr || m.description,
+        lessons: m.lessons.map(l => ({
+          ...l,
+          titleFr: (l as any).titleFr || l.title,
+        })),
+      })),
+    })),
+  } : null);
+
+  const path = program?.paths.find((p: any) => p.id === pathId);
   const { completedLessons, totalXP, level, levelTitle, streak } = useGamification();
   const [expandedModule, setExpandedModule] = useState<number | null>(null);
+
+  if (isLoading) {
+    return (
+      <DashboardLayout>
+        <div className="space-y-6">
+          <div className="h-8 w-64 bg-gray-100 rounded animate-pulse" />
+          <div className="h-56 bg-gray-100 rounded-2xl animate-pulse" />
+          {[1, 2, 3, 4].map(i => (
+            <div key={i} className="h-32 bg-gray-100 rounded-xl animate-pulse" />
+          ))}
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   if (!program || !path) {
     return (
@@ -186,8 +232,10 @@ export default function PathDetail() {
   }
 
   // Calculate overall path progress
-  const allLessonKeys = path.modules.flatMap((m) => m.lessons.map((l) => `${programId}-${l.id}`));
-  const completedCount = allLessonKeys.filter((k) => completedLessons.has(k)).length;
+  const allLessonKeys = (path.modules || []).flatMap((m: any) =>
+    (m.lessons || []).map((l: any) => `${programId}-${l.id}`)
+  );
+  const completedCount = allLessonKeys.filter((k: string) => completedLessons.has(k)).length;
   const overallProgress = allLessonKeys.length > 0 ? Math.round((completedCount / allLessonKeys.length) * 100) : 0;
 
   return (
@@ -234,32 +282,28 @@ export default function PathDetail() {
           </div>
         </div>
 
-        {/* Gamification Stats Bar */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {/* Gamification Bar */}
+        <div className="grid grid-cols-3 gap-3">
           {[
-            { icon: "stars", label: "Total XP", value: totalXP.toLocaleString(), color: "#f5a623" },
-            { icon: "military_tech", label: "Level", value: `${level} — ${levelTitle}`, color: "#008090" },
-            { icon: "local_fire_department", label: "Streak", value: `${streak} days`, color: "#e74c3c" },
-            { icon: "emoji_events", label: "Modules", value: `${path.modules.length}`, color: "#8b5cf6" },
-          ].map((stat) => (
-            <div key={stat.label} className="p-3 rounded-xl text-center" style={{
+            { icon: "stars", label: "XP", value: totalXP.toLocaleString(), color: "#f5a623" },
+            { icon: "military_tech", label: "Level", value: `${level}`, color: "#008090" },
+            { icon: "local_fire_department", label: "Streak", value: `${streak}d`, color: "#e74c3c" },
+          ].map((s) => (
+            <div key={s.label} className="text-center p-3 rounded-xl" style={{
               background: "rgba(255,255,255,0.7)",
               backdropFilter: "blur(8px)",
-              border: "1px solid rgba(0,128,144,0.08)",
+              border: "1px solid rgba(0,128,144,0.06)",
             }}>
-              <span className="material-icons" style={{ color: stat.color, fontSize: "20px" }}>{stat.icon}</span>
-              <div className="text-sm font-bold text-gray-900 mt-1">{stat.value}</div>
-              <div className="text-[10px] text-gray-400 uppercase tracking-wider">{stat.label}</div>
+              <span className="material-icons" style={{ color: s.color, fontSize: "20px" }}>{s.icon}</span>
+              <div className="text-sm font-bold text-gray-900">{s.value}</div>
+              <div className="text-[9px] text-gray-400 uppercase">{s.label}</div>
             </div>
           ))}
         </div>
 
-        {/* Modules List */}
-        <div className="space-y-3">
-          <h2 className="text-lg font-bold text-gray-900" style={{ fontFamily: "'Playfair Display', serif" }}>
-            Modules & Lessons
-          </h2>
-          {path.modules.map((mod) => (
+        {/* Module Cards */}
+        <div className="space-y-4">
+          {(path.modules || []).map((mod: any) => (
             <ModuleCard
               key={mod.id}
               mod={mod}
@@ -270,32 +314,6 @@ export default function PathDetail() {
               onToggle={() => setExpandedModule(expandedModule === mod.id ? null : mod.id)}
             />
           ))}
-        </div>
-
-        {/* Final Exam Card */}
-        <div className="rounded-2xl p-6 text-center" style={{
-          background: "linear-gradient(135deg, rgba(0,128,144,0.05), rgba(245,166,35,0.08))",
-          border: "2px dashed rgba(0,128,144,0.2)",
-        }}>
-          <span className="material-icons text-4xl" style={{ color: "#f5a623" }}>workspace_premium</span>
-          <h3 className="text-lg font-bold text-gray-900 mt-2" style={{ fontFamily: "'Playfair Display', serif" }}>
-            Final Examination — Path {path.number}
-          </h3>
-          <p className="text-sm text-gray-500 mt-1">
-            Complete all 4 modules and their summative quizzes to unlock the final examination.
-          </p>
-          <p className="text-xs text-gray-400 mt-2">
-            Passing score: 80% — Comprehensive assessment of all path competencies
-          </p>
-          <button
-            disabled={overallProgress < 100}
-            className="mt-4 px-6 py-2.5 rounded-xl text-sm font-semibold text-white transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed"
-            style={{
-              background: overallProgress >= 100 ? "linear-gradient(135deg, #008090, #f5a623)" : "rgba(0,128,144,0.3)",
-            }}
-          >
-            {overallProgress >= 100 ? "Start Final Exam" : `Complete all modules first (${overallProgress}%)`}
-          </button>
         </div>
       </div>
     </DashboardLayout>

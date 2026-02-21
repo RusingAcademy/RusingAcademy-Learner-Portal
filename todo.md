@@ -724,8 +724,25 @@
 - [x] Build Admin Modules page (manage modules within a path)
 - [x] Build Admin Lessons page (rich content editor with 7-slot structure)
 - [x] Build Admin Quizzes page (quiz builder with question types)
-- [ ] Build Admin Media Library page (upload, browse, attach media to lessons)
-- [ ] Wire learner-facing pages to read from CMS database instead of hardcoded courseData.ts
+- [x] Build Admin Media Library page (upload, browse, attach media to lessons)
+- [x] Wire learner-facing pages to read from CMS database instead of hardcoded courseData.ts
 - [x] Write vitest tests for all CMS procedures (30 tests, 429 total passing)
-- [ ] Verify zero regression on all existing features (399+ tests passing)
+- [x] Verify zero regression on all existing features (446 tests passing)
+- [ ] Save checkpoint and push to GitHub
+
+## CMS Enhancement — Content Seeding, Media Library, Dynamic Pages
+- [x] Analyze courseData.ts and lessonContent.ts structure for seeding
+- [x] Build server-side CMS seeder script to migrate all 192 lessons
+- [x] Seed ESL programs, paths, modules, lessons, slots from eslLessonContent.ts
+- [x] Seed FSL programs, paths, modules, lessons, slots from lessonContent.ts
+- [x] Seed quizzes and quiz questions from existing content (122 quizzes, 142 questions)
+- [x] Build Admin Media Library page with drag-and-drop upload
+- [x] Implement S3 upload via tRPC media.upload procedure
+- [x] Add media browsing, filtering by category, and delete
+- [x] Create public CMS tRPC procedures for learner-facing pages
+- [x] Wire ProgramSelect page to read from CMS database (with static fallback)
+- [x] Wire PathDetail page to read from CMS database (with static fallback)
+- [x] Wire LessonViewer to read from CMS database (with static fallback)
+- [x] Write vitest tests for public CMS procedures (17 new tests, 446 total passing)
+- [x] Verify zero regression on all existing features (446 tests passing)
 - [ ] Save checkpoint and push to GitHub

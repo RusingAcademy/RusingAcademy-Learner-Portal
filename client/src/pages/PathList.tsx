@@ -1,18 +1,63 @@
 /**
  * PathList — RusingÂcademy Learning Portal
  * Shows all 6 Paths for a selected program with progress and gamification
+ * Now reads from CMS database with fallback to static courseData.ts
  * Design: Premium glassmorphism, teal/gold, accessible
  */
 import { Link, useParams } from "wouter";
 import { getProgramById, type Program } from "@/data/courseData";
 import { useGamification } from "@/contexts/GamificationContext";
 import DashboardLayout from "@/components/DashboardLayout";
+import { useCmsProgram } from "@/hooks/useCmsData";
 
 export default function PathList() {
   const params = useParams<{ programId: string }>();
   const programId = params.programId as Program;
-  const program = getProgramById(programId);
+
+  // CMS-first with fallback
+  const { program: cmsProgram, isLoading, source } = useCmsProgram(programId);
+
+  // Fallback to static if CMS returns nothing
+  const staticProgram = getProgramById(programId);
+  const program = cmsProgram || (staticProgram ? {
+    id: staticProgram.id,
+    title: staticProgram.title,
+    titleFr: (staticProgram as any).titleFr || "",
+    description: staticProgram.description,
+    descriptionFr: (staticProgram as any).descriptionFr || "",
+    icon: staticProgram.icon,
+    color: "",
+    paths: staticProgram.paths.map(p => ({
+      ...p,
+      titleFr: (p as any).titleFr || "",
+      subtitleFr: (p as any).subtitleFr || p.subtitle,
+      modules: p.modules.map(m => ({
+        ...m,
+        titleFr: (m as any).titleFr || m.title,
+        descriptionFr: (m as any).descriptionFr || m.description,
+        lessons: m.lessons.map(l => ({
+          ...l,
+          titleFr: (l as any).titleFr || l.title,
+        })),
+      })),
+    })),
+  } : null);
+
   const { completedLessons, totalXP } = useGamification();
+
+  if (isLoading) {
+    return (
+      <DashboardLayout>
+        <div className="space-y-6">
+          <div className="h-8 w-48 bg-gray-100 rounded animate-pulse" />
+          <div className="h-40 bg-gray-100 rounded-2xl animate-pulse" />
+          {[1, 2, 3].map(i => (
+            <div key={i} className="h-48 bg-gray-100 rounded-2xl animate-pulse" />
+          ))}
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   if (!program) {
     return (
@@ -54,6 +99,11 @@ export default function PathList() {
               <span className="text-xs font-bold px-3 py-1 rounded-full bg-white/20 text-white backdrop-blur-sm">
                 {isESL ? "English as a Second Language" : "Français langue seconde"}
               </span>
+              {source === "cms" && (
+                <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-white/10 text-white/60">
+                  CMS
+                </span>
+              )}
             </div>
             <h1 className="text-3xl font-bold text-white" style={{ fontFamily: "'Playfair Display', serif" }}>
               {program.title}
@@ -66,7 +116,7 @@ export default function PathList() {
               </span>
               <span className="flex items-center gap-1">
                 <span className="material-icons" style={{ fontSize: "14px" }}>school</span>
-                {program.paths.reduce((s, p) => s + p.totalLessons, 0)} Lessons
+                {program.paths.reduce((s: number, p: any) => s + (p.totalLessons || p.modules?.reduce((ms: number, m: any) => ms + (m.lessons?.length || 0), 0) || 0), 0)} Lessons
               </span>
               <span className="flex items-center gap-1">
                 <span className="material-icons" style={{ fontSize: "14px" }}>stars</span>
@@ -78,16 +128,20 @@ export default function PathList() {
 
         {/* Path Cards */}
         <div className="space-y-4">
-          {program.paths.map((path, idx) => {
-            const allLessonKeys = path.modules.flatMap((m) => m.lessons.map((l) => `${programId}-${l.id}`));
-            const completedCount = allLessonKeys.filter((k) => completedLessons.has(k)).length;
+          {program.paths.map((path: any, idx: number) => {
+            const allLessonKeys = (path.modules || []).flatMap((m: any) =>
+              (m.lessons || []).map((l: any) => `${programId}-${l.id}`)
+            );
+            const completedCount = allLessonKeys.filter((k: string) => completedLessons.has(k)).length;
             const progressPct = allLessonKeys.length > 0 ? Math.round((completedCount / allLessonKeys.length) * 100) : 0;
             const isComplete = progressPct === 100;
             const isLocked = idx > 0 && (() => {
               const prevPath = program.paths[idx - 1];
-              const prevKeys = prevPath.modules.flatMap((m) => m.lessons.map((l) => `${programId}-${l.id}`));
-              const prevCompleted = prevKeys.filter((k) => completedLessons.has(k)).length;
-              return prevCompleted / prevKeys.length < 0.5;
+              const prevKeys = (prevPath.modules || []).flatMap((m: any) =>
+                (m.lessons || []).map((l: any) => `${programId}-${l.id}`)
+              );
+              const prevCompleted = prevKeys.filter((k: string) => completedLessons.has(k)).length;
+              return prevKeys.length > 0 ? prevCompleted / prevKeys.length < 0.5 : false;
             })();
 
             return (
@@ -149,16 +203,16 @@ export default function PathList() {
 
                       {/* Module pills */}
                       <div className="flex flex-wrap gap-2 mb-3">
-                        {path.modules.map((mod) => {
-                          const modKeys = mod.lessons.map((l) => `${programId}-${l.id}`);
-                          const modComplete = modKeys.filter((k) => completedLessons.has(k)).length;
+                        {(path.modules || []).map((mod: any) => {
+                          const modKeys = (mod.lessons || []).map((l: any) => `${programId}-${l.id}`);
+                          const modComplete = modKeys.filter((k: string) => completedLessons.has(k)).length;
                           const modPct = modKeys.length > 0 ? Math.round((modComplete / modKeys.length) * 100) : 0;
                           return (
                             <span key={mod.id} className="text-[10px] px-2 py-1 rounded-full font-medium" style={{
                               background: modPct === 100 ? "rgba(245,166,35,0.1)" : "rgba(0,128,144,0.06)",
                               color: modPct === 100 ? "#f5a623" : "#008090",
                             }}>
-                              M{mod.id}: {mod.title.substring(0, 20)}{mod.title.length > 20 ? "..." : ""} ({modPct}%)
+                              M{mod.id}: {(mod.title || "").substring(0, 20)}{(mod.title || "").length > 20 ? "..." : ""} ({modPct}%)
                             </span>
                           );
                         })}

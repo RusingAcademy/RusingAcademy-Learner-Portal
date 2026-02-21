@@ -1,16 +1,59 @@
 /**
  * ProgramSelect — RusingÂcademy Learning Portal
+ * Now reads from CMS database with fallback to static courseData.ts
  * Design: Clean white light theme, accessible, LRDG-inspired
  */
 import { Link } from "wouter";
-import { programs, getTotalStats, type Program } from "@/data/courseData";
+import { programs as staticPrograms, getTotalStats, type Program } from "@/data/courseData";
 import { useGamification } from "@/contexts/GamificationContext";
 import DashboardLayout from "@/components/DashboardLayout";
+import { trpc } from "@/lib/trpc";
+import { useMemo } from "react";
 
 const LOGO_URL = "https://files.manuscdn.com/user_upload_by_module/session_file/310519663049070748/mrXRaWLUDJGHdcjc.png";
 
 export default function ProgramSelect() {
   const { totalXP, level, levelTitle, streak, lessonsCompleted } = useGamification();
+
+  // Try CMS first
+  const cmsQuery = trpc.cms.public.listPrograms.useQuery(undefined, {
+    staleTime: 5 * 60 * 1000,
+    retry: 1,
+  });
+  const eslStats = trpc.cms.public.getProgramStats.useQuery({ slug: "esl" }, { staleTime: 5 * 60 * 1000, retry: 1 });
+  const fslStats = trpc.cms.public.getProgramStats.useQuery({ slug: "fsl" }, { staleTime: 5 * 60 * 1000, retry: 1 });
+
+  // Determine data source
+  const programList = useMemo(() => {
+    if (cmsQuery.data && cmsQuery.data.length > 0) {
+      return cmsQuery.data.map((p: any) => ({
+        id: p.slug,
+        title: p.title,
+        titleFr: p.titleFr || p.title,
+        description: p.description || "",
+        descriptionFr: p.descriptionFr || "",
+        icon: p.icon || "school",
+        source: "cms" as const,
+      }));
+    }
+    return staticPrograms.map((p) => ({
+      id: p.id,
+      title: p.title,
+      titleFr: p.titleFr || "",
+      description: p.description,
+      descriptionFr: p.descriptionFr || "",
+      icon: p.icon,
+      source: "static" as const,
+    }));
+  }, [cmsQuery.data]);
+
+  const getStats = (progId: string) => {
+    if (programList[0]?.source === "cms") {
+      const stats = progId === "esl" ? eslStats.data : fslStats.data;
+      return stats || { paths: 6, modules: 24, lessons: 96, activities: 672 };
+    }
+    return getTotalStats(progId as Program);
+  };
 
   return (
     <DashboardLayout>
@@ -48,8 +91,8 @@ export default function ProgramSelect() {
 
         {/* Program Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {programs.map((prog) => {
-            const stats = getTotalStats(prog.id as Program);
+          {programList.map((prog) => {
+            const stats = getStats(prog.id);
             const isESL = prog.id === "esl";
 
             return (

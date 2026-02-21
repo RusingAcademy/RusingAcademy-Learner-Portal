@@ -4,10 +4,11 @@
  * Now integrates with real course data from programs
  */
 import DashboardLayout from "@/components/DashboardLayout";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Link } from "wouter";
-import { programs, type Path } from "@/data/courseData";
+import { programs as staticPrograms, type Path } from "@/data/courseData";
 import { useGamification } from "@/contexts/GamificationContext";
+import { trpc } from "@/lib/trpc";
 
 const tabs = ["My Courses", "Tests & Quizzes", "References"];
 
@@ -85,7 +86,12 @@ export default function LearningMaterials() {
   const [activeTab, setActiveTab] = useState(0);
   const { totalXP, lessonsCompleted } = useGamification();
 
-  const allPaths = programs.flatMap(p => p.paths.map(path => ({ ...path, programId: p.id })));
+  // Try CMS first
+  const cmsPrograms = trpc.cms.public.listPrograms.useQuery(undefined, { staleTime: 5 * 60 * 1000, retry: 1 });
+  const programs = cmsPrograms.data && cmsPrograms.data.length > 0
+    ? cmsPrograms.data.map((p: any) => ({ ...p, id: p.slug, paths: [] }))
+    : staticPrograms;
+  const allPaths = staticPrograms.flatMap(p => p.paths.map(path => ({ ...path, programId: p.id })));
 
   return (
     <DashboardLayout>
@@ -177,7 +183,7 @@ export default function LearningMaterials() {
                       </tr>
                     </thead>
                     <tbody>
-                      {program.paths.map((path) => (
+                      {program.paths.map((path: any) => (
                         <PathRow key={path.id} path={path} programId={program.id} />
                       ))}
                     </tbody>

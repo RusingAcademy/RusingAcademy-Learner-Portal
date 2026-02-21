@@ -2,7 +2,7 @@
  * routers-cms.ts — tRPC router for the CMS (Course Content Management System)
  * All procedures are admin-only (protectedProcedure + role check)
  */
-import { router, protectedProcedure } from "./_core/trpc";
+import { router, protectedProcedure, publicProcedure } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import * as cmsDb from "./db-cms";
@@ -406,6 +406,32 @@ const statsRouter = router({
   overview: adminProcedure.query(() => cmsDb.getCmsStats()),
 });
 
+/* ═══════════════════════ PUBLIC (Learner-facing) ═══════════════════════ */
+const publicCmsRouter = router({
+  /** List all published programs */
+  listPrograms: publicProcedure.query(() => cmsDb.listPublishedPrograms()),
+
+  /** Get a published program with full tree (paths → modules → lessons) */
+  getProgram: publicProcedure
+    .input(z.object({ slug: z.string() }))
+    .query(({ input }) => cmsDb.getPublishedProgramBySlug(input.slug)),
+
+  /** Get program stats */
+  getProgramStats: publicProcedure
+    .input(z.object({ slug: z.string() }))
+    .query(({ input }) => cmsDb.getPublishedProgramStats(input.slug)),
+
+  /** Get a published path with modules and lessons */
+  getPath: publicProcedure
+    .input(z.object({ programSlug: z.string(), pathSlug: z.string() }))
+    .query(({ input }) => cmsDb.getPublishedPath(input.programSlug, input.pathSlug)),
+
+  /** Get a full lesson with slots and quiz */
+  getLesson: publicProcedure
+    .input(z.object({ programSlug: z.string(), lessonNumber: z.string() }))
+    .query(({ input }) => cmsDb.getPublishedLesson(input.programSlug, input.lessonNumber)),
+});
+
 /* ═══════════════════════ COMBINED CMS ROUTER ═══════════════════════ */
 export const cmsRouter = router({
   programs: programsRouter,
@@ -417,4 +443,5 @@ export const cmsRouter = router({
   questions: questionsRouter,
   media: mediaRouter,
   stats: statsRouter,
+  public: publicCmsRouter,
 });
