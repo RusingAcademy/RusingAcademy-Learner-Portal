@@ -10,6 +10,7 @@ import { getProgramById, type Program } from "@/data/courseData";
 import { getLessonContent, type SlotContent } from "@/data/lessonContent";
 import { useGamification } from "@/contexts/GamificationContext";
 import DashboardLayout from "@/components/DashboardLayout";
+import { useCmsLesson, useCmsProgram } from "@/hooks/useCmsData";
 import { toast } from "sonner";
 import { AudioPlayer } from "@/components/AudioPlayer";
 import { VoiceRecorder } from "@/components/VoiceRecorder";
@@ -476,21 +477,39 @@ export default function LessonViewer() {
   const programId = params.programId as Program;
   const pathId = params.pathId || "";
   const lessonId = params.lessonId || "";
-  const program = getProgramById(programId);
-  const path = program?.paths.find((p) => p.id === pathId);
+
+  // CMS-first: try loading from database
+  const { program: cmsProgram } = useCmsProgram(programId);
+  const { lessonContent: cmsContent, source: contentSource } = useCmsLesson(programId, lessonId);
+
+  // Fallback to static data
+  const staticProgram = getProgramById(programId);
+  const program = cmsProgram || (staticProgram ? {
+    id: staticProgram.id,
+    title: staticProgram.title,
+    paths: staticProgram.paths.map(p => ({
+      ...p,
+      modules: p.modules.map(m => ({
+        ...m,
+        lessons: m.lessons.map(l => ({ ...l, titleFr: (l as any).titleFr || l.title })),
+      })),
+    })),
+  } : null) as any;
+  const path = program?.paths.find((p: any) => p.id === pathId);
 
   // Find the lesson across all modules
-  let lesson = null;
-  let currentModule = null;
+  let lesson: any = null;
+  let currentModule: any = null;
   if (path) {
-    for (const mod of path.modules) {
-      const found = mod.lessons.find((l) => l.id === lessonId);
+    for (const mod of (path.modules || [])) {
+      const found = (mod.lessons || []).find((l: any) => l.id === lessonId);
       if (found) { lesson = found; currentModule = mod; break; }
     }
   }
 
-  // Get real lesson content from extracted data
-  const realContent = useMemo(() => getLessonContent(lessonId, programId), [lessonId, programId]);
+  // Get lesson content: CMS first, then static fallback
+  const staticContent = useMemo(() => getLessonContent(lessonId, programId), [lessonId, programId]);
+  const realContent = cmsContent || staticContent;
 
   const { completedLessons, addXP, completeLesson, completeSlot } = useGamification();
   const moduleIndex = currentModule ? path!.modules.indexOf(currentModule) : 0;
@@ -532,8 +551,8 @@ export default function LessonViewer() {
 
   const findNextLesson = () => {
     if (!path || !currentModule) return null;
-    const allLessons = path.modules.flatMap((m) => m.lessons.map((l) => ({ ...l, moduleId: m.id })));
-    const currentIdx = allLessons.findIndex((l) => l.id === lessonId);
+    const allLessons = (path.modules || []).flatMap((m: any) => (m.lessons || []).map((l: any) => ({ ...l, moduleId: m.id })));
+    const currentIdx = allLessons.findIndex((l: any) => l.id === lessonId);
     if (currentIdx >= 0 && currentIdx < allLessons.length - 1) {
       return allLessons[currentIdx + 1];
     }

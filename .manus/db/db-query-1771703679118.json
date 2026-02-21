@@ -1,0 +1,38 @@
+{
+  "query": "SELECT 'programs' as entity, COUNT(*) as cnt FROM cms_programs UNION ALL SELECT 'paths', COUNT(*) FROM cms_paths UNION ALL SELECT 'modules', COUNT(*) FROM cms_modules UNION ALL SELECT 'lessons', COUNT(*) FROM cms_lessons UNION ALL SELECT 'slots', COUNT(*) FROM cms_lesson_slots UNION ALL SELECT 'quizzes', COUNT(*) FROM cms_quizzes UNION ALL SELECT 'questions', COUNT(*) FROM cms_quiz_questions;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user cYPAHDVF1MZtM6S.caf383761fdf --database Rc5qDPWJcsCQwb6WK47Ybr --execute SELECT 'programs' as entity, COUNT(*) as cnt FROM cms_programs UNION ALL SELECT 'paths', COUNT(*) FROM cms_paths UNION ALL SELECT 'modules', COUNT(*) FROM cms_modules UNION ALL SELECT 'lessons', COUNT(*) FROM cms_lessons UNION ALL SELECT 'slots', COUNT(*) FROM cms_lesson_slots UNION ALL SELECT 'quizzes', COUNT(*) FROM cms_quizzes UNION ALL SELECT 'questions', COUNT(*) FROM cms_quiz_questions;",
+  "rows": [
+    {
+      "entity": "paths",
+      "cnt": "12"
+    },
+    {
+      "entity": "programs",
+      "cnt": "2"
+    },
+    {
+      "entity": "modules",
+      "cnt": "48"
+    },
+    {
+      "entity": "lessons",
+      "cnt": "192"
+    },
+    {
+      "entity": "quizzes",
+      "cnt": "122"
+    },
+    {
+      "entity": "questions",
+      "cnt": "142"
+    },
+    {
+      "entity": "slots",
+      "cnt": "1344"
+    }
+  ],
+  "messages": [],
+  "stdout": "entity\tcnt\npaths\t12\nprograms\t2\nmodules\t48\nlessons\t192\nquizzes\t122\nquestions\t142\nslots\t1344\n",
+  "stderr": "",
+  "execution_time_ms": 59
+}

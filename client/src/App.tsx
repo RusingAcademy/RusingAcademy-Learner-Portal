@@ -72,6 +72,7 @@ import AdminCourses from "./pages/admin/AdminCourses";
 import AdminCommerce from "./pages/admin/AdminCommerce";
 import AdminMarketing from "./pages/admin/AdminMarketing";
 import AdminKPIs from "./pages/admin/AdminKPIs";
+import AdminMedia from "./pages/admin/AdminMedia";
 import AcceptInvitation from "./pages/AcceptInvitation";
 import CelebrationOverlay from "./components/CelebrationOverlay";
 import FloatingAICompanion from "./components/FloatingAICompanion";
@@ -170,6 +171,7 @@ function Router() {
       <Route path="/admin/control/commerce">{() => <Protected requiredRole="admin"><AdminCommerce /></Protected>}</Route>
       <Route path="/admin/control/marketing">{() => <Protected requiredRole="admin"><AdminMarketing /></Protected>}</Route>
       <Route path="/admin/control/kpis">{() => <Protected requiredRole="admin"><AdminKPIs /></Protected>}</Route>
+      <Route path="/admin/control/media">{() => <Protected requiredRole="admin"><AdminMedia /></Protected>}</Route>
 
       {/* Catch-all */}
       <Route component={NotFound} />

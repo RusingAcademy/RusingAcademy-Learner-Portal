@@ -377,3 +377,176 @@ export async function getFullLesson(lessonId: number) {
   );
   return { ...lesson, slots, quizzes: quizzesWithQuestions };
 }
+
+
+/* ═══════════════════════ PUBLIC QUERIES (Learner-facing) ═══════════════════════ */
+
+/** List published programs for learners */
+export async function listPublishedPrograms() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(cmsPrograms)
+    .where(eq(cmsPrograms.isPublished, true))
+    .orderBy(asc(cmsPrograms.sortOrder));
+}
+
+/** Get a published program by slug (e.g., "esl" or "fsl") with full tree */
+export async function getPublishedProgramBySlug(slug: string) {
+  const db = await getDb();
+  if (!db) return null;
+  const [program] = await db.select().from(cmsPrograms)
+    .where(and(eq(cmsPrograms.slug, slug), eq(cmsPrograms.isPublished, true)));
+  if (!program) return null;
+
+  const paths = await db.select().from(cmsPaths)
+    .where(and(eq(cmsPaths.programId, program.id), eq(cmsPaths.isPublished, true)))
+    .orderBy(asc(cmsPaths.sortOrder));
+
+  const pathsWithModules = await Promise.all(
+    paths.map(async (path: any) => {
+      const modules = await db.select().from(cmsModules)
+        .where(and(eq(cmsModules.pathId, path.id), eq(cmsModules.isPublished, true)))
+        .orderBy(asc(cmsModules.sortOrder));
+
+      const modulesWithLessons = await Promise.all(
+        modules.map(async (mod: any) => {
+          const lessons = await db.select().from(cmsLessons)
+            .where(and(eq(cmsLessons.moduleId, mod.id), eq(cmsLessons.isPublished, true)))
+            .orderBy(asc(cmsLessons.sortOrder));
+          return { ...mod, lessons };
+        })
+      );
+      return { ...path, modules: modulesWithLessons };
+    })
+  );
+
+  return { ...program, paths: pathsWithModules };
+}
+
+/** Get a published path with its modules and lessons */
+export async function getPublishedPath(programSlug: string, pathSlug: string) {
+  const db = await getDb();
+  if (!db) return null;
+  const [program] = await db.select().from(cmsPrograms)
+    .where(and(eq(cmsPrograms.slug, programSlug), eq(cmsPrograms.isPublished, true)));
+  if (!program) return null;
+
+  const [path] = await db.select().from(cmsPaths)
+    .where(and(eq(cmsPaths.programId, program.id), eq(cmsPaths.slug, pathSlug), eq(cmsPaths.isPublished, true)));
+  if (!path) return null;
+
+  const modules = await db.select().from(cmsModules)
+    .where(and(eq(cmsModules.pathId, path.id), eq(cmsModules.isPublished, true)))
+    .orderBy(asc(cmsModules.sortOrder));
+
+  const modulesWithLessons = await Promise.all(
+    modules.map(async (mod: any) => {
+      const lessons = await db.select().from(cmsLessons)
+        .where(and(eq(cmsLessons.moduleId, mod.id), eq(cmsLessons.isPublished, true)))
+        .orderBy(asc(cmsLessons.sortOrder));
+      return { ...mod, lessons };
+    })
+  );
+
+  return { program, path: { ...path, modules: modulesWithLessons } };
+}
+
+/** Get a full lesson with slots and quiz for learner viewing */
+export async function getPublishedLesson(programSlug: string, lessonNumber: string) {
+  const db = await getDb();
+  if (!db) return null;
+
+  // Find the program
+  const [program] = await db.select().from(cmsPrograms)
+    .where(and(eq(cmsPrograms.slug, programSlug), eq(cmsPrograms.isPublished, true)));
+  if (!program) return null;
+
+  // Find the lesson by lessonNumber within this program's modules
+  // We need to join through paths → modules → lessons
+  const paths = await db.select().from(cmsPaths)
+    .where(eq(cmsPaths.programId, program.id));
+  const pathIds = paths.map((p: any) => p.id);
+  if (pathIds.length === 0) return null;
+
+  const modules = await db.select().from(cmsModules)
+    .where(sql`${cmsModules.pathId} IN (${sql.join(pathIds.map(id => sql`${id}`), sql`, `)})`);
+  const moduleIds = modules.map((m: any) => m.id);
+  if (moduleIds.length === 0) return null;
+
+  const [lesson] = await db.select().from(cmsLessons)
+    .where(and(
+      eq(cmsLessons.lessonNumber, lessonNumber),
+      sql`${cmsLessons.moduleId} IN (${sql.join(moduleIds.map(id => sql`${id}`), sql`, `)})`
+    ));
+  if (!lesson) return null;
+
+  // Get the module and path for this lesson
+  const lessonModule = modules.find((m: any) => m.id === lesson.moduleId);
+  const lessonPath = paths.find((p: any) => p.id === lessonModule?.pathId);
+
+  // Get slots
+  const slots = await db.select().from(cmsLessonSlots)
+    .where(eq(cmsLessonSlots.lessonId, lesson.id))
+    .orderBy(asc(cmsLessonSlots.sortOrder));
+
+  // Get quizzes with questions
+  const quizzes = await db.select().from(cmsQuizzes)
+    .where(eq(cmsQuizzes.lessonId, lesson.id));
+  const quizzesWithQuestions = await Promise.all(
+    quizzes.map(async (quiz: any) => {
+      const questions = await db.select().from(cmsQuizQuestions)
+        .where(eq(cmsQuizQuestions.quizId, quiz.id))
+        .orderBy(asc(cmsQuizQuestions.sortOrder));
+      return { ...quiz, questions };
+    })
+  );
+
+  return {
+    program,
+    path: lessonPath,
+    module: lessonModule,
+    lesson: { ...lesson, slots, quizzes: quizzesWithQuestions },
+  };
+}
+
+/** Get stats for a published program (counts of paths, modules, lessons, activities) */
+export async function getPublishedProgramStats(programSlug: string) {
+  const db = await getDb();
+  if (!db) return { paths: 0, modules: 0, lessons: 0, activities: 0 };
+
+  const [program] = await db.select().from(cmsPrograms)
+    .where(and(eq(cmsPrograms.slug, programSlug), eq(cmsPrograms.isPublished, true)));
+  if (!program) return { paths: 0, modules: 0, lessons: 0, activities: 0 };
+
+  const [pathCount] = await db.select({ count: sql<number>`COUNT(*)` }).from(cmsPaths)
+    .where(and(eq(cmsPaths.programId, program.id), eq(cmsPaths.isPublished, true)));
+
+  const paths = await db.select({ id: cmsPaths.id }).from(cmsPaths)
+    .where(and(eq(cmsPaths.programId, program.id), eq(cmsPaths.isPublished, true)));
+  const pathIds = paths.map((p: any) => p.id);
+
+  let moduleCount = 0;
+  let lessonCount = 0;
+  if (pathIds.length > 0) {
+    const [mc] = await db.select({ count: sql<number>`COUNT(*)` }).from(cmsModules)
+      .where(sql`${cmsModules.pathId} IN (${sql.join(pathIds.map(id => sql`${id}`), sql`, `)}) AND ${cmsModules.isPublished} = true`);
+    moduleCount = Number(mc?.count ?? 0);
+
+    const modules = await db.select({ id: cmsModules.id }).from(cmsModules)
+      .where(sql`${cmsModules.pathId} IN (${sql.join(pathIds.map(id => sql`${id}`), sql`, `)}) AND ${cmsModules.isPublished} = true`);
+    const moduleIds = modules.map((m: any) => m.id);
+
+    if (moduleIds.length > 0) {
+      const [lc] = await db.select({ count: sql<number>`COUNT(*)` }).from(cmsLessons)
+        .where(sql`${cmsLessons.moduleId} IN (${sql.join(moduleIds.map(id => sql`${id}`), sql`, `)}) AND ${cmsLessons.isPublished} = true`);
+      lessonCount = Number(lc?.count ?? 0);
+    }
+  }
+
+  return {
+    paths: Number(pathCount?.count ?? 0),
+    modules: moduleCount,
+    lessons: lessonCount,
+    activities: lessonCount * 7, // 7 slots per lesson
+  };
+}

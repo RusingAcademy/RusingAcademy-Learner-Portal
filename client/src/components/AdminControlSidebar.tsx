@@ -22,6 +22,7 @@ const mainNav: NavItem[] = [
   { icon: "storefront", labelEn: "Commerce", labelFr: "Commerce", path: "/admin/control/commerce" },
   { icon: "campaign", labelEn: "Marketing CRM", labelFr: "Marketing CRM", path: "/admin/control/marketing" },
   { icon: "analytics", labelEn: "Live KPIs", labelFr: "KPIs en direct", path: "/admin/control/kpis" },
+  { icon: "perm_media", labelEn: "Media Library", labelFr: "Médiathèque", path: "/admin/control/media" },
 ];
 
 export default function AdminControlSidebar() {

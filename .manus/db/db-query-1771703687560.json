@@ -1,0 +1,45 @@
+{
+  "query": "SELECT ls.slotType, LEFT(ls.title, 50) as title, LENGTH(ls.content) as contentLen FROM cms_lesson_slots ls JOIN cms_lessons l ON ls.lessonId = l.id WHERE l.lessonNumber = '1.1' AND l.moduleId IN (SELECT id FROM cms_modules WHERE pathId IN (SELECT id FROM cms_paths WHERE programId = (SELECT id FROM cms_programs WHERE slug = 'esl'))) ORDER BY ls.sortOrder;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user cYPAHDVF1MZtM6S.caf383761fdf --database Rc5qDPWJcsCQwb6WK47Ybr --execute SELECT ls.slotType, LEFT(ls.title, 50) as title, LENGTH(ls.content) as contentLen FROM cms_lesson_slots ls JOIN cms_lessons l ON ls.lessonId = l.id WHERE l.lessonNumber = '1.1' AND l.moduleId IN (SELECT id FROM cms_modules WHERE pathId IN (SELECT id FROM cms_paths WHERE programId = (SELECT id FROM cms_programs WHERE slug = 'esl'))) ORDER BY ls.sortOrder;",
+  "rows": [
+    {
+      "slotType": "hook",
+      "title": "The Art of the First Impression",
+      "contentLen": "615"
+    },
+    {
+      "slotType": "video",
+      "title": "Formal vs. Casual",
+      "contentLen": "1480"
+    },
+    {
+      "slotType": "strategy",
+      "title": "The Building Blocks: Subject Pronouns & \\",
+      "contentLen": "1383"
+    },
+    {
+      "slotType": "written",
+      "title": "Write Your Professional Introduction",
+      "contentLen": "382"
+    },
+    {
+      "slotType": "oral",
+      "title": "Record Your Introduction",
+      "contentLen": "561"
+    },
+    {
+      "slotType": "quiz",
+      "title": "Quiz (Format JSON, 7 min)",
+      "contentLen": "37"
+    },
+    {
+      "slotType": "coaching",
+      "title": "Overcoming the Fear of Speaking",
+      "contentLen": "737"
+    }
+  ],
+  "messages": [],
+  "stdout": "slotType\ttitle\tcontentLen\nhook\tThe Art of the First Impression\t615\nvideo\tFormal vs. Casual\t1480\nstrategy\tThe Building Blocks: Subject Pronouns & \\\t1383\nwritten\tWrite Your Professional Introduction\t382\noral\tRecord Your Introduction\t561\nquiz\tQuiz (Format JSON, 7 min)\t37\ncoaching\tOvercoming the Fear of Speaking\t737\n",
+  "stderr": "",
+  "execution_time_ms": 66
+}
