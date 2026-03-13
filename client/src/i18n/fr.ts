@@ -567,7 +567,7 @@ export const fr = {
   auth: {
     loginTitle: "Bienvenue à RusingÂcademy",
     loginSubtitle: "Votre parcours vers l'excellence bilingue commence ici",
-    loginButton: "Se connecter avec Manus",
+    loginButton: "Se connecter",
     loggingIn: "Connexion en cours...",
     logoutConfirm: "Êtes-vous sûr de vouloir vous déconnecter ?",
   },

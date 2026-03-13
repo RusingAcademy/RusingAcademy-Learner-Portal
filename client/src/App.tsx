@@ -92,6 +92,7 @@ function Router() {
     <Switch>
       {/* Public routes — no authentication required */}
       <Route path="/" component={Login} />
+      <Route path="/login" component={Login} />
       <Route path="/invite/:token" component={AcceptInvitation} />
       <Route path="/404" component={NotFound} />
 

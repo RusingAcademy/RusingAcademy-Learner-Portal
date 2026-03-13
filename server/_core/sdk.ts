@@ -270,8 +270,13 @@ class SDKServer {
     const signedInAt = new Date();
     let user = await db.getUserByOpenId(sessionUserId);
 
-    // If user not in DB, sync from OAuth server automatically
+    // If user not in DB, try to sync from OAuth server (skip for native users)
     if (!user) {
+      if (sessionUserId.startsWith("native_")) {
+        // Native user should already exist in DB — if not, session is invalid
+        console.warn("[Auth] Native user not found in DB:", sessionUserId);
+        throw ForbiddenError("User not found");
+      }
       try {
         const userInfo = await this.getUserInfoWithJwt(sessionCookie ?? "");
         await db.upsertUser({

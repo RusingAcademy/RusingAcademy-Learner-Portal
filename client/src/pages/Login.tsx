@@ -1,19 +1,19 @@
 /*
- * RusingÂcademy Auth Page — "Institutional Elegance" v5
+ * RusingÂcademy Auth Page — "Institutional Elegance" v6
  * ─────────────────────────────────────────────────────
- * Full beautification rewrite.
+ * Native email/password authentication — no Manus OAuth.
  * Layout: 100vh, no scroll, asymmetric split (55% left / 45% right).
  * Left: Cream gradient with CSS MacBook mockup (dominant), real logo above, stats below.
  * Right: Deep teal gradient with glassmorphism auth card, floating orbs, micro-animations.
  * Brand: Teal (#2A5C5A) · Gold (#C9A96A) · Cream (#F7F5F0)
  * Typography: DM Serif Display (headings) + Inter (UI)
- * Auth: Manus OAuth — "Sign In with Email" primary CTA.
+ * Auth modes: Sign In | Sign Up | Forgot Password | Reset Password
  */
 
 import { useState, useEffect, useCallback } from "react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
-import { getLoginUrl } from "@/const";
+import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -30,9 +30,15 @@ import {
   Lock,
   Mail,
   ArrowRight,
+  ArrowLeft,
   GraduationCap,
   BookOpen,
   Trophy,
+  UserPlus,
+  KeyRound,
+  User,
+  CheckCircle2,
+  Loader2,
 } from "lucide-react";
 
 /* ─── CDN Assets ─── */
@@ -41,6 +47,9 @@ const DASHBOARD_SCREENSHOT =
 
 const LOGO_ICON =
   "https://files.manuscdn.com/user_upload_by_module/session_file/310519663049070748/vOOwfivmRZqlQBIL.png";
+
+/* ─── Auth mode type ─── */
+type AuthMode = "signin" | "signup" | "forgot" | "reset-success";
 
 /* ─── Floating Orb ─── */
 function FloatingOrb({
@@ -331,7 +340,7 @@ function MacBookMockup({
               width: "16%",
               height: "2px",
               background: "linear-gradient(180deg, #999 0%, #b0b0b0 100%)",
-              borderRadius: "0 0 2px 2px",
+              borderRadius: "0 0 4px 4px",
             }}
           />
         </div>
@@ -343,26 +352,32 @@ function MacBookMockup({
             width: "102%",
             maxWidth: "102%",
             marginLeft: "-1%",
-            marginTop: "0px",
-            height: "auto",
-            background:
-              "linear-gradient(180deg, #e8e8e8 0%, #d4d4d4 40%, #c8c8c8 100%)",
+            background: "linear-gradient(180deg, #c8c8c8 0%, #b0b0b0 50%, #a0a0a0 100%)",
             borderRadius: "0 0 8px 8px",
-            padding: "6px 10px 8px 10px",
-            boxShadow:
-              "0 4px 12px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.5)",
+            padding: "4px 6px 6px 6px",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.3)",
           }}
         >
-          <RealisticKeyboard />
+          <div
+            style={{
+              background: "linear-gradient(180deg, #2a2a2a 0%, #1f1f1f 100%)",
+              borderRadius: "3px",
+              padding: "4px 3px",
+            }}
+          >
+            <RealisticKeyboard />
+          </div>
 
           {/* Trackpad */}
           <div
-            className="mx-auto mt-[5px] rounded-[4px]"
+            className="mx-auto mt-[3px]"
             style={{
-              width: "38%",
-              height: "24px",
-              background: "linear-gradient(180deg, #d2d2d2 0%, #c6c6c6 100%)",
-              boxShadow: "inset 0 0 0 0.5px rgba(0,0,0,0.1), inset 0 1px 2px rgba(0,0,0,0.05)",
+              width: "42%",
+              height: "28px",
+              background: "linear-gradient(180deg, #b8b8b8 0%, #a8a8a8 100%)",
+              borderRadius: "3px",
+              boxShadow: "inset 0 0.5px 1px rgba(0,0,0,0.1), 0 0.5px 0 rgba(255,255,255,0.3)",
+              border: "0.5px solid rgba(0,0,0,0.1)",
             }}
           />
         </div>
@@ -422,30 +437,6 @@ function LanguageSwitcher({
   );
 }
 
-/* ─── Google Icon ─── */
-function GoogleIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24">
-      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4" />
-      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
-      <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
-      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
-    </svg>
-  );
-}
-
-/* ─── Microsoft Icon ─── */
-function MicrosoftIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 21 21">
-      <rect x="1" y="1" width="9" height="9" fill="#F25022" />
-      <rect x="11" y="1" width="9" height="9" fill="#7FBA00" />
-      <rect x="1" y="11" width="9" height="9" fill="#00A4EF" />
-      <rect x="11" y="11" width="9" height="9" fill="#FFB900" />
-    </svg>
-  );
-}
-
 /* ═══════════════════════════════════════════════════════
    Main Auth Page — Single Viewport (100vh, no scroll)
    ═══════════════════════════════════════════════════════ */
@@ -456,6 +447,14 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [authMode, setAuthMode] = useState<AuthMode>("signin");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  /* tRPC mutations */
+  const signinMutation = trpc.nativeAuth.signin.useMutation();
+  const signupMutation = trpc.nativeAuth.signup.useMutation();
+  const resetMutation = trpc.nativeAuth.requestReset.useMutation();
 
   useEffect(() => {
     if (!loading && isAuthenticated) {
@@ -463,26 +462,95 @@ export default function Login() {
     }
   }, [loading, isAuthenticated, setLocation]);
 
-  const handleOAuthLogin = useCallback((e: React.FormEvent) => {
-    e.preventDefault();
-    window.location.href = getLoginUrl();
-  }, []);
-
-  const handleSocialLogin = useCallback(
-    (provider: string) => {
-      toast.info(
-        language === "en"
-          ? `${provider} sign-in coming soon! Use "Sign In with Email" for now.`
-          : `Connexion ${provider} bientôt disponible ! Utilisez "Se connecter par courriel" pour l'instant.`
-      );
-    },
-    [language]
-  );
-
   const t = useCallback(
     (en: string, fr: string) => (language === "en" ? en : fr),
     [language]
   );
+
+  /* ─── Handle Sign In ─── */
+  const handleSignIn = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      if (!email || !password) {
+        toast.error(t("Please fill in all fields.", "Veuillez remplir tous les champs."));
+        return;
+      }
+      setIsSubmitting(true);
+      try {
+        await signinMutation.mutateAsync({ email, password });
+        toast.success(t("Welcome back!", "Bon retour !"));
+        // Force reload to pick up the new session cookie
+        window.location.href = "/dashboard";
+      } catch (err: any) {
+        const msg = err?.message || t("Sign in failed.", "Échec de la connexion.");
+        toast.error(msg);
+      } finally {
+        setIsSubmitting(false);
+      }
+    },
+    [email, password, signinMutation, t]
+  );
+
+  /* ─── Handle Sign Up ─── */
+  const handleSignUp = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      if (!name || !email || !password) {
+        toast.error(t("Please fill in all fields.", "Veuillez remplir tous les champs."));
+        return;
+      }
+      if (password.length < 8) {
+        toast.error(
+          t(
+            "Password must be at least 8 characters.",
+            "Le mot de passe doit contenir au moins 8 caractères."
+          )
+        );
+        return;
+      }
+      setIsSubmitting(true);
+      try {
+        await signupMutation.mutateAsync({ name, email, password });
+        toast.success(t("Account created! Signing you in...", "Compte créé ! Connexion en cours..."));
+        window.location.href = "/dashboard";
+      } catch (err: any) {
+        const msg = err?.message || t("Sign up failed.", "Échec de l'inscription.");
+        toast.error(msg);
+      } finally {
+        setIsSubmitting(false);
+      }
+    },
+    [name, email, password, signupMutation, t]
+  );
+
+  /* ─── Handle Forgot Password ─── */
+  const handleForgotPassword = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      if (!email) {
+        toast.error(t("Please enter your email.", "Veuillez entrer votre courriel."));
+        return;
+      }
+      setIsSubmitting(true);
+      try {
+        await resetMutation.mutateAsync({ email });
+        setAuthMode("reset-success");
+      } catch (err: any) {
+        toast.error(t("Something went wrong.", "Une erreur est survenue."));
+      } finally {
+        setIsSubmitting(false);
+      }
+    },
+    [email, resetMutation, t]
+  );
+
+  /* ─── Switch mode helper ─── */
+  const switchMode = useCallback((mode: AuthMode) => {
+    setAuthMode(mode);
+    setPassword("");
+    setName("");
+    setShowPassword(false);
+  }, []);
 
   /* Loading state */
   if (loading) {
@@ -513,6 +581,271 @@ export default function Login() {
       </div>
     );
   }
+
+  /* ─── Auth Card Content (shared between desktop and mobile) ─── */
+  const renderAuthCard = (isMobile: boolean) => {
+    const inputClass = `w-full pl-10 pr-3 py-${isMobile ? "3" : "2.5"} rounded-${isMobile ? "xl" : "lg"} bg-white/[0.06] border border-white/10 text-white text-sm placeholder:text-white/25 focus:outline-none focus:border-[#C9A96A]/50 focus:bg-white/[0.08] transition-all`;
+    const passwordInputClass = `w-full pl-10 pr-10 py-${isMobile ? "3" : "2.5"} rounded-${isMobile ? "xl" : "lg"} bg-white/[0.06] border border-white/10 text-white text-sm placeholder:text-white/25 focus:outline-none focus:border-[#C9A96A]/50 focus:bg-white/[0.08] transition-all`;
+
+    /* ─── Reset Success ─── */
+    if (authMode === "reset-success") {
+      return (
+        <div className="text-center">
+          <div className="w-14 h-14 rounded-full bg-emerald-500/20 flex items-center justify-center mx-auto mb-4">
+            <CheckCircle2 className="w-7 h-7 text-emerald-400" />
+          </div>
+          <h2
+            className="text-2xl text-white leading-tight mb-2"
+            style={{ fontFamily: "'DM Serif Display', serif" }}
+          >
+            {t("Check Your Email", "Vérifiez votre courriel")}
+          </h2>
+          <p className="text-white/50 text-xs mb-6 leading-relaxed">
+            {t(
+              "If an account exists with this email, you will receive a password reset link shortly.",
+              "Si un compte existe avec ce courriel, vous recevrez un lien de réinitialisation sous peu."
+            )}
+          </p>
+          <button
+            onClick={() => switchMode("signin")}
+            className="flex items-center justify-center gap-2 mx-auto text-[#C9A96A] text-sm font-semibold hover:text-[#D4B87A] transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            {t("Back to Sign In", "Retour à la connexion")}
+          </button>
+        </div>
+      );
+    }
+
+    /* ─── Forgot Password ─── */
+    if (authMode === "forgot") {
+      return (
+        <>
+          <div className="text-center mb-5">
+            <div className="w-12 h-12 rounded-full bg-[#C9A96A]/20 flex items-center justify-center mx-auto mb-3">
+              <KeyRound className="w-6 h-6 text-[#C9A96A]" />
+            </div>
+            <h2
+              className="text-2xl text-white leading-tight mb-1"
+              style={{ fontFamily: "'DM Serif Display', serif" }}
+            >
+              {t("Reset Password", "Réinitialiser le mot de passe")}
+            </h2>
+            <p className="text-white/50 text-xs">
+              {t(
+                "Enter your email and we'll send you a reset link.",
+                "Entrez votre courriel et nous vous enverrons un lien de réinitialisation."
+              )}
+            </p>
+          </div>
+
+          <form onSubmit={handleForgotPassword} className="space-y-3 mb-4">
+            <div>
+              <label className="block text-white/40 text-[10px] font-semibold tracking-wider uppercase mb-1.5">
+                {t("Email", "Courriel")}
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder={t("your@email.com", "votre@courriel.com")}
+                  className={inputClass}
+                  autoFocus
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-white text-sm font-bold shadow-lg shadow-[#C9A96A]/20 hover:shadow-xl hover:scale-[1.01] active:scale-[0.99] transition-all mt-1 disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{
+                background:
+                  "linear-gradient(135deg, #C9A96A 0%, #B8944F 50%, #A8843F 100%)",
+              }}
+            >
+              {isSubmitting ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Mail className="w-4 h-4" />
+              )}
+              {t("Send Reset Link", "Envoyer le lien")}
+            </button>
+          </form>
+
+          <button
+            onClick={() => switchMode("signin")}
+            className="flex items-center justify-center gap-2 mx-auto text-white/40 text-xs hover:text-white/60 transition-colors"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            {t("Back to Sign In", "Retour à la connexion")}
+          </button>
+        </>
+      );
+    }
+
+    /* ─── Sign In / Sign Up ─── */
+    const isSignUp = authMode === "signup";
+    const handleSubmit = isSignUp ? handleSignUp : handleSignIn;
+
+    return (
+      <>
+        {/* Card Header */}
+        <div className="text-center mb-5">
+          <h2
+            className="text-2xl text-white leading-tight mb-1"
+            style={{ fontFamily: "'DM Serif Display', serif" }}
+          >
+            {isSignUp
+              ? t("Create Account", "Créer un compte")
+              : t("Welcome Back", "Bon retour")}
+          </h2>
+          <p className="text-white/50 text-xs">
+            {isSignUp
+              ? t(
+                  "Start your bilingual learning journey today",
+                  "Commencez votre parcours bilingue dès aujourd'hui"
+                )
+              : t(
+                  "Sign in to continue your learning journey",
+                  "Connectez-vous pour continuer votre parcours"
+                )}
+          </p>
+        </div>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-3 mb-4">
+          {/* Name (signup only) */}
+          <AnimatePresence mode="popLayout">
+            {isSignUp && (
+              <motion.div
+                key="name-field"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <label className="block text-white/40 text-[10px] font-semibold tracking-wider uppercase mb-1.5">
+                  {t("Full Name", "Nom complet")}
+                </label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder={t("John Doe", "Jean Dupont")}
+                    className={inputClass}
+                  />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Email */}
+          <div>
+            <label className="block text-white/40 text-[10px] font-semibold tracking-wider uppercase mb-1.5">
+              {t("Email", "Courriel")}
+            </label>
+            <div className="relative">
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder={t("your@email.com", "votre@courriel.com")}
+                className={inputClass}
+              />
+            </div>
+          </div>
+
+          {/* Password */}
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="block text-white/40 text-[10px] font-semibold tracking-wider uppercase">
+                {t("Password", "Mot de passe")}
+              </label>
+              {!isSignUp && (
+                <button
+                  type="button"
+                  onClick={() => switchMode("forgot")}
+                  className="text-[#C9A96A]/60 text-[10px] hover:text-[#C9A96A] transition-colors"
+                >
+                  {t("Forgot?", "Oublié ?")}
+                </button>
+              )}
+            </div>
+            <div className="relative">
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+              <input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder={isSignUp ? t("Min. 8 characters", "Min. 8 caractères") : "••••••••"}
+                className={passwordInputClass}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60 transition-colors"
+              >
+                {showPassword ? (
+                  <EyeOff className="w-4 h-4" />
+                ) : (
+                  <Eye className="w-4 h-4" />
+                )}
+              </button>
+            </div>
+            {isSignUp && (
+              <p className="text-white/25 text-[9px] mt-1">
+                {t("Minimum 8 characters required", "Minimum 8 caractères requis")}
+              </p>
+            )}
+          </div>
+
+          {/* Primary CTA */}
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-white text-sm font-bold shadow-lg shadow-[#2A5C5A]/30 hover:shadow-xl hover:shadow-[#2A5C5A]/40 hover:scale-[1.01] active:scale-[0.99] transition-all mt-1 disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{
+              background:
+                "linear-gradient(135deg, #2A5C5A 0%, #3B8686 50%, #4A9E9E 100%)",
+            }}
+          >
+            {isSubmitting ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : isSignUp ? (
+              <UserPlus className="w-4 h-4" />
+            ) : (
+              <LogIn className="w-4 h-4" />
+            )}
+            {isSignUp
+              ? t("Create Account", "Créer un compte")
+              : t("Sign In", "Se connecter")}
+            <ArrowRight className="w-3.5 h-3.5 ml-1" />
+          </button>
+        </form>
+
+        {/* Toggle Sign In / Sign Up */}
+        <p className="text-center text-white/40 text-xs">
+          {isSignUp
+            ? t("Already have an account?", "Déjà un compte ?")
+            : t("Don't have an account?", "Pas encore de compte ?")}{" "}
+          <button
+            onClick={() => switchMode(isSignUp ? "signin" : "signup")}
+            className="text-[#C9A96A] font-semibold hover:text-[#D4B87A] transition-colors"
+          >
+            {isSignUp
+              ? t("Sign in", "Se connecter")
+              : t("Sign up", "S'inscrire")}
+          </button>
+        </p>
+      </>
+    );
+  };
 
   return (
     <div className="h-screen w-screen flex flex-col lg:flex-row overflow-hidden">
@@ -651,142 +984,17 @@ export default function Login() {
                 "0 8px 32px rgba(0,0,0,0.3), 0 1px 0 rgba(255,255,255,0.05) inset",
             }}
           >
-            {/* Card Header */}
-            <div className="text-center mb-5">
-              <h2
-                className="text-2xl text-white leading-tight mb-1"
-                style={{ fontFamily: "'DM Serif Display', serif" }}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={authMode}
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                transition={{ duration: 0.2 }}
               >
-                {t("Welcome Back", "Bon retour")}
-              </h2>
-              <p className="text-white/50 text-xs">
-                {t(
-                  "Sign in to continue your learning journey",
-                  "Connectez-vous pour continuer votre parcours"
-                )}
-              </p>
-            </div>
-
-            {/* Email + Password Form */}
-            <form onSubmit={handleOAuthLogin} className="space-y-3 mb-4">
-              {/* Email */}
-              <div>
-                <label className="block text-white/40 text-[10px] font-semibold tracking-wider uppercase mb-1.5">
-                  {t("Email", "Courriel")}
-                </label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder={t("your@email.com", "votre@courriel.com")}
-                    className="w-full pl-10 pr-3 py-2.5 rounded-lg bg-white/[0.06] border border-white/10 text-white text-sm placeholder:text-white/25 focus:outline-none focus:border-[#C9A96A]/50 focus:bg-white/[0.08] transition-all"
-                  />
-                </div>
-              </div>
-
-              {/* Password */}
-              <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <label className="block text-white/40 text-[10px] font-semibold tracking-wider uppercase">
-                    {t("Password", "Mot de passe")}
-                  </label>
-                  <a
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      toast.info(
-                        t(
-                          "Password reset coming soon!",
-                          "Réinitialisation bientôt disponible !"
-                        )
-                      );
-                    }}
-                    className="text-[#C9A96A]/60 text-[10px] hover:text-[#C9A96A] transition-colors"
-                  >
-                    {t("Forgot?", "Oublié ?")}
-                  </a>
-                </div>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    className="w-full pl-10 pr-10 py-2.5 rounded-lg bg-white/[0.06] border border-white/10 text-white text-sm placeholder:text-white/25 focus:outline-none focus:border-[#C9A96A]/50 focus:bg-white/[0.08] transition-all"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60 transition-colors"
-                  >
-                    {showPassword ? (
-                      <EyeOff className="w-4 h-4" />
-                    ) : (
-                      <Eye className="w-4 h-4" />
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              {/* Primary CTA */}
-              <button
-                type="submit"
-                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-white text-sm font-bold shadow-lg shadow-[#2A5C5A]/30 hover:shadow-xl hover:shadow-[#2A5C5A]/40 hover:scale-[1.01] active:scale-[0.99] transition-all mt-1"
-                style={{
-                  background:
-                    "linear-gradient(135deg, #2A5C5A 0%, #3B8686 50%, #4A9E9E 100%)",
-                }}
-              >
-                <LogIn className="w-4 h-4" />
-                {t("Sign In with Email", "Se connecter par courriel")}
-                <ArrowRight className="w-3.5 h-3.5 ml-1" />
-              </button>
-            </form>
-
-            {/* Divider */}
-            <div className="flex items-center gap-3 mb-4">
-              <div className="flex-1 h-px bg-white/10" />
-              <span className="text-white/30 text-[10px] font-semibold tracking-wider uppercase">
-                {t("Or continue with", "Ou continuer avec")}
-              </span>
-              <div className="flex-1 h-px bg-white/10" />
-            </div>
-
-            {/* SSO Buttons */}
-            <div className="grid grid-cols-2 gap-2.5 mb-4">
-              <button
-                onClick={() => handleSocialLogin("Google")}
-                className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-white text-[#333] text-xs font-semibold shadow-sm hover:shadow-lg hover:bg-gray-50 hover:scale-[1.01] active:scale-[0.99] transition-all"
-              >
-                <GoogleIcon />
-                Google
-              </button>
-              <button
-                onClick={() => handleSocialLogin("Microsoft")}
-                className="flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-[#2F2F2F] text-white text-xs font-semibold shadow-sm hover:bg-[#3a3a3a] hover:shadow-lg hover:scale-[1.01] active:scale-[0.99] transition-all"
-              >
-                <MicrosoftIcon />
-                Microsoft
-              </button>
-            </div>
-
-            {/* Sign Up */}
-            <p className="text-center text-white/40 text-xs">
-              {t("Don't have an account?", "Pas encore de compte ?")}{" "}
-              <a
-                href="#"
-                className="text-[#C9A96A] font-semibold hover:text-[#D4B87A] transition-colors"
-                onClick={(e) => {
-                  e.preventDefault();
-                  window.location.href = getLoginUrl();
-                }}
-              >
-                {t("Sign up", "S'inscrire")}
-              </a>
-            </p>
+                {renderAuthCard(false)}
+              </motion.div>
+            </AnimatePresence>
           </motion.div>
 
           {/* ─── Portal Access + Social + Copyright ─── */}
@@ -872,13 +1080,13 @@ export default function Login() {
           </div>
         </div>
 
-        {/* Secure redirect notice */}
+        {/* Secure notice — NO Manus reference */}
         <div className="absolute bottom-3 left-0 right-0 flex justify-center z-10">
           <p className="text-white/15 text-[8px] tracking-wide flex items-center gap-1">
             <Lock className="w-2.5 h-2.5" />
             {t(
-              "Secured by Manus OAuth · 256-bit encryption",
-              "Sécurisé par Manus OAuth · Chiffrement 256 bits"
+              "Secured connection · 256-bit encryption",
+              "Connexion sécurisée · Chiffrement 256 bits"
             )}
           </p>
         </div>
@@ -913,84 +1121,27 @@ export default function Login() {
             </p>
           </div>
 
-          {/* Mobile Auth Form */}
-          <form onSubmit={handleOAuthLogin} className="space-y-3 mb-5">
-            <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder={t("your@email.com", "votre@courriel.com")}
-                className="w-full pl-10 pr-3 py-3 rounded-xl bg-white/[0.06] border border-white/10 text-white text-sm placeholder:text-white/25 focus:outline-none focus:border-[#C9A96A]/50 transition-all"
-              />
-            </div>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
-              <input
-                type={showPassword ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full pl-10 pr-10 py-3 rounded-xl bg-white/[0.06] border border-white/10 text-white text-sm placeholder:text-white/25 focus:outline-none focus:border-[#C9A96A]/50 transition-all"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60 transition-colors"
+          {/* Mobile Auth Card */}
+          <div
+            className="rounded-2xl p-5 backdrop-blur-xl mb-4"
+            style={{
+              background:
+                "linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)",
+              border: "1px solid rgba(255,255,255,0.12)",
+            }}
+          >
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={authMode}
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                transition={{ duration: 0.2 }}
               >
-                {showPassword ? (
-                  <EyeOff className="w-4 h-4" />
-                ) : (
-                  <Eye className="w-4 h-4" />
-                )}
-              </button>
-            </div>
-            <button
-              type="submit"
-              className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-white text-sm font-bold shadow-lg"
-              style={{
-                background:
-                  "linear-gradient(135deg, #2A5C5A 0%, #3B8686 50%, #4A9E9E 100%)",
-              }}
-            >
-              <LogIn className="w-4 h-4" />
-              {t("Sign In with Email", "Se connecter par courriel")}
-            </button>
-          </form>
-
-          {/* Mobile SSO */}
-          <div className="grid grid-cols-2 gap-2 mb-4">
-            <button
-              onClick={() => handleSocialLogin("Google")}
-              className="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white text-[#333] text-xs font-semibold"
-            >
-              <GoogleIcon />
-              Google
-            </button>
-            <button
-              onClick={() => handleSocialLogin("Microsoft")}
-              className="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#2F2F2F] text-white text-xs font-semibold"
-            >
-              <MicrosoftIcon />
-              Microsoft
-            </button>
+                {renderAuthCard(true)}
+              </motion.div>
+            </AnimatePresence>
           </div>
-
-          {/* Mobile Sign Up */}
-          <p className="text-center text-white/40 text-xs">
-            {t("Don't have an account?", "Pas encore de compte ?")}{" "}
-            <a
-              href="#"
-              className="text-[#C9A96A] font-semibold"
-              onClick={(e) => {
-                e.preventDefault();
-                window.location.href = getLoginUrl();
-              }}
-            >
-              {t("Sign up", "S'inscrire")}
-            </a>
-          </p>
 
           {/* Mobile Copyright */}
           <p className="text-center text-white/15 text-[9px] mt-6">

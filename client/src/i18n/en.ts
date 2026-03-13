@@ -567,7 +567,7 @@ export const en = {
   auth: {
     loginTitle: "Welcome to RusingÂcademy",
     loginSubtitle: "Your bilingual excellence journey starts here",
-    loginButton: "Sign In with Manus",
+    loginButton: "Sign In",
     loggingIn: "Signing in...",
     logoutConfirm: "Are you sure you want to log out?",
   },

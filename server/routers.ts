@@ -13,6 +13,7 @@ import { mockSleRouter, coachRouter, studyGroupRouter, bookmarkRouter, dictation
 import * as adminDb from "./db-admin";
 import { clientPortalRouter } from "./routers-client-portal";
 import { cmsRouter } from "./routers-cms";
+import { nativeAuthRouter } from "./routers-native-auth";
 import * as notifService from "./notifications";
 import { gamificationProfiles, users } from "../drizzle/schema";
 import { desc, eq, sql } from "drizzle-orm";
@@ -103,6 +104,7 @@ export const appRouter = router({
   system: systemRouter,
   clientPortal: clientPortalRouter,
   cms: cmsRouter,
+  nativeAuth: nativeAuthRouter,
 
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),

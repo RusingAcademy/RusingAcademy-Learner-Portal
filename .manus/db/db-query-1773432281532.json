@@ -1,0 +1,16 @@
+{
+  "query": "SELECT id, openId, name, email FROM users WHERE email = 'lrdg.test@gmail.com';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user cYPAHDVF1MZtM6S.caf383761fdf --database Rc5qDPWJcsCQwb6WK47Ybr --execute SELECT id, openId, name, email FROM users WHERE email = 'lrdg.test@gmail.com';",
+  "rows": [
+    {
+      "id": "270007",
+      "openId": "native_test-lrdg-user",
+      "name": "LRDG Test User",
+      "email": "lrdg.test@gmail.com"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\topenId\tname\temail\n270007\tnative_test-lrdg-user\tLRDG Test User\tlrdg.test@gmail.com\n",
+  "stderr": "",
+  "execution_time_ms": 60
+}

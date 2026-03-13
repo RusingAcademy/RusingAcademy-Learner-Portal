@@ -770,3 +770,32 @@
 - [x] Remove lock icon overlay and cursor-not-allowed styling
 - [x] Keep progress tracking intact (just remove the gate)
 - [ ] Push updated code to GitHub RusingAcademy/RusingAcademy-Learner-Portal
+
+## Remove Manus AI Branding from Login/Signup Flow
+- [x] Audit current authentication flow to identify all Manus AI references
+- [x] Understand the OAuth redirect to Manus login portal
+- [x] Implement custom-branded login/signup page (RusingAcademy/Teachify branding)
+- [x] Remove all Manus AI references from the user-facing authentication experience
+- [x] Test the new login flow end-to-end
+
+## Native Authentication System (Bypass Manus OAuth)
+
+- [x] Create `credentials` table in database (email, password_hash, verified, reset_token, reset_expires)
+- [x] Install bcrypt dependency for password hashing
+- [x] Build tRPC `nativeAuth.signup` procedure (email/password registration, bcrypt hash, JWT session)
+- [x] Build tRPC `nativeAuth.signin` procedure (email/password verification, JWT session cookie)
+- [x] Build tRPC `nativeAuth.resetPassword` procedure (generate reset token)
+- [x] Build tRPC `nativeAuth.confirmReset` procedure (verify token, update password)
+- [x] Update Login.tsx — replace Manus OAuth redirect with native signup/signin forms
+- [x] Build signup form (name, email, password, confirm password) on Login page
+- [x] Build password reset form on Login page
+- [x] Remove "Secured by Manus OAuth" text from Login page footer
+- [x] Remove Google/Microsoft SSO buttons (kept as future placeholders)
+- [x] Ensure existing useAuth() hook works seamlessly with native JWT sessions
+- [x] Patch authenticateRequest to handle native users (native_ openId prefix)
+- [x] Remove all Manus references from i18n (en.ts, fr.ts) and localStorage keys
+- [x] Update getLoginUrl() to redirect to /login instead of Manus OAuth portal
+- [x] Add /login route to App.tsx
+- [x] Validate zero regression (483 tests passing, zero failures)
+- [x] Seed test account: lrdg.test@gmail.com / lrdg1234.
+- [ ] Save checkpoint and push to GitHub
